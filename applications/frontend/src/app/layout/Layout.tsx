@@ -2,7 +2,8 @@ import React from 'react'
 import { styled } from '../styles/Theme'
 
 const StyledLayout = styled.div`
-	background-color: ${(p) => p.theme.color.ludecatyellow};
+	height: 100%;
+	width: 100%;
 `
 
 interface MainLayoutProps {

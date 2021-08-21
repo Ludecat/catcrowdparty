@@ -3,10 +3,17 @@ import { NextPage, GetStaticProps } from 'next'
 import Head from 'next/head'
 import MainLayout from '../../app/layout/Layout'
 import PageWithLayoutType from '../../app/layout/PageWithLayout'
+import { Overlay } from '../../app/overlay/Overlay'
+import styled from 'styled-components'
 
 export interface OverlayPageProps {
 	title?: string
 }
+
+const OverlayWrapper = styled.div`
+	width: 100%;
+	height: 100%;
+`
 
 const OverlayPage: NextPage<OverlayPageProps> = (props: OverlayPageProps) => {
 	const { title } = props
@@ -15,7 +22,9 @@ const OverlayPage: NextPage<OverlayPageProps> = (props: OverlayPageProps) => {
 			<Head>
 				<title>{title}</title>
 			</Head>
-			<div>{title}</div>
+			<OverlayWrapper>
+				<Overlay />
+			</OverlayWrapper>
 		</>
 	)
 }
