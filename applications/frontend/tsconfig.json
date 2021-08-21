@@ -1,0 +1,10 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		"jsx": "preserve",
+		"lib": ["dom", "dom.iterable", "esnext"],
+		"rootDir": "src"
+	},
+	"exclude": ["dist", ".next", "out", "next.config.js", "node_modules/**/*"],
+	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
+}

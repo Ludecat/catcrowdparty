@@ -1,0 +1,8 @@
+{
+	"name": "@ccp/common",
+	"private": true,
+	"version": "1.0.0",
+	"author": "Patrick Obermüller",
+	"license": "MIT",
+	"main": ""
+}

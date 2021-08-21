@@ -1,0 +1,10 @@
+# next specific
+/out/
+.env.local
+.next
+
+# dependencies
+node_modules/
+
+# random logs
+*.log*
