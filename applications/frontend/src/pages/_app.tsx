@@ -1,12 +1,15 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable react/prop-types */
+import { AppProps } from 'next/dist/shared/lib/router/router'
 import React from 'react'
 import { ThemeProvider } from 'styled-components'
 import { GlobalStyle } from '../app/styles/global.styles'
 import { theme } from '../app/styles/Theme'
 
-function App({ Component, pageProps }) {
-	const Layout = Component.layout ? Component.layout : React.Fragment
+function App({ Component, pageProps }: AppProps) {
+	// Casting to any workaround for static prop
+	const Layout = (Component as any).layout ? (Component as any).layout : React.Fragment
+
 	return (
 		<React.Fragment>
 			<GlobalStyle />
