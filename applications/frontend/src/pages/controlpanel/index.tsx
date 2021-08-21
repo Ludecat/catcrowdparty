@@ -5,6 +5,7 @@ import MainLayout from '../../app/layout/Layout'
 import PageWithLayoutType from '../../app/layout/PageWithLayout'
 import { Button } from '../../app/components/Button'
 import { TextArea } from '../../app/components/TextArea'
+import { CheckBoxToggle } from '../../app/components/CheckBoxToggle'
 
 export interface ControlPanelPageProps {
 	title?: string
@@ -29,6 +30,10 @@ const ControlPanelPage: NextPage<ControlPanelPageProps> = (props: ControlPanelPa
 
 				<div>
 					<TextArea onChange={(e) => console.log(e.currentTarget.value)} />
+				</div>
+
+				<div>
+					<CheckBoxToggle id="ludecat-checkbox-01" onChange={(e) => console.log(e.currentTarget.checked)} />
 				</div>
 			</div>
 		</>
