@@ -35,6 +35,28 @@ export const getStaticProps: GetStaticProps<ControlPanelPageProps> = async () =>
 
 const ControlPanelPageWrapper = styled.div`
 	padding: ${(p) => p.theme.space.xl}px;
+	background-color: black;
+	overflow: hidden;
+	height: 100%;
+	background-color: #363636;
+	background-image: linear-gradient(
+			45deg,
+			hsla(0, 0%, 0%, 0.25) 25%,
+			transparent 25%,
+			transparent 75%,
+			hsla(0, 0%, 0%, 0.25) 75%,
+			hsla(0, 0%, 0%, 0.25)
+		),
+		linear-gradient(
+			45deg,
+			hsla(0, 0%, 0%, 0.25) 25%,
+			transparent 25%,
+			transparent 75%,
+			hsla(0, 0%, 0%, 0.25) 75%,
+			hsla(0, 0%, 0%, 0.25)
+		);
+	background-position: 0 0, 2px 2px;
+	background-size: 4px 4px;
 `
 
 export default ControlPanelPage

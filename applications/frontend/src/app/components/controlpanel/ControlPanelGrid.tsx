@@ -18,6 +18,7 @@ const Grid = styled.div`
 `
 
 const GridItem = styled.div<{ gridArea: string }>`
+	color: ${(p) => p.theme.color.white};
 	grid-area: ${(p) => p.gridArea};
 `
 
@@ -28,7 +29,6 @@ const GridContentWrapper = styled.div`
 const GridItemHeading = styled.p`
 	margin: 0;
 	padding: 0;
-	color: ${(p) => p.theme.color.blackPeral};
 	font-size: ${(p) => p.theme.fontSize.xl}px;
 `
 
