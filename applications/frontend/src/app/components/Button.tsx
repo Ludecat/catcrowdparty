@@ -12,7 +12,7 @@ const StyledButton = styled.button`
 	border: 2px solid ${(p) => p.theme.color.ludecatyellow};
 	font-size: ${(p) => p.theme.fontSize.l}px;
 
-	margin: ${(p) => p.theme.space.l}px;
+	margin: ${(p) => p.theme.space.s}px;
 	padding: ${(p) => p.theme.space.s}px ${(p) => p.theme.space.l}px;
 	cursor: pointer;
 	border-radius: 3px;

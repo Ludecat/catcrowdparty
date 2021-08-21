@@ -4,6 +4,7 @@ import Head from 'next/head'
 import MainLayout from '../../app/layout/Layout'
 import PageWithLayoutType from '../../app/layout/PageWithLayout'
 import { Button } from '../../app/components/Button'
+import { TextArea } from '../../app/components/TextArea'
 
 export interface ControlPanelPageProps {
 	title?: string
@@ -16,14 +17,18 @@ const ControlPanelPage: NextPage<ControlPanelPageProps> = (props: ControlPanelPa
 			<Head>
 				<title>{title}</title>
 			</Head>
+			<header>CONTROL PANEL</header>
 			<div>
-				{title}
 				<div>
 					<Button
 						onClick={(e) => console.log(e.currentTarget.value)}
 						value="I am LudeCat"
 						title="I am LudeCat"
 					></Button>
+				</div>
+
+				<div>
+					<TextArea onChange={(e) => console.log(e.currentTarget.value)} />
 				</div>
 			</div>
 		</>
