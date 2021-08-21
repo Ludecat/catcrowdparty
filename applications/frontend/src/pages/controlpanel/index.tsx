@@ -3,9 +3,8 @@ import { NextPage, GetStaticProps } from 'next'
 import Head from 'next/head'
 import MainLayout from '../../app/layout/Layout'
 import PageWithLayoutType from '../../app/layout/PageWithLayout'
-import { Button } from '../../app/components/Button'
-import { TextArea } from '../../app/components/TextArea'
-import { CheckBoxToggle } from '../../app/components/CheckBoxToggle'
+import { ControlPanelGrid } from '../../app/components/controlpanel/ControlPanelGrid'
+import { styled } from '../../app/styles/Theme'
 
 export interface ControlPanelPageProps {
 	title?: string
@@ -18,24 +17,9 @@ const ControlPanelPage: NextPage<ControlPanelPageProps> = (props: ControlPanelPa
 			<Head>
 				<title>{title}</title>
 			</Head>
-			<header>CONTROL PANEL</header>
-			<div>
-				<div>
-					<Button
-						onClick={(e) => console.log(e.currentTarget.value)}
-						value="I am LudeCat"
-						title="I am LudeCat"
-					></Button>
-				</div>
-
-				<div>
-					<TextArea onChange={(e) => console.log(e.currentTarget.value)} />
-				</div>
-
-				<div>
-					<CheckBoxToggle id="ludecat-checkbox-01" onChange={(e) => console.log(e.currentTarget.checked)} />
-				</div>
-			</div>
+			<ControlPanelPageWrapper>
+				<ControlPanelGrid />
+			</ControlPanelPageWrapper>
 		</>
 	)
 }
@@ -48,5 +32,9 @@ export const getStaticProps: GetStaticProps<ControlPanelPageProps> = async () =>
 	}
 }
 ;(ControlPanelPage as PageWithLayoutType).layout = MainLayout
+
+const ControlPanelPageWrapper = styled.div`
+	padding: ${(p) => p.theme.space.xl}px;
+`
 
 export default ControlPanelPage

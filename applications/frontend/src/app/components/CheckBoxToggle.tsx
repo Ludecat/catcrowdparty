@@ -3,21 +3,30 @@ import { styled } from '../styles/Theme'
 
 interface CheckBoxProps extends React.HTMLAttributes<HTMLInputElement> {
 	value?: string
+	description?: string
 }
 
 /**
  * Inspired by https://codesandbox.io/s/6v7n1vr8yn?file=/src/index.js
  */
-export const CheckBoxToggle = ({ ...props }: CheckBoxProps) => {
+export const CheckBoxToggle = ({ description, ...props }: CheckBoxProps) => {
 	return (
 		<CheckBoxWrapper>
 			<CheckBox {...props} type="checkbox" />
 			<CheckBoxLabel htmlFor={props.id} />
+			<CheckBoxDescription>{description}</CheckBoxDescription>
 		</CheckBoxWrapper>
 	)
 }
 
+const CheckBoxDescription = styled.p`
+	position: absolute;
+	right: 20%;
+	top: 3px;
+`
+
 const CheckBoxWrapper = styled.div`
+	width: 100%;
 	position: relative;
 `
 const CheckBoxLabel = styled.label`

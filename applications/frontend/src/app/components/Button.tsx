@@ -7,21 +7,21 @@ interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
 }
 
 const StyledButton = styled.button`
-	background: ${(p) => p.theme.color.white};
-	color: ${(p) => p.theme.color.ludecatyellow};
+	background: ${(p) => p.theme.color.ludecatyellow};
+	color: ${(p) => p.theme.color.white};
 	border: 2px solid ${(p) => p.theme.color.ludecatyellow};
+
 	font-size: ${(p) => p.theme.fontSize.l}px;
 
-	margin: ${(p) => p.theme.space.s}px;
+	margin-right: ${(p) => p.theme.space.l}px;
 	padding: ${(p) => p.theme.space.s}px ${(p) => p.theme.space.l}px;
 	cursor: pointer;
 	border-radius: 3px;
 	transition: all 0.12s;
 
 	&:hover {
-		background: ${(p) => p.theme.color.ludecatyellow};
-		color: ${(p) => p.theme.color.white};
-		border-color: ${(p) => p.theme.color.ludecatyellow};
+		background: ${(p) => p.theme.color.white};
+		color: ${(p) => p.theme.color.ludecatyellow};
 	}
 `
 
