@@ -3,6 +3,7 @@ import { NextPage, GetStaticProps } from 'next'
 import Head from 'next/head'
 import MainLayout from '../../app/layout/Layout'
 import PageWithLayoutType from '../../app/layout/PageWithLayout'
+import { Button } from '../../app/components/Button'
 
 export interface ControlPanelPageProps {
 	title?: string
@@ -15,7 +16,16 @@ const ControlPanelPage: NextPage<ControlPanelPageProps> = (props: ControlPanelPa
 			<Head>
 				<title>{title}</title>
 			</Head>
-			<div>{title}</div>
+			<div>
+				{title}
+				<div>
+					<Button
+						onClick={(e) => console.log(e.currentTarget.value)}
+						value="I am LudeCat"
+						title="I am LudeCat"
+					></Button>
+				</div>
+			</div>
 		</>
 	)
 }

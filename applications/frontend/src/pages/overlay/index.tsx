@@ -13,6 +13,7 @@ export interface OverlayPageProps {
 const OverlayWrapper = styled.div`
 	width: 100%;
 	height: 100%;
+	background-image: url('/ccp_background_placeholder.jpg');
 `
 
 const OverlayPage: NextPage<OverlayPageProps> = (props: OverlayPageProps) => {

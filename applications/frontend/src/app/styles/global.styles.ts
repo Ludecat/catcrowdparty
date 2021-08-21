@@ -13,7 +13,6 @@ export const GlobalStyle = createGlobalStyle`
 		width: 100%;
 		height: 100%;
 		font-family: 'Roboto', sans-serif;
-		background-image: url('/ccp_background_placeholder.jpg');
 	}
 
 	#__next {
