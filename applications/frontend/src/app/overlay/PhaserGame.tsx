@@ -1,6 +1,7 @@
 import React from 'react'
 import { useEffect } from 'react'
 import { useIsMounted } from '../hooks/useIsMounted'
+import { useSocket } from '../hooks/useSocket'
 import { styled } from '../styles/Theme'
 import Game from './game/Game'
 
@@ -11,10 +12,11 @@ const PhaserDiv = styled.div`
 
 const PhaserGame = () => {
 	const isMounted = useIsMounted()
+	const { socket } = useSocket()
 
 	useEffect(() => {
-		if (isMounted) {
-			new Game(1080, 1920)
+		if (isMounted && socket?.connected) {
+			new Game(socket, 1080, 1920)
 		}
 	}, [isMounted])
 

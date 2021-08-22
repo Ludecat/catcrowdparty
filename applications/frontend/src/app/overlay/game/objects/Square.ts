@@ -1,4 +1,6 @@
 import Phaser from 'phaser'
+import { Socket } from 'socket.io-client'
+import { DESTROY_CHECKBOXES } from '@ccp/common/shared'
 
 interface CharacterProps {
 	x: number
@@ -6,7 +8,9 @@ interface CharacterProps {
 }
 
 export class Checkpoint extends Phaser.GameObjects.Rectangle {
-	constructor(scene: Phaser.Scene, options: CharacterProps) {
+	public socket: Socket
+
+	constructor(scene: Phaser.Scene, socket: Socket, options: CharacterProps) {
 		super(scene, options.x, options.y, 60, 60, Phaser.Display.Color.HexStringToColor('#FF0000').color)
 		scene.matter.add.gameObject(
 			this,
@@ -16,5 +20,10 @@ export class Checkpoint extends Phaser.GameObjects.Rectangle {
 			})
 		)
 		scene.add.existing(this)
+
+		this.socket = socket
+		this.socket.on(DESTROY_CHECKBOXES, () => {
+			this.destroy()
+		})
 	}
 }
