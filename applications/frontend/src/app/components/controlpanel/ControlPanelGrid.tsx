@@ -17,9 +17,11 @@ const Grid = styled.div`
 		'triggers-control triggers-control';
 `
 
-const GridItem = styled.div<{ gridArea: string }>`
+const GridItem = styled.div<{ gridArea: string; height?: string; width?: string }>`
 	color: ${(p) => p.theme.color.white};
 	grid-area: ${(p) => p.gridArea};
+	height: ${(p) => p.height ?? 'auto'};
+	width: ${(p) => p.width ?? 'auto'};
 `
 
 const GridContentWrapper = styled.div`
@@ -32,9 +34,11 @@ const GridItemHeading = styled.p`
 	font-size: ${(p) => p.theme.fontSize.xl}px;
 `
 
-const Preview = styled.div`
-	height: 100%;
-	background-color: ${(p) => p.theme.color.decentBeton};
+const Preview = styled.iframe`
+	border: none;
+	display: block;
+	transform: scale(0.5);
+	transform-origin: 0 0;
 `
 
 const ControlPanelHeading = styled.h1`
@@ -45,12 +49,14 @@ const ControlPanelHeading = styled.h1`
 interface GridComponentProps {
 	gridArea: string
 	title: string
+	height?: string
+	width?: string
 }
 
 const GridComponent: FunctionComponent<GridComponentProps> = (props) => {
-	const { title, gridArea } = props
+	const { title, gridArea, height, width } = props
 	return (
-		<GridItem gridArea={gridArea}>
+		<GridItem gridArea={gridArea} height={height} width={width}>
 			<GridItemHeading>{title}</GridItemHeading>
 			<GridContentWrapper>{props.children}</GridContentWrapper>
 		</GridItem>
@@ -98,8 +104,8 @@ export const ControlPanelGrid = () => {
 					description="Twitch Speech Bubble"
 				/>
 			</GridComponent>
-			<GridComponent gridArea={'preview'} title="Preview">
-				<Preview />
+			<GridComponent gridArea={'preview'} title="Preview" height={'540px'} width={'960px'}>
+				<Preview src="/overlay#small" height={1080} width={1920} />
 			</GridComponent>
 			<GridComponent gridArea={'triggers-control'} title="Triggers">
 				<Button

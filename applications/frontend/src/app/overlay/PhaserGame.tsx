@@ -11,9 +11,10 @@ const PhaserDiv = styled.div`
 
 const PhaserGame = () => {
 	const isMounted = useIsMounted()
+
 	useEffect(() => {
 		if (isMounted) {
-			new Game()
+			new Game(1080, 1920)
 		}
 	}, [isMounted])
 

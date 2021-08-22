@@ -7,6 +7,10 @@ export const GlobalStyle = createGlobalStyle`
 		height: 100%;
 	}
 
+	#ccp-overlay canvas {
+		display: block;
+	}
+
 	body {
 		margin: 0;
 		padding: 0;

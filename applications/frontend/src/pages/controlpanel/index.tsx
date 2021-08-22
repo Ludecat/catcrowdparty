@@ -36,7 +36,6 @@ export const getStaticProps: GetStaticProps<ControlPanelPageProps> = async () =>
 const ControlPanelPageWrapper = styled.div`
 	padding: ${(p) => p.theme.space.xl}px;
 	background-color: black;
-	overflow: hidden;
 	height: 100%;
 	background-color: #363636;
 	background-image: linear-gradient(
