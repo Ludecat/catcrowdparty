@@ -1,4 +1,6 @@
 import React, { FunctionComponent } from 'react'
+import { CROWD_CROUCH, CROWD_IDLE, CROWD_RUN } from '@ccp/common/shared'
+import { useSocket } from '../../hooks/useSocket'
 import { styled } from '../../styles/Theme'
 import { Button } from '../Button'
 import { CheckBoxToggle } from '../CheckBoxToggle'
@@ -64,15 +66,17 @@ const GridComponent: FunctionComponent<GridComponentProps> = (props) => {
 }
 
 export const ControlPanelGrid = () => {
+	const { socket } = useSocket()
+
 	return (
 		<Grid>
 			<GridItem gridArea={'header'}>
 				<ControlPanelHeading>Cat Crowd Party - Control Panel</ControlPanelHeading>
 			</GridItem>
 			<GridComponent gridArea={'crowd-control'} title="Crowd Control">
-				<Button onClick={(e) => console.log(e.currentTarget.value)} value="Idle" title="Idle"></Button>
-				<Button onClick={(e) => console.log(e.currentTarget.value)} value="Clap" title="Clap"></Button>
-				<Button onClick={(e) => console.log(e.currentTarget.value)} value="Party" title="Party"></Button>
+				<Button onClick={() => socket?.emit(CROWD_IDLE)} value="CROWD_IDLE" title="Idle"></Button>
+				<Button onClick={() => socket?.emit(CROWD_CROUCH)} value="CROWD_CROUCH" title="Crouch"></Button>
+				<Button onClick={() => socket?.emit(CROWD_RUN)} value="CROWD_RUN" title="Run"></Button>
 			</GridComponent>
 			<GridComponent gridArea={'moderator-control'} title="Moderator">
 				<TextArea onChange={(e) => console.log(e.currentTarget.value)} />

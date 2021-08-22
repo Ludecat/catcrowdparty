@@ -1,7 +1,7 @@
 import Phaser from 'phaser'
 import { Socket } from 'socket.io-client'
 import { SCENES } from '../config'
-import { Checkpoint } from '../objects/Square'
+import { Dude, DUDE_SPRITESHEET_KEY } from '../objects/Dude'
 
 export default class OverlayScene extends Phaser.Scene {
 	constructor() {
@@ -13,12 +13,20 @@ export default class OverlayScene extends Phaser.Scene {
 	}
 
 	preload() {
+		this.load.spritesheet(DUDE_SPRITESHEET_KEY, '/dude.png', {
+			frameWidth: 77.42857142857143,
+			frameHeight: 57.2727272727,
+		})
 		console.log(`${SCENES.OVERLAY}: preload()`)
 	}
 
 	create(socket: Socket) {
-		new Checkpoint(this, socket, { x: 50, y: 50 })
-		new Checkpoint(this, socket, { x: 150, y: 150 })
+		/**
+		 * Placeholder
+		 */
+		for (let i = 0; i < 26; i++) {
+			new Dude(this, socket, { x: i * 75, y: 1000 })
+		}
 		console.log(`${SCENES.OVERLAY}: create()`)
 	}
 	update() {}

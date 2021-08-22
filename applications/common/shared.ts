@@ -1,8 +1,7 @@
-// PLACEHOLDER
-export const SHARED = 'SHARED'
-
 // SOCKET IO
 export const SOCKET_URL = 'http://localhost:5000'
 
 // SOCKET IO EVENTS
-export const DESTROY_CHECKBOXES = 'destroyCheckboxes'
+export const CROWD_IDLE = 'crowdIdle'
+export const CROWD_CROUCH = 'crowdCrouch'
+export const CROWD_RUN = 'crowdRun'
