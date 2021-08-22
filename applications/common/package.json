@@ -1,8 +1,8 @@
 {
 	"name": "@ccp/common",
 	"private": true,
+	"main": "shared.js",
 	"version": "1.0.0",
 	"author": "Patrick Obermüller",
-	"license": "MIT",
-	"main": ""
+	"license": "MIT"
 }
