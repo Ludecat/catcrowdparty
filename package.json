@@ -10,7 +10,8 @@
 		"url": "git+https://github.com/Ludecat/catcrowdparty.git"
 	},
 	"scripts": {
-		"build:all": "npm run build --workspaces"
+		"build:all": "npm run build --workspaces",
+		"build:tsc": "tsc --build"
 	},
 	"workspaces": [
 		"applications/*"
