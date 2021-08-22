@@ -4,5 +4,8 @@
 	"main": "shared.js",
 	"version": "1.0.0",
 	"author": "Patrick Obermüller",
-	"license": "MIT"
+	"license": "MIT",
+	"scripts": {
+		"build": "tsc --build"
+	}
 }

@@ -11,6 +11,8 @@
 	},
 	"scripts": {
 		"build:all": "npm run build --workspaces",
+		"start:frontend": "npm run start --workspace=@ccp/frontend",
+		"start:backend": "npm run start --workspace=@ccp/backend",
 		"build:tsc": "tsc --build",
 		"tsc:watch": "tsc --build --watch"
 	},
