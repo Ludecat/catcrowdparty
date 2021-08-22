@@ -1,3 +1,4 @@
 import { SHARED } from '@ccp/common'
+import { logger } from './logger'
 
-console.log(`Hello World! ${SHARED}`)
+logger.info(`Hello World! ${SHARED}`)
