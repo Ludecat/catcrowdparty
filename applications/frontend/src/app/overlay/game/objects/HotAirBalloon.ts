@@ -14,6 +14,7 @@ export const HOT_AIR_BALLOON_STATE_KEY = {
 
 export class HotAirBalloon extends Phaser.GameObjects.Sprite {
 	public socket: Socket
+	private velocity: number = 200
 
 	constructor(scene: Phaser.Scene, socket: Socket, options: ModeratorProps) {
 		super(scene, options.x, options.y, HOT_AIR_BALLOON_SPRITESHEET_KEY)
@@ -35,16 +36,28 @@ export class HotAirBalloon extends Phaser.GameObjects.Sprite {
 		 */
 		this.play({ key: HOT_AIR_BALLOON_STATE_KEY.IDLE, repeat: -1 })
 
+		scene.physics.add.existing(this)
+		scene.add.existing(this)
+
+		this.body.velocity.x = this.velocity
+
 		socket.on(HOT_AIR_BALLON_SHOW, () => {
 			console.log('received HOT_AIR_BALLON_SHOW')
+			this.body.velocity.x = this.velocity
 			this.setVisible(true)
 		})
 		socket.on(HOT_AIR_BALLON_HIDE, () => {
 			console.log('received HOT_AIR_BALLON_HIDE')
+			this.reset(options.x, options.y)
 			this.setVisible(false)
 		})
 
-		scene.add.existing(this)
 		this.socket = socket
+	}
+
+	private reset(x: number, y: number) {
+		this.body.velocity.x = 0
+		this.x = x
+		this.y = y
 	}
 }

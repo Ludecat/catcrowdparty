@@ -43,7 +43,7 @@ export default class OverlayScene extends Phaser.Scene {
 			new Dude(this, socket, { x: i * 75, y: 1000 })
 		}
 		new Moderator(this, socket, { x: this.game.canvas.width - 130, y: this.game.canvas.height - 200 })
-		new HotAirBalloon(this, socket, { x: 400, y: 400 })
+		new HotAirBalloon(this, socket, { x: -100, y: 400 })
 		console.log(`${SCENES.OVERLAY}: create()`)
 	}
 	update() {}
