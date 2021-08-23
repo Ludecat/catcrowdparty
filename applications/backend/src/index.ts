@@ -1,5 +1,5 @@
 import { createServer } from 'http'
-import { CROWD_CROUCH, CROWD_IDLE, CROWD_RUN } from '@ccp/common'
+import { CROWD_CROUCH, CROWD_HIDE, CROWD_IDLE, CROWD_RUN, CROWD_SHOW } from '@ccp/common'
 import { logger } from './logger'
 import { Server } from 'socket.io'
 
@@ -22,6 +22,16 @@ io.on('connection', (socket) => {
 	socket.on(CROWD_RUN, () => {
 		logger.info(`received CROWD_RUN`)
 		io.emit(CROWD_RUN)
+	})
+
+	socket.on(CROWD_SHOW, () => {
+		logger.info(`received CROWD_SHOW`)
+		io.emit(CROWD_SHOW)
+	})
+
+	socket.on(CROWD_HIDE, () => {
+		logger.info(`received CROWD_HIDE`)
+		io.emit(CROWD_HIDE)
 	})
 
 	socket.on('disconnect', (reason) => {
