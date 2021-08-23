@@ -2,6 +2,7 @@ import Phaser from 'phaser'
 import { Socket } from 'socket.io-client'
 import { SCENES } from '../config'
 import { Dude, DUDE_SPRITESHEET_KEY } from '../objects/Dude'
+import { HotAirBalloon, HOT_AIR_BALLOON_SPRITESHEET_KEY } from '../objects/HotAirBalloon'
 import { Moderator, MODERATOR_SPRITESHEET_KEY } from '../objects/Moderator'
 
 export default class OverlayScene extends Phaser.Scene {
@@ -27,6 +28,10 @@ export default class OverlayScene extends Phaser.Scene {
 			frameWidth: 77.42857142857143,
 			frameHeight: 57.2727272727,
 		})
+		this.load.spritesheet(HOT_AIR_BALLOON_SPRITESHEET_KEY, '/hot_air_balloon.png', {
+			frameWidth: 61,
+			frameHeight: 92,
+		})
 		console.log(`${SCENES.OVERLAY}: preload()`)
 	}
 
@@ -38,6 +43,7 @@ export default class OverlayScene extends Phaser.Scene {
 			new Dude(this, socket, { x: i * 75, y: 1000 })
 		}
 		new Moderator(this, socket, { x: this.game.canvas.width - 130, y: this.game.canvas.height - 200 })
+		new HotAirBalloon(this, socket, { x: 400, y: 400 })
 		console.log(`${SCENES.OVERLAY}: create()`)
 	}
 	update() {}
