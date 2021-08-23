@@ -5,6 +5,8 @@ import {
 	CROWD_IDLE,
 	CROWD_RUN,
 	CROWD_SHOW,
+	HOT_AIR_BALLON_HIDE,
+	HOT_AIR_BALLON_SHOW,
 	MODERATOR_HIDE,
 	MODERATOR_SHOW,
 } from '@ccp/common/shared'
@@ -93,7 +95,13 @@ export const ControlPanelGrid = () => {
 			<GridComponent gridArea={'layer-control'} title="Layers">
 				<CheckBoxToggle
 					id="ccp-checkbox-air-ballon"
-					onChange={(e) => console.log(e.currentTarget.checked)}
+					onChange={(e) => {
+						if (e.currentTarget.checked) {
+							socket?.emit(HOT_AIR_BALLON_SHOW)
+						} else {
+							socket?.emit(HOT_AIR_BALLON_HIDE)
+						}
+					}}
 					description="Air Ballon"
 				/>
 				<CheckBoxToggle

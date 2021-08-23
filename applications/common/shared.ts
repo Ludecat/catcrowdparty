@@ -14,3 +14,6 @@ export const MODERATOR_HIDE = 'moderatorHide'
 export interface ModeratorMessage {
 	message: string
 }
+
+export const HOT_AIR_BALLON_SHOW = 'hodeAirBalloonShow'
+export const HOT_AIR_BALLON_HIDE = 'hodeAirBalloonHide'

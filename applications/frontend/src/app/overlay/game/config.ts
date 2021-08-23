@@ -11,11 +11,11 @@ export const gameConfig = {
 		autoCenter: Phaser.Scale.NONE,
 	},
 	physics: {
-		default: 'matter',
-		matter: {
+		default: 'arcade',
+		arcade: {
+			debug: true,
 			enabled: true,
 			gravity: {},
-			debug: true,
 			showBody: true,
 			showStaticBody: true,
 			debugBodyColor: 0xff00ff,
