@@ -3,7 +3,6 @@ import { NextPage, GetStaticProps } from 'next'
 import Head from 'next/head'
 import PageWithLayoutType from '../app/layout/PageWithLayout'
 import MainLayout from '../app/layout/Layout'
-import { SHARED } from '@ccp/common/shared'
 
 export interface InitialAppProps {
 	title?: string
@@ -16,9 +15,7 @@ const IndexPage: NextPage<InitialAppProps> = (props: InitialAppProps) => {
 			<Head>
 				<title>Index Page</title>
 			</Head>
-			<div>
-				{title} {SHARED}
-			</div>
+			<div>{title}</div>
 		</>
 	)
 }
