@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react'
-import { CROWD_CROUCH, CROWD_IDLE, CROWD_RUN } from '@ccp/common/shared'
+import { CROWD_CROUCH, CROWD_HIDE, CROWD_IDLE, CROWD_RUN, CROWD_SHOW } from '@ccp/common/shared'
 import { useSocket } from '../../hooks/useSocket'
 import { styled } from '../../styles/Theme'
 import { Button } from '../Button'
@@ -94,7 +94,13 @@ export const ControlPanelGrid = () => {
 				/>
 				<CheckBoxToggle
 					id="ccp-checkbox-crowd"
-					onChange={(e) => console.log(e.currentTarget.checked)}
+					onChange={(e) => {
+						if (e.currentTarget.checked) {
+							socket?.emit(CROWD_SHOW)
+						} else {
+							socket?.emit(CROWD_HIDE)
+						}
+					}}
 					description="Crowd"
 				/>
 				<CheckBoxToggle

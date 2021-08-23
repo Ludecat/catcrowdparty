@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
 import { Socket } from 'socket.io-client'
-import { CROWD_CROUCH, CROWD_IDLE, CROWD_RUN } from '@ccp/common/shared'
+import { CROWD_CROUCH, CROWD_HIDE, CROWD_IDLE, CROWD_RUN, CROWD_SHOW } from '@ccp/common/shared'
 
 interface DudeProps {
 	x: number
@@ -64,6 +64,14 @@ export class Dude extends Phaser.GameObjects.Sprite {
 		socket.on(CROWD_RUN, () => {
 			console.log('received CROWD_RUN')
 			this.play({ key: DUDE_STATE_KEY.RUN, repeat: -1 })
+		})
+		socket.on(CROWD_SHOW, () => {
+			console.log('received CROWD_SHOW')
+			this.setVisible(true)
+		})
+		socket.on(CROWD_HIDE, () => {
+			console.log('received CROWD_HIDE')
+			this.setVisible(false)
 		})
 
 		scene.add.existing(this)
