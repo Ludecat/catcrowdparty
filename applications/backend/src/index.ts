@@ -1,5 +1,14 @@
 import { createServer } from 'http'
-import { CROWD_CROUCH, CROWD_HIDE, CROWD_IDLE, CROWD_RUN, CROWD_SHOW } from '@ccp/common'
+import {
+	CROWD_CROUCH,
+	CROWD_HIDE,
+	CROWD_IDLE,
+	CROWD_RUN,
+	CROWD_SHOW,
+	ModeratorMessage,
+	MODERATOR_HIDE,
+	MODERATOR_SHOW,
+} from '@ccp/common'
 import { logger } from './logger'
 import { Server } from 'socket.io'
 
@@ -9,6 +18,9 @@ const io = new Server(httpServer, {})
 io.on('connection', (socket) => {
 	logger.info(`new connection from ${socket.id}!`)
 
+	/**
+	 * CROWD
+	 */
 	socket.on(CROWD_IDLE, () => {
 		logger.info(`received CROWD_IDLE`)
 		io.emit(CROWD_IDLE)
@@ -34,6 +46,22 @@ io.on('connection', (socket) => {
 		io.emit(CROWD_HIDE)
 	})
 
+	/**
+	 * MODERATOR
+	 */
+	socket.on(MODERATOR_SHOW, (data: ModeratorMessage) => {
+		logger.info(`received MODERATOR_SHOW`)
+		io.emit(MODERATOR_SHOW, data)
+	})
+
+	socket.on(MODERATOR_HIDE, () => {
+		logger.info(`received MODERATOR_HIDE`)
+		io.emit(MODERATOR_HIDE)
+	})
+
+	/**
+	 * DISCONNECT
+	 */
 	socket.on('disconnect', (reason) => {
 		logger.info(`socket ${socket.id} disconnected with reason: ${reason}`)
 	})

@@ -1,5 +1,13 @@
-import React, { FunctionComponent } from 'react'
-import { CROWD_CROUCH, CROWD_HIDE, CROWD_IDLE, CROWD_RUN, CROWD_SHOW } from '@ccp/common/shared'
+import React, { FunctionComponent, useState } from 'react'
+import {
+	CROWD_CROUCH,
+	CROWD_HIDE,
+	CROWD_IDLE,
+	CROWD_RUN,
+	CROWD_SHOW,
+	MODERATOR_HIDE,
+	MODERATOR_SHOW,
+} from '@ccp/common/shared'
 import { useSocket } from '../../hooks/useSocket'
 import { styled } from '../../styles/Theme'
 import { Button } from '../Button'
@@ -67,6 +75,7 @@ const GridComponent: FunctionComponent<GridComponentProps> = (props) => {
 
 export const ControlPanelGrid = () => {
 	const { socket } = useSocket()
+	const [moderatorMessage, setModeratorMessage] = useState('')
 
 	return (
 		<Grid>
@@ -79,7 +88,7 @@ export const ControlPanelGrid = () => {
 				<Button onClick={() => socket?.emit(CROWD_RUN)} value="CROWD_RUN" title="Run"></Button>
 			</GridComponent>
 			<GridComponent gridArea={'moderator-control'} title="Moderator">
-				<TextArea onChange={(e) => console.log(e.currentTarget.value)} />
+				<TextArea onChange={(e) => setModeratorMessage(e.currentTarget.value)} />
 			</GridComponent>
 			<GridComponent gridArea={'layer-control'} title="Layers">
 				<CheckBoxToggle
@@ -89,7 +98,13 @@ export const ControlPanelGrid = () => {
 				/>
 				<CheckBoxToggle
 					id="ccp-checkbox-moderator"
-					onChange={(e) => console.log(e.currentTarget.checked)}
+					onChange={(e) => {
+						if (e.currentTarget.checked) {
+							socket?.emit(MODERATOR_SHOW, { message: moderatorMessage })
+						} else {
+							socket?.emit(MODERATOR_HIDE)
+						}
+					}}
 					description="Moderator"
 				/>
 				<CheckBoxToggle
