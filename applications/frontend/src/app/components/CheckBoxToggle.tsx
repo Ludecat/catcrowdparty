@@ -12,7 +12,7 @@ interface CheckBoxProps extends React.HTMLAttributes<HTMLInputElement> {
 export const CheckBoxToggle = ({ description, ...props }: CheckBoxProps) => {
 	return (
 		<CheckBoxWrapper>
-			<CheckBox {...props} type="checkbox" />
+			<CheckBox {...props} type="checkbox" defaultChecked={true} />
 			<CheckBoxLabel htmlFor={props.id} />
 			<CheckBoxDescription>{description}</CheckBoxDescription>
 		</CheckBoxWrapper>
