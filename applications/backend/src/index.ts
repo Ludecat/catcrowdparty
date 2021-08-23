@@ -5,6 +5,7 @@ import {
 	CROWD_IDLE,
 	CROWD_RUN,
 	CROWD_SHOW,
+	ModeratorMessage,
 	MODERATOR_HIDE,
 	MODERATOR_SHOW,
 } from '@ccp/common'
@@ -48,14 +49,14 @@ io.on('connection', (socket) => {
 	/**
 	 * MODERATOR
 	 */
+	socket.on(MODERATOR_SHOW, (data: ModeratorMessage) => {
+		logger.info(`received MODERATOR_SHOW`)
+		io.emit(MODERATOR_SHOW, data)
+	})
+
 	socket.on(MODERATOR_HIDE, () => {
 		logger.info(`received MODERATOR_HIDE`)
 		io.emit(MODERATOR_HIDE)
-	})
-
-	socket.on(MODERATOR_SHOW, () => {
-		logger.info(`received MODERATOR_SHOW`)
-		io.emit(MODERATOR_SHOW)
 	})
 
 	/**

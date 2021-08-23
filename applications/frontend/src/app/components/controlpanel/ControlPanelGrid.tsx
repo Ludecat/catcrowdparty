@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react'
+import React, { FunctionComponent, useState } from 'react'
 import {
 	CROWD_CROUCH,
 	CROWD_HIDE,
@@ -75,6 +75,7 @@ const GridComponent: FunctionComponent<GridComponentProps> = (props) => {
 
 export const ControlPanelGrid = () => {
 	const { socket } = useSocket()
+	const [moderatorMessage, setModeratorMessage] = useState('')
 
 	return (
 		<Grid>
@@ -87,7 +88,7 @@ export const ControlPanelGrid = () => {
 				<Button onClick={() => socket?.emit(CROWD_RUN)} value="CROWD_RUN" title="Run"></Button>
 			</GridComponent>
 			<GridComponent gridArea={'moderator-control'} title="Moderator">
-				<TextArea onChange={(e) => console.log(e.currentTarget.value)} />
+				<TextArea onChange={(e) => setModeratorMessage(e.currentTarget.value)} />
 			</GridComponent>
 			<GridComponent gridArea={'layer-control'} title="Layers">
 				<CheckBoxToggle
@@ -99,7 +100,7 @@ export const ControlPanelGrid = () => {
 					id="ccp-checkbox-moderator"
 					onChange={(e) => {
 						if (e.currentTarget.checked) {
-							socket?.emit(MODERATOR_SHOW)
+							socket?.emit(MODERATOR_SHOW, { message: moderatorMessage })
 						} else {
 							socket?.emit(MODERATOR_HIDE)
 						}
