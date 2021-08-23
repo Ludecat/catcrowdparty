@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
 import { Socket } from 'socket.io-client'
-import { MODERATOR_HIDE, MODERATOR_SHOW } from '@ccp/common/shared'
+import { ModeratorMessage, MODERATOR_HIDE, MODERATOR_SHOW } from '@ccp/common/shared'
 
 interface ModeratorProps {
 	x: number
@@ -35,8 +35,9 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 		 */
 		this.play({ key: MODERATOR_STATE_KEY.IDLE, repeat: -1 })
 
-		socket.on(MODERATOR_SHOW, () => {
+		socket.on(MODERATOR_SHOW, (data: ModeratorMessage) => {
 			console.log('received MODERATOR_SHOW')
+			console.log(data.message)
 			this.setVisible(true)
 		})
 		socket.on(MODERATOR_HIDE, () => {

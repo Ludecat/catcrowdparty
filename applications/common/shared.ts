@@ -10,3 +10,7 @@ export const CROWD_HIDE = 'crowdHide'
 
 export const MODERATOR_SHOW = 'moderatorShow'
 export const MODERATOR_HIDE = 'moderatorHide'
+
+export interface ModeratorMessage {
+	message: string
+}
