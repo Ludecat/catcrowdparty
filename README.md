@@ -12,7 +12,7 @@ Recommenend way: [nvm](https://github.com/nvm-sh/nvm)
 # Setup
 
 Cat Crowd Party monorepo consists of `backend`, `frontend` and `common` which shares sourcecode imported by `backend` and `frontend` located under `applications/`.  
-Never import `backend` modules from `frontend` and vice versa to avoid cicular dependencies. Never import modules from `backend` and `frontend` in `commin` package.
+Never import `backend` modules from `frontend` and vice versa to avoid cicular dependencies. Never import modules from `backend` and `frontend` in `common` package.
 
 Run `npm install` from the root directory to install dependencies for each application.  
 Run `npm run build:all` from the root directory to build each application at once.
@@ -31,3 +31,7 @@ Tech Stack, Flow Chart and Presentation are located in [docs](docs).
 https://lude.cat/  
 https://www.facebook.com/ludecatgaming  
 https://www.twitch.tv/ludecat
+
+# Credits 
+Placeholder Hero: https://rvros.itch.io/animated-pixel-hero  
+Placeholder Hot Air Balloon: https://www.appgamekit.com/documentation/utilities/0_image_joiner.htm
