@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
 import { Socket } from 'socket.io-client'
-import { ModeratorMessage, MODERATOR_HIDE, MODERATOR_SHOW } from '@ccp/common/shared'
+import { ModeratorMessage, MODERATOR_HIDE, MODERATOR_MESSAGE_UPDATE, MODERATOR_SHOW } from '@ccp/common/shared'
 
 interface ModeratorProps {
 	x: number
@@ -54,6 +54,11 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 			this.setVisible(false)
 			this.text.destroy()
 			this.bubble.setVisible(false)
+		})
+		socket.on(MODERATOR_MESSAGE_UPDATE, (data: ModeratorMessage) => {
+			console.log('received MODERATOR_MESSAGE_UPDATE')
+			this.text.destroy()
+			this.text = this.createBubbleText(scene, data.message, BUBBLE_WIDTH, BUBBLE_HEIGHT)
 		})
 
 		scene.add.existing(this)

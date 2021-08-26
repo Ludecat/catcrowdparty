@@ -9,6 +9,7 @@ import {
 	HOT_AIR_BALLON_SHOW,
 	ModeratorMessage,
 	MODERATOR_HIDE,
+	MODERATOR_MESSAGE_UPDATE,
 	MODERATOR_SHOW,
 } from '@ccp/common'
 import { logger } from './logger'
@@ -54,6 +55,11 @@ io.on('connection', (socket) => {
 	socket.on(MODERATOR_SHOW, (data: ModeratorMessage) => {
 		logger.info(`received MODERATOR_SHOW`)
 		io.emit(MODERATOR_SHOW, data)
+	})
+
+	socket.on(MODERATOR_MESSAGE_UPDATE, (data: ModeratorMessage) => {
+		logger.info(`received MODERATOR_MESSAGE_UPDATE`)
+		io.emit(MODERATOR_MESSAGE_UPDATE, data)
 	})
 
 	socket.on(MODERATOR_HIDE, () => {

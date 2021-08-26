@@ -8,6 +8,7 @@ import {
 	HOT_AIR_BALLON_HIDE,
 	HOT_AIR_BALLON_SHOW,
 	MODERATOR_HIDE,
+	MODERATOR_MESSAGE_UPDATE,
 	MODERATOR_SHOW,
 } from '@ccp/common/shared'
 import { useSocket } from '../../hooks/useSocket'
@@ -15,6 +16,7 @@ import { styled } from '../../styles/Theme'
 import { Button } from '../Button'
 import { CheckBoxToggle } from '../CheckBoxToggle'
 import { TextArea } from '../TextArea'
+import { GrUpdate } from 'react-icons/gr'
 
 const Grid = styled.div`
 	display: grid;
@@ -40,7 +42,12 @@ const GridContentWrapper = styled.div`
 	height: calc(100% - 19px); // automatically fill rest of the griditem by counting in heading height
 	margin-top: ${(p) => p.theme.space.xs}px;
 `
-const GridItemHeading = styled.p`
+const GridItemHeading = styled.div`
+	display: flex;
+	align-items: center;
+`
+
+const GridItemTitle = styled.p`
 	margin: 0;
 	padding: 0;
 	font-size: ${(p) => p.theme.fontSize.xl}px;
@@ -58,18 +65,27 @@ const ControlPanelHeading = styled.h1`
 	padding: 0;
 `
 
+const GridItemHeadingActionsWrapper = styled.div`
+	margin-left: ${(p) => p.theme.space.m}px;
+	display: flex;
+`
+
 interface GridComponentProps {
 	gridArea: string
 	title: string
 	height?: string
 	width?: string
+	actions?: React.ReactNode
 }
 
 const GridComponent: FunctionComponent<GridComponentProps> = (props) => {
-	const { title, gridArea, height, width } = props
+	const { title, gridArea, height, width, actions } = props
 	return (
 		<GridItem gridArea={gridArea} height={height} width={width}>
-			<GridItemHeading>{title}</GridItemHeading>
+			<GridItemHeading>
+				<GridItemTitle>{title} </GridItemTitle>
+				{actions && <GridItemHeadingActionsWrapper>{actions}</GridItemHeadingActionsWrapper>}
+			</GridItemHeading>
 			<GridContentWrapper>{props.children}</GridContentWrapper>
 		</GridItem>
 	)
@@ -85,11 +101,29 @@ export const ControlPanelGrid = () => {
 				<ControlPanelHeading>Cat Crowd Party - Control Panel</ControlPanelHeading>
 			</GridItem>
 			<GridComponent gridArea={'crowd-control'} title="Crowd Control">
-				<Button onClick={() => socket?.emit(CROWD_IDLE)} value="CROWD_IDLE" title="Idle"></Button>
-				<Button onClick={() => socket?.emit(CROWD_CROUCH)} value="CROWD_CROUCH" title="Crouch"></Button>
-				<Button onClick={() => socket?.emit(CROWD_RUN)} value="CROWD_RUN" title="Run"></Button>
+				<Button onClick={() => socket?.emit(CROWD_IDLE)} value="CROWD_IDLE">
+					Idle
+				</Button>
+				<Button onClick={() => socket?.emit(CROWD_CROUCH)} value="CROWD_CROUCH">
+					Crouch
+				</Button>
+				<Button onClick={() => socket?.emit(CROWD_RUN)} value="CROWD_RUN">
+					Run
+				</Button>
 			</GridComponent>
-			<GridComponent gridArea={'moderator-control'} title="Moderator">
+			<GridComponent
+				gridArea={'moderator-control'}
+				title="Moderator"
+				actions={
+					<Button
+						onClick={() => {
+							socket?.emit(MODERATOR_MESSAGE_UPDATE, { message: moderatorMessage })
+						}}
+					>
+						<GrUpdate size={16} />
+					</Button>
+				}
+			>
 				<TextArea onChange={(e) => setModeratorMessage(e.currentTarget.value)} />
 			</GridComponent>
 			<GridComponent gridArea={'layer-control'} title="Layers">
@@ -141,17 +175,15 @@ export const ControlPanelGrid = () => {
 				<Preview src="/overlay#small" height={1080} width={1920} />
 			</GridComponent>
 			<GridComponent gridArea={'triggers-control'} title="Triggers">
-				<Button
-					onClick={(e) => console.log(e.currentTarget.value)}
-					value="LudeCat Air Ballon"
-					title="LudeCat Air Ballon"
-				></Button>
-				<Button
-					onClick={(e) => console.log(e.currentTarget.value)}
-					value="Fritz Cola Ballon"
-					title="Fritz Cola Ballon"
-				></Button>
-				<Button onClick={(e) => console.log(e.currentTarget.value)} value="FH Ballon" title="FH Ballon"></Button>
+				<Button onClick={(e) => console.log(e.currentTarget.value)} value="LudeCat Air Ballon">
+					LudeCat Air Ballon
+				</Button>
+				<Button onClick={(e) => console.log(e.currentTarget.value)} value="Fritz Cola Ballon">
+					Fritz Cola Ballon
+				</Button>
+				<Button onClick={(e) => console.log(e.currentTarget.value)} value="FH Ballon">
+					FH Ballon
+				</Button>
 			</GridComponent>
 		</Grid>
 	)
