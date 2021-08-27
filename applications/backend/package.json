@@ -2,7 +2,7 @@
   "name": "@ccp/backend",
   "version": "1.0.0",
   "description": "Cat Crowd Party Backend",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc --build",
     "start": "npm run build && node dist/index.js"
@@ -16,5 +16,6 @@
   },
   "devDependencies": {
     "@types/tmi.js": "^1.7.2",
+    "nodemon": "^2.0.12"
   }
 }
