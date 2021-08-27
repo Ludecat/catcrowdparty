@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import winston, { format, Logger } from 'winston'
 
 const createLogger = (label: string): Logger =>
