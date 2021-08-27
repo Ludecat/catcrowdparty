@@ -15,6 +15,7 @@ import {
 } from '@ccp/common'
 import { logger } from './logger'
 import { Server } from 'socket.io'
+import TwitchChatHandler from './TwitchChatHandler'
 
 const httpServer = createServer()
 const io = new Server(httpServer, {})
@@ -92,3 +93,6 @@ io.on('connection', (socket) => {
 const port = process.env.PORT_BACKEND ?? 5000
 httpServer.listen(port)
 logger.info(`Backend ready on port ${port}`)
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const twitchChatHandler = new TwitchChatHandler()
