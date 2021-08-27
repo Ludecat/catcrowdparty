@@ -1,10 +1,12 @@
 import { Client as TmiClient } from 'tmi.js'
 import { twitchLogger as logger } from './logger'
+import { EventEmitter } from 'events'
 
-export default class TwitchChatHandler {
+export default class TwitchChatHandler extends EventEmitter {
 	private readonly tmi: TmiClient
 
 	constructor() {
+		super()
 		this.tmi = new TmiClient({
 			connection: {
 				secure: true,
@@ -21,7 +23,7 @@ export default class TwitchChatHandler {
 				const emotes = Object.keys(userstate.emotes).map(
 					(emoteId) => `https://static-cdn.jtvnw.net/emoticons/v2/${emoteId}/static/light/2.0`
 				)
-				logger.debug(JSON.stringify(emotes))
+				this.emit('newEmotes', emotes)
 			}
 		})
 

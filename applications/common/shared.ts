@@ -18,3 +18,8 @@ export interface ModeratorMessage {
 
 export const HOT_AIR_BALLON_SHOW = 'hodeAirBalloonShow'
 export const HOT_AIR_BALLON_HIDE = 'hodeAirBalloonHide'
+
+export const EMOTE_MESSAGE = "emoteMessage"
+export interface EmoteMessage {
+	emoteUrls: string[]
+}

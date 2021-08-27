@@ -6,6 +6,8 @@ import {
 	CROWD_IDLE,
 	CROWD_RUN,
 	CROWD_SHOW,
+	EmoteMessage,
+	EMOTE_MESSAGE,
 	HOT_AIR_BALLON_HIDE,
 	HOT_AIR_BALLON_SHOW,
 	ModeratorMessage,
@@ -94,5 +96,11 @@ const port = process.env.PORT_BACKEND ?? 5000
 httpServer.listen(port)
 logger.info(`Backend ready on port ${port}`)
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const twitchChatHandler = new TwitchChatHandler()
+twitchChatHandler.on('newEmotes', (emotes: string[]) => {
+	logger.info(JSON.stringify(emotes))
+	const message: EmoteMessage = {
+		emoteUrls: emotes,
+	}
+	io.emit(EMOTE_MESSAGE, message)
+})
