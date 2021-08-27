@@ -1,3 +1,4 @@
+import '@ccp/common/env'
 import { createServer } from 'http'
 import {
 	CROWD_CROUCH,
