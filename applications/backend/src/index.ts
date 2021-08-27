@@ -89,4 +89,6 @@ io.on('connection', (socket) => {
 	})
 })
 
-httpServer.listen(5000)
+const port = process.env.PORT_BACKEND ?? 5000
+httpServer.listen(port)
+logger.info(`Backend ready on port ${port}`)
