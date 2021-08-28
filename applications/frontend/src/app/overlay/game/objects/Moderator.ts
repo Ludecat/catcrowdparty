@@ -113,7 +113,7 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 		const bubblePadding = 10
 
 		const content = scene.add.text(0, 0, message, {
-			fontFamily: 'Arial',
+			fontFamily: 'Roboto',
 			fontSize: '20px',
 			color: '#000000',
 			align: 'center',

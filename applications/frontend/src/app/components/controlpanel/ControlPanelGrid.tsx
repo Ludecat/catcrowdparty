@@ -20,6 +20,8 @@ import { CheckBoxToggle } from '../CheckBoxToggle'
 import { TextArea } from '../TextArea'
 import { GrUpdate } from 'react-icons/gr'
 import { useCallback } from 'react'
+import { toast } from 'react-toastify'
+import { longestWordCount } from '../../util/utils'
 
 const Grid = styled.div`
 	display: grid;
@@ -98,6 +100,10 @@ interface Layers {
 	[key: string]: boolean
 }
 
+const longestWordMaxThreshold = 15
+const maxCharThreshold = 128
+const maxLinesThreshold = 8
+
 export const ControlPanelGrid = () => {
 	const { socket } = useSocket()
 	const [moderatorMessage, setModeratorMessage] = useState('')
@@ -119,6 +125,24 @@ export const ControlPanelGrid = () => {
 		[layersActive, setLayersActive]
 	)
 
+	const onModeratorMessageChange = useCallback(
+		(e: React.FormEvent<HTMLTextAreaElement>) => {
+			if (longestWordCount(e.currentTarget.value) > longestWordMaxThreshold) {
+				toast(`Longest word to long. Max ${longestWordMaxThreshold}.`, { type: 'info' })
+				return
+			}
+			if (e.currentTarget.value.length > maxCharThreshold) {
+				toast(`Too many characters. Max ${maxCharThreshold}.`, { type: 'info' })
+				return
+			}
+			if (e.currentTarget.value.split('\n').length > maxLinesThreshold) {
+				toast(`Too many lines. Max ${maxLinesThreshold}.`, { type: 'info' })
+				return
+			}
+			setModeratorMessage(e.currentTarget.value)
+		},
+		[setModeratorMessage]
+	)
 	return (
 		<Grid>
 			<GridItem gridArea={'header'}>
@@ -161,7 +185,7 @@ export const ControlPanelGrid = () => {
 					</Button>
 				}
 			>
-				<TextArea onChange={(e) => setModeratorMessage(e.currentTarget.value)} />
+				<TextArea onChange={onModeratorMessageChange} value={moderatorMessage} />
 			</GridComponent>
 			<GridComponent gridArea={'layer-control'} title="Layers">
 				<CheckBoxToggle
