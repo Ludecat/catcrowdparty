@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
 import { Socket } from 'socket.io-client'
-import { HOT_AIR_BALLON_HIDE, HOT_AIR_BALLON_SHOW } from '@ccp/common/shared'
+import { HOT_AIR_BALLON_HIDE, HOT_AIR_BALLON_SHOW, HOT_AIR_BALLON_START } from '@ccp/common/shared'
 
 interface ModeratorProps {
 	x: number
@@ -43,12 +43,15 @@ export class HotAirBalloon extends Phaser.GameObjects.Sprite {
 
 		socket.on(HOT_AIR_BALLON_SHOW, () => {
 			console.log('received HOT_AIR_BALLON_SHOW')
-			this.body.velocity.x = this.velocity
 			this.setVisible(true)
+		})
+		socket.on(HOT_AIR_BALLON_START, () => {
+			console.log('received HOT_AIR_BALLON_START')
+			this.reset(options.x, options.y)
+			this.body.velocity.x = this.velocity
 		})
 		socket.on(HOT_AIR_BALLON_HIDE, () => {
 			console.log('received HOT_AIR_BALLON_HIDE')
-			this.reset(options.x, options.y)
 			this.setVisible(false)
 		})
 
