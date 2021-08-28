@@ -19,6 +19,7 @@ export const theme = {
 		decentBeton: '#E6E6E6',
 		emerald: '#50C878',
 		recordRed: '#F16373',
+		disabled: '#9e9e9e',
 	},
 	fontSize: {
 		s: 12,
