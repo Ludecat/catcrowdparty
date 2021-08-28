@@ -19,3 +19,14 @@ export interface ModeratorMessage {
 export const HOT_AIR_BALLON_SHOW = 'hodeAirBalloonShow'
 export const HOT_AIR_BALLON_HIDE = 'hodeAirBalloonHide'
 export const HOT_AIR_BALLON_START = 'hotAirBallonStart'
+
+export interface HotAirBalloonVariation {
+	variation: HotAirBalloonVariations
+}
+
+export type HotAirBalloonVariations = 'ludecat' | 'fritz-cola' | 'fh-salzburg'
+export const HotAirBallonVationsValues = {
+	ludecat: 'ludecat',
+	fritzCola: 'fritz-cola',
+	fhSalzburg: 'fh-salzburg',
+}

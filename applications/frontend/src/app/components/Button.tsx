@@ -22,6 +22,16 @@ const StyledButton = styled.button`
 	&:hover {
 		background: ${(p) => p.theme.color.white};
 	}
+
+	&:disabled {
+		background: ${(p) => p.theme.color.disabled};
+		border-color: ${(p) => p.theme.color.disabled};
+
+		&:hover {
+			background: ${(p) => p.theme.color.disabled};
+			border-color: ${(p) => p.theme.color.disabled};
+		}
+	}
 `
 
 export const Button = ({ title, children, value, disabled, ...props }: ButtonProps) => {

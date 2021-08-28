@@ -1,13 +1,19 @@
 import Phaser from 'phaser'
 import { Socket } from 'socket.io-client'
-import { HOT_AIR_BALLON_HIDE, HOT_AIR_BALLON_SHOW, HOT_AIR_BALLON_START } from '@ccp/common/shared'
+import {
+	HotAirBalloonVariation,
+	HotAirBalloonVariations,
+	HOT_AIR_BALLON_HIDE,
+	HOT_AIR_BALLON_SHOW,
+	HOT_AIR_BALLON_START,
+} from '@ccp/common/shared'
 
 interface ModeratorProps {
 	x: number
 	y: number
+	variation: HotAirBalloonVariations
 }
 
-export const HOT_AIR_BALLOON_SPRITESHEET_KEY = 'hotAirBalloon'
 export const HOT_AIR_BALLOON_STATE_KEY = {
 	IDLE: 'idle',
 }
@@ -17,11 +23,11 @@ export class HotAirBalloon extends Phaser.GameObjects.Sprite {
 	private velocity: number = 200
 
 	constructor(scene: Phaser.Scene, socket: Socket, options: ModeratorProps) {
-		super(scene, options.x, options.y, HOT_AIR_BALLOON_SPRITESHEET_KEY)
+		super(scene, options.x, options.y, options.variation)
 
 		this.anims.create({
 			key: HOT_AIR_BALLOON_STATE_KEY.IDLE,
-			frames: this.anims.generateFrameNumbers(HOT_AIR_BALLOON_SPRITESHEET_KEY, {
+			frames: this.anims.generateFrameNumbers(options.variation, {
 				start: 0,
 				end: 4,
 			}),
@@ -39,16 +45,16 @@ export class HotAirBalloon extends Phaser.GameObjects.Sprite {
 		scene.physics.add.existing(this)
 		scene.add.existing(this)
 
-		this.body.velocity.x = this.velocity
-
 		socket.on(HOT_AIR_BALLON_SHOW, () => {
 			console.log('received HOT_AIR_BALLON_SHOW')
 			this.setVisible(true)
 		})
-		socket.on(HOT_AIR_BALLON_START, () => {
-			console.log('received HOT_AIR_BALLON_START')
-			this.reset(options.x, options.y)
-			this.body.velocity.x = this.velocity
+		socket.on(HOT_AIR_BALLON_START, (data: HotAirBalloonVariation) => {
+			console.log(`received HOT_AIR_BALLON_START: ${data.variation}`)
+			if (data.variation === options.variation) {
+				this.reset(options.x, options.y)
+				this.body.velocity.x = this.velocity
+			}
 		})
 		socket.on(HOT_AIR_BALLON_HIDE, () => {
 			console.log('received HOT_AIR_BALLON_HIDE')

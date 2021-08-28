@@ -6,6 +6,7 @@ import {
 	CROWD_IDLE,
 	CROWD_RUN,
 	CROWD_SHOW,
+	HotAirBalloonVariation,
 	HOT_AIR_BALLON_HIDE,
 	HOT_AIR_BALLON_SHOW,
 	HOT_AIR_BALLON_START,
@@ -82,9 +83,9 @@ io.on('connection', (socket) => {
 		io.emit(HOT_AIR_BALLON_HIDE)
 	})
 
-	socket.on(HOT_AIR_BALLON_START, () => {
+	socket.on(HOT_AIR_BALLON_START, (data: HotAirBalloonVariation) => {
 		logger.info(`received HOT_AIR_BALLON_START`)
-		io.emit(HOT_AIR_BALLON_START)
+		io.emit(HOT_AIR_BALLON_START, data)
 	})
 
 	/**
