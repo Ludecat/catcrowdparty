@@ -8,3 +8,29 @@ export const longestWordCount = (text: string) => {
 	}
 	return longestWord
 }
+
+export const resumeMediaPlay = async (audioContext: AudioContext) => {
+	try {
+		await audioContext.resume()
+	} catch (e) {
+		console.log(e)
+	}
+}
+
+export const getMediaStreamByDeviceId = async (deviceId: string) => {
+	try {
+		return await navigator.mediaDevices.getUserMedia({
+			audio: {
+				advanced: [
+					{
+						deviceId,
+					},
+				],
+			},
+			video: false,
+		})
+	} catch (err) {
+		console.log(err)
+		return null
+	}
+}

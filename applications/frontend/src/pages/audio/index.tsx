@@ -3,7 +3,7 @@ import { NextPage, GetStaticProps } from 'next'
 import Head from 'next/head'
 import MainLayout from '../../app/layout/Layout'
 import PageWithLayoutType from '../../app/layout/PageWithLayout'
-import { AudioManager } from '../../app/audio/Audio'
+import { AudioManager } from '../../app/audio/AudioManager'
 import Select from 'react-select'
 
 export interface OverlayPageProps {
@@ -24,12 +24,18 @@ const mapAudioDevicesToSelectable = (inputAudioDevices: MediaDeviceInfo[]) => {
 	})
 }
 
+const findDefaultMediaSource = (selectable: Selectable[]) => {
+	return selectable.find((device) => device.value === 'default') as Selectable
+}
+
 const AudioPage: NextPage<OverlayPageProps> = (props: OverlayPageProps) => {
 	const { title } = props
+
 	const canvasRef = React.useRef<HTMLCanvasElement | null>(null)
+	const audioManager = React.useRef<AudioManager | null>(null)
+
 	const [inputMediaDevices, setInputMediaDevices] = useState<Selectable[]>([])
 	const [currentInputDevice, setCurrentInputdevice] = useState<Selectable | null>(null)
-	const audioManager = React.useRef<null | AudioManager>(null)
 
 	const getAudioInputDevices = useCallback(async () => {
 		const mediaDevices = await navigator.mediaDevices.enumerateDevices()
@@ -48,11 +54,8 @@ const AudioPage: NextPage<OverlayPageProps> = (props: OverlayPageProps) => {
 			const devices = await getAudioInputDevices()
 			const selectables = mapAudioDevicesToSelectable(devices)
 			setInputMediaDevices(selectables)
-			setCurrentInputdevice(selectables.find((device) => device.value === 'default') as Selectable)
-			audioManager.current = new AudioManager(
-				canvasRef.current!,
-				(selectables.find((device) => device.value === 'default') as Selectable).value
-			)
+			setCurrentInputdevice(findDefaultMediaSource(selectables))
+			audioManager.current = new AudioManager(canvasRef.current!, findDefaultMediaSource(selectables).value)
 		}
 		setAudioInputDevices()
 	}, [])
