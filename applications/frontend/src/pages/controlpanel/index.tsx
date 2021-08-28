@@ -34,7 +34,7 @@ export const getStaticProps: GetStaticProps<ControlPanelPageProps> = async () =>
 ;(ControlPanelPage as PageWithLayoutType).layout = MainLayout
 
 const ControlPanelPageWrapper = styled.div`
-	padding: ${(p) => p.theme.space.xl}px;
+	padding: ${(p) => p.theme.space.m}px ${(p) => p.theme.space.l}px;
 	background-color: black;
 	height: 100%;
 	background-color: #363636;

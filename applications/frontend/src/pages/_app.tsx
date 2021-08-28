@@ -6,6 +6,8 @@ import { ThemeProvider } from 'styled-components'
 import { SocketProvider } from '../app/provider/SocketProvider'
 import { GlobalStyle } from '../app/styles/global.styles'
 import { theme } from '../app/styles/Theme'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 function App({ Component, pageProps }: AppProps) {
 	// Casting to any workaround for static prop
@@ -25,6 +27,18 @@ function App({ Component, pageProps }: AppProps) {
 					</Layout>
 				</ThemeProvider>
 			</SocketProvider>
+			<ToastContainer
+				position="top-right"
+				autoClose={3000}
+				hideProgressBar={false}
+				newestOnTop={false}
+				closeOnClick
+				rtl={false}
+				pauseOnFocusLoss
+				draggable
+				theme="dark"
+				pauseOnHover
+			/>
 		</React.Fragment>
 	)
 }
