@@ -3,6 +3,7 @@ import { styled } from '../styles/Theme'
 
 interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
 	value?: string
+	disabled?: boolean
 }
 
 const StyledButton = styled.button`
@@ -21,11 +22,21 @@ const StyledButton = styled.button`
 	&:hover {
 		background: ${(p) => p.theme.color.white};
 	}
+
+	&:disabled {
+		background: ${(p) => p.theme.color.disabled};
+		border-color: ${(p) => p.theme.color.disabled};
+
+		&:hover {
+			background: ${(p) => p.theme.color.disabled};
+			border-color: ${(p) => p.theme.color.disabled};
+		}
+	}
 `
 
-export const Button = ({ title, children, value, ...props }: ButtonProps) => {
+export const Button = ({ title, children, value, disabled, ...props }: ButtonProps) => {
 	return (
-		<StyledButton type="button" {...props} value={value}>
+		<StyledButton type="button" {...props} value={value} disabled={disabled}>
 			{children}
 		</StyledButton>
 	)

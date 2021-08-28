@@ -5,8 +5,10 @@ import {
 	CROWD_IDLE,
 	CROWD_RUN,
 	CROWD_SHOW,
+	HotAirBallonVationsValues,
 	HOT_AIR_BALLON_HIDE,
 	HOT_AIR_BALLON_SHOW,
+	HOT_AIR_BALLON_START,
 	MODERATOR_HIDE,
 	MODERATOR_MESSAGE_UPDATE,
 	MODERATOR_SHOW,
@@ -17,6 +19,7 @@ import { Button } from '../Button'
 import { CheckBoxToggle } from '../CheckBoxToggle'
 import { TextArea } from '../TextArea'
 import { GrUpdate } from 'react-icons/gr'
+import { useCallback } from 'react'
 
 const Grid = styled.div`
 	display: grid;
@@ -91,9 +94,30 @@ const GridComponent: FunctionComponent<GridComponentProps> = (props) => {
 	)
 }
 
+interface Layers {
+	[key: string]: boolean
+}
+
 export const ControlPanelGrid = () => {
 	const { socket } = useSocket()
 	const [moderatorMessage, setModeratorMessage] = useState('')
+	const [layersActive, setLayersActive] = useState<Layers>({
+		'ccp-checkbox-air-ballon': true,
+		'ccp-checkbox-moderator': true,
+		'ccp-checkbox-crowd': true,
+		'ccp-checkbox-emotes': true,
+		'ccp-checkbox-speech-bubble': true,
+	})
+
+	const setCurrentLayer = useCallback(
+		(e: React.FormEvent<HTMLInputElement>, isShown: boolean) => {
+			setLayersActive({
+				...layersActive,
+				[e.currentTarget.value]: isShown,
+			})
+		},
+		[layersActive, setLayersActive]
+	)
 
 	return (
 		<Grid>
@@ -101,13 +125,25 @@ export const ControlPanelGrid = () => {
 				<ControlPanelHeading>Cat Crowd Party - Control Panel</ControlPanelHeading>
 			</GridItem>
 			<GridComponent gridArea={'crowd-control'} title="Crowd Control">
-				<Button onClick={() => socket?.emit(CROWD_IDLE)} value="CROWD_IDLE">
+				<Button
+					onClick={() => socket?.emit(CROWD_IDLE)}
+					value="CROWD_IDLE"
+					disabled={!layersActive['ccp-checkbox-crowd']}
+				>
 					Idle
 				</Button>
-				<Button onClick={() => socket?.emit(CROWD_CROUCH)} value="CROWD_CROUCH">
+				<Button
+					onClick={() => socket?.emit(CROWD_CROUCH)}
+					value="CROWD_CROUCH"
+					disabled={!layersActive['ccp-checkbox-crowd']}
+				>
 					Crouch
 				</Button>
-				<Button onClick={() => socket?.emit(CROWD_RUN)} value="CROWD_RUN">
+				<Button
+					onClick={() => socket?.emit(CROWD_RUN)}
+					value="CROWD_RUN"
+					disabled={!layersActive['ccp-checkbox-crowd']}
+				>
 					Run
 				</Button>
 			</GridComponent>
@@ -116,6 +152,7 @@ export const ControlPanelGrid = () => {
 				title="Moderator"
 				actions={
 					<Button
+						disabled={!layersActive['ccp-checkbox-moderator']}
 						onClick={() => {
 							socket?.emit(MODERATOR_MESSAGE_UPDATE, { message: moderatorMessage })
 						}}
@@ -129,10 +166,13 @@ export const ControlPanelGrid = () => {
 			<GridComponent gridArea={'layer-control'} title="Layers">
 				<CheckBoxToggle
 					id="ccp-checkbox-air-ballon"
+					value="ccp-checkbox-air-ballon"
 					onChange={(e) => {
 						if (e.currentTarget.checked) {
+							setCurrentLayer(e, true)
 							socket?.emit(HOT_AIR_BALLON_SHOW)
 						} else {
+							setCurrentLayer(e, false)
 							socket?.emit(HOT_AIR_BALLON_HIDE)
 						}
 					}}
@@ -140,10 +180,13 @@ export const ControlPanelGrid = () => {
 				/>
 				<CheckBoxToggle
 					id="ccp-checkbox-moderator"
+					value="ccp-checkbox-moderator"
 					onChange={(e) => {
 						if (e.currentTarget.checked) {
+							setCurrentLayer(e, true)
 							socket?.emit(MODERATOR_SHOW, { message: moderatorMessage })
 						} else {
+							setCurrentLayer(e, false)
 							socket?.emit(MODERATOR_HIDE)
 						}
 					}}
@@ -151,10 +194,13 @@ export const ControlPanelGrid = () => {
 				/>
 				<CheckBoxToggle
 					id="ccp-checkbox-crowd"
+					value="ccp-checkbox-crowd"
 					onChange={(e) => {
 						if (e.currentTarget.checked) {
+							setCurrentLayer(e, true)
 							socket?.emit(CROWD_SHOW)
 						} else {
+							setCurrentLayer(e, false)
 							socket?.emit(CROWD_HIDE)
 						}
 					}}
@@ -162,26 +208,52 @@ export const ControlPanelGrid = () => {
 				/>
 				<CheckBoxToggle
 					id="ccp-checkbox-emotes"
-					onChange={(e) => console.log(e.currentTarget.checked)}
+					value="ccp-checkbox-emotes"
+					onChange={(e) => {
+						if (e.currentTarget.checked) {
+							setCurrentLayer(e, true)
+						} else {
+							setCurrentLayer(e, false)
+						}
+					}}
 					description="Emotes"
 				/>
 				<CheckBoxToggle
 					id="ccp-checkbox-speech-bubble"
-					onChange={(e) => console.log(e.currentTarget.checked)}
+					value="ccp-checkbox-speech-bubble"
+					onChange={(e) => {
+						if (e.currentTarget.checked) {
+							setCurrentLayer(e, true)
+						} else {
+							setCurrentLayer(e, false)
+						}
+					}}
 					description="Twitch Speech Bubble"
 				/>
 			</GridComponent>
-			<GridComponent gridArea={'preview'} title="Preview" height={'540px'} width={'960px'}>
+			<GridComponent gridArea={'preview'} title="Live View" height={'540px'} width={'960px'}>
 				<Preview src="/overlay#small" height={1080} width={1920} />
 			</GridComponent>
 			<GridComponent gridArea={'triggers-control'} title="Triggers">
-				<Button onClick={(e) => console.log(e.currentTarget.value)} value="LudeCat Air Ballon">
+				<Button
+					onClick={(e) => socket?.emit(HOT_AIR_BALLON_START, { variation: e.currentTarget.value })}
+					disabled={!layersActive['ccp-checkbox-air-ballon']}
+					value={HotAirBallonVationsValues.ludecat}
+				>
 					LudeCat Air Ballon
 				</Button>
-				<Button onClick={(e) => console.log(e.currentTarget.value)} value="Fritz Cola Ballon">
+				<Button
+					onClick={(e) => socket?.emit(HOT_AIR_BALLON_START, { variation: e.currentTarget.value })}
+					disabled={!layersActive['ccp-checkbox-air-ballon']}
+					value={HotAirBallonVationsValues.fritzCola}
+				>
 					Fritz Cola Ballon
 				</Button>
-				<Button onClick={(e) => console.log(e.currentTarget.value)} value="FH Ballon">
+				<Button
+					onClick={(e) => socket?.emit(HOT_AIR_BALLON_START, { variation: e.currentTarget.value })}
+					disabled={!layersActive['ccp-checkbox-air-ballon']}
+					value={HotAirBallonVationsValues.fhSalzburg}
+				>
 					FH Ballon
 				</Button>
 			</GridComponent>
