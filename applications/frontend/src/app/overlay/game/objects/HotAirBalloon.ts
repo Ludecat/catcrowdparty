@@ -8,7 +8,7 @@ import {
 	HOT_AIR_BALLON_START,
 } from '@ccp/common/shared'
 
-interface ModeratorProps {
+interface HotAirBallonProps {
 	x: number
 	y: number
 	variation: HotAirBalloonVariations
@@ -22,7 +22,7 @@ export class HotAirBalloon extends Phaser.GameObjects.Sprite {
 	public socket: Socket
 	private velocity: number = 200
 
-	constructor(scene: Phaser.Scene, socket: Socket, options: ModeratorProps) {
+	constructor(scene: Phaser.Scene, socket: Socket, options: HotAirBallonProps) {
 		super(scene, options.x, options.y, options.variation)
 
 		this.anims.create({
