@@ -1,23 +1,21 @@
 import { getMediaStreamByDeviceId, resumeMediaPlay } from '../util/utils'
 
 export class AudioManager {
-	private audioContext: AudioContext | null = null
+	public audioContext: AudioContext
 	private audioSource: MediaStreamAudioSourceNode | null = null
 	private analyser: AnalyserNode | null = null
 	private frequencyBinCount: Uint8Array | null = null
 
 	private canvas: HTMLCanvasElement
-	private canvasContext: CanvasRenderingContext2D
+	public canvasContext: CanvasRenderingContext2D
 
 	constructor(canvas: HTMLCanvasElement, initialDeviceId: string) {
-		this.audioContext = new window.AudioContext() || null
+		this.audioContext = new window.AudioContext()
 		this.canvas = canvas
 		this.canvasContext = canvas.getContext('2d')!
 
 		// https://developer.chrome.com/blog/autoplay/#web-audio
-		if (this.audioContext !== null) {
-			window.onclick = () => resumeMediaPlay(this.audioContext!)
-		}
+		window.onclick = () => resumeMediaPlay(this.audioContext)
 
 		this.loop = this.loop.bind(this)
 		this.start(initialDeviceId)
@@ -25,9 +23,13 @@ export class AudioManager {
 
 	async start(deviceId: string) {
 		await this.setInputSource(deviceId)
-		this.analyser = this.audioContext!.createAnalyser()
+		this.analyser = this.audioContext.createAnalyser()
+
+		// audioSource set by setInputSource()
 		this.audioSource!.connect(this.analyser)
-		this.analyser.connect(this.audioContext!.destination)
+
+		this.analyser.connect(this.audioContext.destination)
+		this.canvasContext.font = '24px Roboto'
 		this.loop()
 	}
 
@@ -43,9 +45,14 @@ export class AudioManager {
 	drawBar() {
 		this.clearCanvas()
 
-		this.canvasContext.fillStyle = '#FF0000'
+		this.canvasContext.fillStyle = '#FFCC00'
 		const maxFbcDecibel = Math.max(...(this.frequencyBinCount ?? [0]))
-		this.canvasContext.fillRect(0, this.canvas.height, this.canvas.width, (-1 * maxFbcDecibel) / 2)
+		const mappedBarHeightToCanvasHeight = (maxFbcDecibel / 255) * this.canvas.height
+
+		this.canvasContext.fillRect(0, this.canvas.height, this.canvas.width, -1 * mappedBarHeightToCanvasHeight)
+		this.canvasContext.fillStyle = '#000000'
+
+		this.canvasContext.fillText(`${maxFbcDecibel}dB`, this.canvas.width / 2, this.canvas.height / 2)
 	}
 
 	clearCanvas() {
@@ -58,10 +65,12 @@ export class AudioManager {
 			this.audioSource?.disconnect()
 			this.analyser?.disconnect()
 			this.analyser?.disconnect()
-			this.audioSource = this.audioContext!.createMediaStreamSource(stream)
-			this.analyser = this.audioContext!.createAnalyser()
+			this.audioSource = this.audioContext.createMediaStreamSource(stream)
+			this.analyser = this.audioContext.createAnalyser()
 			this.audioSource!.connect(this.analyser)
-			this.analyser.connect(this.audioContext!.destination)
+
+			// Enable this to hear audio input.
+			// this.analyser.connect(this.audioContext.destination)
 		}
 	}
 }

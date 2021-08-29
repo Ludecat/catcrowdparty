@@ -5,6 +5,7 @@ import MainLayout from '../../app/layout/Layout'
 import PageWithLayoutType from '../../app/layout/PageWithLayout'
 import { AudioManager } from '../../app/audio/AudioManager'
 import Select from 'react-select'
+import { styled } from '../../app/styles/Theme'
 
 export interface OverlayPageProps {
 	title?: string
@@ -28,11 +29,13 @@ const findDefaultMediaSource = (selectable: Selectable[]) => {
 	return selectable.find((device) => device.value === 'default') as Selectable
 }
 
+const dropDownHeight = 38
 const AudioPage: NextPage<OverlayPageProps> = (props: OverlayPageProps) => {
 	const { title } = props
 
 	const canvasRef = React.useRef<HTMLCanvasElement | null>(null)
 	const audioManager = React.useRef<AudioManager | null>(null)
+	const [isAudioContextEnabled, setIsAudioContextEnabled] = useState<boolean | null>(null)
 
 	const [inputMediaDevices, setInputMediaDevices] = useState<Selectable[]>([])
 	const [currentInputDevice, setCurrentInputdevice] = useState<Selectable | null>(null)
@@ -43,11 +46,17 @@ const AudioPage: NextPage<OverlayPageProps> = (props: OverlayPageProps) => {
 	}, [])
 
 	useEffect(() => {
-		if (canvasRef.current) {
-			canvasRef.current.style.height = 'calc(100vh - 43px)'
-			canvasRef.current.style.width = '100vw'
-		}
+		resizeCanvas()
+		window.addEventListener('resize', resizeCanvas)
+		return () => window.removeEventListener('resize', resizeCanvas)
 	}, [])
+
+	const resizeCanvas = useCallback(() => {
+		if (canvasRef.current) {
+			canvasRef.current.width = window.innerWidth
+			canvasRef.current.height = window.innerHeight - dropDownHeight
+		}
+	}, [canvasRef.current])
 
 	useEffect(() => {
 		const setAudioInputDevices = async () => {
@@ -55,10 +64,19 @@ const AudioPage: NextPage<OverlayPageProps> = (props: OverlayPageProps) => {
 			const selectables = mapAudioDevicesToSelectable(devices)
 			setInputMediaDevices(selectables)
 			setCurrentInputdevice(findDefaultMediaSource(selectables))
-			audioManager.current = new AudioManager(canvasRef.current!, findDefaultMediaSource(selectables).value)
+
+			if (canvasRef.current) {
+				const audioManagerInstance = new AudioManager(canvasRef.current, findDefaultMediaSource(selectables).value)
+				audioManagerInstance.audioContext.onstatechange = (e) => {
+					if (e.currentTarget) {
+						setIsAudioContextEnabled((e.currentTarget as AudioContext).state === 'running' ? true : false)
+					}
+				}
+				audioManager.current = audioManagerInstance
+			}
 		}
 		setAudioInputDevices()
-	}, [])
+	}, [setIsAudioContextEnabled, setInputMediaDevices, setCurrentInputdevice])
 
 	useEffect(() => {
 		if (currentInputDevice) {
@@ -80,10 +98,24 @@ const AudioPage: NextPage<OverlayPageProps> = (props: OverlayPageProps) => {
 					}}
 				></Select>
 				<canvas id="audio-frequency" ref={canvasRef} />
+				{!isAudioContextEnabled && (
+					<PromptInteractionOverlay>Please click to enable AudioContext.</PromptInteractionOverlay>
+				)}
 			</div>
 		</>
 	)
 }
+
+const PromptInteractionOverlay = styled.div`
+	top: 0;
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	background-color: transparent;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+`
 
 export const getStaticProps: GetStaticProps<OverlayPageProps> = async () => ({
 	props: {
