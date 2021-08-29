@@ -1,3 +1,5 @@
+import { Socket } from 'socket.io-client'
+import { AUDIO_INPUT_VALUE_UPDATE } from '@ccp/common/shared'
 import { getMediaStreamByDeviceId, resumeMediaPlay } from '../util/utils'
 
 export class AudioManager {
@@ -9,11 +11,13 @@ export class AudioManager {
 	private canvas: HTMLCanvasElement
 	public canvasContext: CanvasRenderingContext2D
 
+	private socket: Socket
 	private currentDecibelBatch: number[] = [0]
 
-	constructor(canvas: HTMLCanvasElement, initialDeviceId: string) {
+	constructor(socket: Socket, canvas: HTMLCanvasElement, initialDeviceId: string) {
 		this.audioContext = new window.AudioContext()
 		this.canvas = canvas
+		this.socket = socket
 		this.canvasContext = canvas.getContext('2d')!
 
 		// https://developer.chrome.com/blog/autoplay/#web-audio
@@ -38,8 +42,12 @@ export class AudioManager {
 
 	startRollingDecibelTicker() {
 		window.setInterval(() => {
-			const arrSum = this.currentDecibelBatch.reduce((num1, num2) => num1 + num2, 0)
-			console.log(arrSum / this.currentDecibelBatch.length)
+			const dbSum = this.currentDecibelBatch.reduce((num1, num2) => num1 + num2, 0)
+			const avgDbPerSecond = dbSum / this.currentDecibelBatch.length
+
+			this.socket.emit(AUDIO_INPUT_VALUE_UPDATE, {
+				db: avgDbPerSecond,
+			})
 			this.currentDecibelBatch = []
 		}, 1000)
 	}

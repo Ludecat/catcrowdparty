@@ -30,3 +30,9 @@ export const HotAirBallonVationsValues = {
 	fritzCola: 'fritz-cola',
 	fhSalzburg: 'fh-salzburg',
 }
+
+export const AUDIO_INPUT_VALUE_UPDATE = 'audioInputValueUpdate'
+
+export interface AudioInputValue {
+	db: number
+}

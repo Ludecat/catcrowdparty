@@ -6,6 +6,8 @@ import PageWithLayoutType from '../../app/layout/PageWithLayout'
 import { AudioManager } from '../../app/audio/AudioManager'
 import Select from 'react-select'
 import { styled } from '../../app/styles/Theme'
+import { useSocket } from '../../app/hooks/useSocket'
+import { useIsMounted } from '../../app/hooks/useIsMounted'
 
 export interface OverlayPageProps {
 	title?: string
@@ -35,7 +37,9 @@ const AudioPage: NextPage<OverlayPageProps> = (props: OverlayPageProps) => {
 
 	const canvasRef = React.useRef<HTMLCanvasElement | null>(null)
 	const audioManager = React.useRef<AudioManager | null>(null)
+	const { socket } = useSocket()
 	const [isAudioContextEnabled, setIsAudioContextEnabled] = useState<boolean | null>(null)
+	const isMounted = useIsMounted()
 
 	const [inputMediaDevices, setInputMediaDevices] = useState<Selectable[]>([])
 	const [currentInputDevice, setCurrentInputdevice] = useState<Selectable | null>(null)
@@ -65,8 +69,12 @@ const AudioPage: NextPage<OverlayPageProps> = (props: OverlayPageProps) => {
 			setInputMediaDevices(selectables)
 			setCurrentInputdevice(findDefaultMediaSource(selectables))
 
-			if (canvasRef.current) {
-				const audioManagerInstance = new AudioManager(canvasRef.current, findDefaultMediaSource(selectables).value)
+			if (canvasRef.current && socket) {
+				const audioManagerInstance = new AudioManager(
+					socket,
+					canvasRef.current,
+					findDefaultMediaSource(selectables).value
+				)
 				audioManagerInstance.audioContext.onstatechange = (e) => {
 					if (e.currentTarget) {
 						setIsAudioContextEnabled((e.currentTarget as AudioContext).state === 'running' ? true : false)
@@ -76,7 +84,7 @@ const AudioPage: NextPage<OverlayPageProps> = (props: OverlayPageProps) => {
 			}
 		}
 		setAudioInputDevices()
-	}, [setIsAudioContextEnabled, setInputMediaDevices, setCurrentInputdevice])
+	}, [isMounted, setIsAudioContextEnabled, setInputMediaDevices, setCurrentInputdevice])
 
 	useEffect(() => {
 		if (currentInputDevice) {

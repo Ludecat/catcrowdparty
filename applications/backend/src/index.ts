@@ -1,6 +1,8 @@
 import '@ccp/common/env'
 import { createServer } from 'http'
 import {
+	AudioInputValue,
+	AUDIO_INPUT_VALUE_UPDATE,
 	CROWD_CROUCH,
 	CROWD_HIDE,
 	CROWD_IDLE,
@@ -86,6 +88,14 @@ io.on('connection', (socket) => {
 	socket.on(HOT_AIR_BALLON_START, (data: HotAirBalloonVariation) => {
 		logger.info(`received HOT_AIR_BALLON_START`)
 		io.emit(HOT_AIR_BALLON_START, data)
+	})
+
+	/**
+	 * AUDIO
+	 */
+	socket.on(AUDIO_INPUT_VALUE_UPDATE, (data: AudioInputValue) => {
+		logger.info(`received AUDIO_INPUT_VALUE_UPDATE`)
+		io.emit(AUDIO_INPUT_VALUE_UPDATE, data)
 	})
 
 	/**
