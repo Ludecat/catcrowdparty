@@ -82,10 +82,10 @@ export class Dude extends Phaser.GameObjects.Sprite {
 			this.setVisible(false)
 		})
 		socket.on(AUDIO_INPUT_VALUE_UPDATE, (data: AudioInputValue) => {
-			console.log(`'received AUDIO_INPUT_VALUE_UPDATE: ${data.db}`)
-			if (data.db > 50 && data.db <= 150) {
+			console.log(`received AUDIO_INPUT_VALUE_UPDATE: ${data.averageFrequencyPower}`)
+			if (data.averageFrequencyPower > 50 && data.averageFrequencyPower <= 150) {
 				this.play({ key: DUDE_STATE_KEY.CROUCH, repeat: -1 })
-			} else if (data.db > 150) {
+			} else if (data.averageFrequencyPower > 150) {
 				this.play({ key: DUDE_STATE_KEY.RUN, repeat: -1 })
 			} else {
 				this.play({ key: DUDE_STATE_KEY.IDLE, repeat: -1 })

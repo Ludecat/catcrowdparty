@@ -34,5 +34,5 @@ export const HotAirBallonVationsValues = {
 export const AUDIO_INPUT_VALUE_UPDATE = 'audioInputValueUpdate'
 
 export interface AudioInputValue {
-	db: number
+	averageFrequencyPower: number
 }

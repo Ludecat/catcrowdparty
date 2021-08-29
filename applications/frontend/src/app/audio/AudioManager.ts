@@ -12,7 +12,8 @@ export class AudioManager {
 	public canvasContext: CanvasRenderingContext2D
 
 	private socket: Socket
-	private currentDecibelBatch: number[] = [0]
+	private intervalId: number | undefined
+	private currentFrequenciesPowerBatch: number[] = [0]
 
 	constructor(socket: Socket, canvas: HTMLCanvasElement, initialDeviceId: string) {
 		this.audioContext = new window.AudioContext()
@@ -34,22 +35,25 @@ export class AudioManager {
 		// audioSource set by setInputSource()
 		this.audioSource!.connect(this.analyser)
 
-		this.analyser.connect(this.audioContext.destination)
 		this.canvasContext.font = '24px Roboto'
-		this.startRollingDecibelTicker()
+		this.startSocketTicker()
 		this.loop()
 	}
 
-	startRollingDecibelTicker() {
-		window.setInterval(() => {
-			const dbSum = this.currentDecibelBatch.reduce((num1, num2) => num1 + num2, 0)
-			const avgDbPerSecond = dbSum / this.currentDecibelBatch.length
+	startSocketTicker() {
+		this.intervalId = window.setInterval(() => {
+			const frequencyPowerSum = this.currentFrequenciesPowerBatch.reduce((num1, num2) => num1 + num2, 0)
+			const averageFrequencyPower = frequencyPowerSum / this.currentFrequenciesPowerBatch.length
 
 			this.socket.emit(AUDIO_INPUT_VALUE_UPDATE, {
-				db: avgDbPerSecond,
+				averageFrequencyPower,
 			})
-			this.currentDecibelBatch = []
+			this.currentFrequenciesPowerBatch = []
 		}, 1000)
+
+		this.socket.on('disconnect', () => {
+			window.clearInterval(this.intervalId)
+		})
 	}
 
 	loop() {
@@ -65,14 +69,18 @@ export class AudioManager {
 		this.clearCanvas()
 
 		this.canvasContext.fillStyle = '#FFCC00'
-		const maxFbcDecibel = Math.max(...(this.frequencyBinCount ?? [0]))
-		this.currentDecibelBatch.push(maxFbcDecibel)
-		const mappedBarHeightToCanvasHeight = (maxFbcDecibel / 255) * this.canvas.height
+		const maxPowerOfFrequencies = Math.max(...(this.frequencyBinCount ?? [0]))
+		this.currentFrequenciesPowerBatch.push(maxPowerOfFrequencies)
+		const mappedBarHeightToCanvasHeight = (maxPowerOfFrequencies / 255) * this.canvas.height
 
 		this.canvasContext.fillRect(0, this.canvas.height, this.canvas.width, -1 * mappedBarHeightToCanvasHeight)
 		this.canvasContext.fillStyle = '#000000'
-
-		this.canvasContext.fillText(`${maxFbcDecibel}dB`, this.canvas.width / 2, this.canvas.height / 2)
+		this.canvasContext.textAlign = 'center'
+		this.canvasContext.fillText(
+			`${maxPowerOfFrequencies} frequencies max power.`,
+			this.canvas.width / 2,
+			this.canvas.height / 2
+		)
 	}
 
 	clearCanvas() {
@@ -84,10 +92,9 @@ export class AudioManager {
 		if (stream) {
 			this.audioSource?.disconnect()
 			this.analyser?.disconnect()
-			this.analyser?.disconnect()
 			this.audioSource = this.audioContext.createMediaStreamSource(stream)
 			this.analyser = this.audioContext.createAnalyser()
-			this.audioSource!.connect(this.analyser)
+			this.audioSource.connect(this.analyser)
 
 			// Enable this to hear audio input.
 			// this.analyser.connect(this.audioContext.destination)
