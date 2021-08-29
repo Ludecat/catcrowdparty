@@ -9,6 +9,8 @@ export class AudioManager {
 	private canvas: HTMLCanvasElement
 	public canvasContext: CanvasRenderingContext2D
 
+	private currentDecibelBatch: number[] = [0]
+
 	constructor(canvas: HTMLCanvasElement, initialDeviceId: string) {
 		this.audioContext = new window.AudioContext()
 		this.canvas = canvas
@@ -30,7 +32,16 @@ export class AudioManager {
 
 		this.analyser.connect(this.audioContext.destination)
 		this.canvasContext.font = '24px Roboto'
+		this.startRollingDecibelTicker()
 		this.loop()
+	}
+
+	startRollingDecibelTicker() {
+		window.setInterval(() => {
+			const arrSum = this.currentDecibelBatch.reduce((num1, num2) => num1 + num2, 0)
+			console.log(arrSum / this.currentDecibelBatch.length)
+			this.currentDecibelBatch = []
+		}, 1000)
 	}
 
 	loop() {
@@ -47,6 +58,7 @@ export class AudioManager {
 
 		this.canvasContext.fillStyle = '#FFCC00'
 		const maxFbcDecibel = Math.max(...(this.frequencyBinCount ?? [0]))
+		this.currentDecibelBatch.push(maxFbcDecibel)
 		const mappedBarHeightToCanvasHeight = (maxFbcDecibel / 255) * this.canvas.height
 
 		this.canvasContext.fillRect(0, this.canvas.height, this.canvas.width, -1 * mappedBarHeightToCanvasHeight)
