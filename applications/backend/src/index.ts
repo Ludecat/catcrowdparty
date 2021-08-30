@@ -3,9 +3,11 @@ import { createServer } from 'http'
 import {
 	AudioInputValue,
 	AUDIO_INPUT_VALUE_UPDATE,
+	CrowdMode,
 	CROWD_CROUCH,
 	CROWD_HIDE,
 	CROWD_IDLE,
+	CROWD_MODE_UPDATE,
 	CROWD_RUN,
 	CROWD_SHOW,
 	HotAirBalloonVariation,
@@ -54,6 +56,18 @@ io.on('connection', (socket) => {
 		io.emit(CROWD_HIDE)
 	})
 
+	socket.on(CROWD_MODE_UPDATE, (data: CrowdMode) => {
+		logger.info(`received CROWD_MODE_UPDATE: ${data.mode}`)
+		/**
+		 *
+		 * DO SOMETHING WITH data.mode
+		 * 'auto' set crowd_state by voice input only
+		 * 'manuel' set crowd_state by control panel input only
+		 *
+		 */
+		io.emit(CROWD_MODE_UPDATE, data)
+	})
+
 	/**
 	 * MODERATOR
 	 */
@@ -62,14 +76,14 @@ io.on('connection', (socket) => {
 		io.emit(MODERATOR_SHOW, data)
 	})
 
-	socket.on(MODERATOR_MESSAGE_UPDATE, (data: ModeratorMessage) => {
-		logger.info(`received MODERATOR_MESSAGE_UPDATE`)
-		io.emit(MODERATOR_MESSAGE_UPDATE, data)
-	})
-
 	socket.on(MODERATOR_HIDE, () => {
 		logger.info(`received MODERATOR_HIDE`)
 		io.emit(MODERATOR_HIDE)
+	})
+
+	socket.on(MODERATOR_MESSAGE_UPDATE, (data: ModeratorMessage) => {
+		logger.info(`received MODERATOR_MESSAGE_UPDATE`)
+		io.emit(MODERATOR_MESSAGE_UPDATE, data)
 	})
 
 	/**

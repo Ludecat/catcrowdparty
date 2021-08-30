@@ -7,6 +7,12 @@ export const CROWD_CROUCH = 'crowdCrouch'
 export const CROWD_RUN = 'crowdRun'
 export const CROWD_SHOW = 'crowdShow'
 export const CROWD_HIDE = 'crowdHide'
+export const CROWD_MODE_UPDATE = 'crowdModeUpdate'
+
+export type CrowdModeType = 'auto' | 'manuel'
+export interface CrowdMode {
+	mode: CrowdModeType
+}
 
 export const MODERATOR_SHOW = 'moderatorShow'
 export const MODERATOR_HIDE = 'moderatorHide'
