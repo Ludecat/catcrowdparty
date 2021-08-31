@@ -51,6 +51,8 @@ const AudioPage: NextPage<OverlayPageProps> = (props: OverlayPageProps) => {
 
 	useEffect(() => {
 		resizeCanvas()
+		// https://developer.mozilla.org/en-US/docs/Web/API/Window/focus
+		window.focus()
 		window.addEventListener('resize', resizeCanvas)
 		return () => window.removeEventListener('resize', resizeCanvas)
 	}, [])
@@ -60,6 +62,7 @@ const AudioPage: NextPage<OverlayPageProps> = (props: OverlayPageProps) => {
 			canvasRef.current.width = window.innerWidth
 			canvasRef.current.height = window.innerHeight - dropDownHeight
 		}
+		window.focus()
 	}, [canvasRef.current])
 
 	useEffect(() => {
