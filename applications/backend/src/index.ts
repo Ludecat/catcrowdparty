@@ -20,12 +20,15 @@ import {
 	MODERATOR_MESSAGE_UPDATE,
 	MODERATOR_SHOW,
 	CROWD_RUN_AUDIO_VALUE_THRESHOLD,
+	CrowdModeType,
 } from '@ccp/common'
 import { logger } from './logger'
 import { Server } from 'socket.io'
 
 const httpServer = createServer()
 const io = new Server(httpServer, {})
+
+let crowdControleMode: CrowdModeType = 'manuel'
 
 io.on('connection', (socket) => {
 	logger.info(`new connection from ${socket.id}!`)
@@ -60,13 +63,7 @@ io.on('connection', (socket) => {
 
 	socket.on(CROWD_MODE_UPDATE, (data: CrowdMode) => {
 		logger.info(`received CROWD_MODE_UPDATE: ${data.mode}`)
-		/**
-		 *
-		 * DO SOMETHING WITH data.mode
-		 * 'auto' set crowd_state by voice input only
-		 * 'manuel' set crowd_state by control panel input only
-		 *
-		 */
+		crowdControleMode = data.mode
 		io.emit(CROWD_MODE_UPDATE, data)
 	})
 
@@ -75,6 +72,11 @@ io.on('connection', (socket) => {
 	 */
 	socket.on(AUDIO_INPUT_VALUE_UPDATE, (data: AudioInputValue) => {
 		logger.info(`received AUDIO_INPUT_VALUE_UPDATE ${data.averageFrequencyPower}`)
+
+		if (crowdControleMode === 'manuel') {
+			logger.info(`declined AUDIO_INPUT_VALUE_UPDATE caused by crowdControleMode set to: '${crowdControleMode}'.`)
+			return
+		}
 
 		io.emit(AUDIO_INPUT_VALUE_UPDATE, data)
 
