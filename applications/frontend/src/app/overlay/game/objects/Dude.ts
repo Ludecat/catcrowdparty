@@ -58,7 +58,7 @@ export class Dude extends Phaser.GameObjects.Sprite {
 			this.play({ key: DUDE_STATE_KEY.IDLE, repeat: -1 })
 		})
 		socket.on(CROWD_CROUCH, () => {
-			console.log('received CROWD_RUN')
+			console.log('received CROWD_CROUCH')
 			this.play({ key: DUDE_STATE_KEY.CROUCH, repeat: -1 })
 		})
 		socket.on(CROWD_RUN, () => {
