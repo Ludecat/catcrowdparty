@@ -152,6 +152,7 @@ export const ControlPanelGrid = () => {
 		socket?.emit(CROWD_MODE_UPDATE, { mode: crowdMode })
 	}, [crowdMode])
 
+	const isDisabledManuelCrowdButton = !layersActive['ccp-checkbox-crowd'] || crowdMode === 'auto'
 	return (
 		<Grid>
 			<GridItem gridArea={'header'}>
@@ -170,25 +171,13 @@ export const ControlPanelGrid = () => {
 					</Button>
 				}
 			>
-				<Button
-					onClick={() => socket?.emit(CROWD_IDLE)}
-					value="CROWD_IDLE"
-					disabled={!layersActive['ccp-checkbox-crowd']}
-				>
+				<Button onClick={() => socket?.emit(CROWD_IDLE)} value="CROWD_IDLE" disabled={isDisabledManuelCrowdButton}>
 					Idle
 				</Button>
-				<Button
-					onClick={() => socket?.emit(CROWD_CROUCH)}
-					value="CROWD_CROUCH"
-					disabled={!layersActive['ccp-checkbox-crowd']}
-				>
+				<Button onClick={() => socket?.emit(CROWD_CROUCH)} value="CROWD_CROUCH" disabled={isDisabledManuelCrowdButton}>
 					Crouch
 				</Button>
-				<Button
-					onClick={() => socket?.emit(CROWD_RUN)}
-					value="CROWD_RUN"
-					disabled={!layersActive['ccp-checkbox-crowd']}
-				>
+				<Button onClick={() => socket?.emit(CROWD_RUN)} value="CROWD_RUN" disabled={isDisabledManuelCrowdButton}>
 					Run
 				</Button>
 			</GridComponent>

@@ -30,6 +30,7 @@ const StyledButton = styled.button`
 		&:hover {
 			background: ${(p) => p.theme.color.disabled};
 			border-color: ${(p) => p.theme.color.disabled};
+			cursor: default;
 		}
 	}
 `
