@@ -7,6 +7,7 @@ import {
 	CROWD_CROUCH,
 	CROWD_HIDE,
 	CROWD_IDLE,
+	CROWD_CROUCH_AUDIO_VALUE_THRESHOLD,
 	CROWD_MODE_UPDATE,
 	CROWD_RUN,
 	CROWD_SHOW,
@@ -18,6 +19,7 @@ import {
 	MODERATOR_HIDE,
 	MODERATOR_MESSAGE_UPDATE,
 	MODERATOR_SHOW,
+	CROWD_RUN_AUDIO_VALUE_THRESHOLD,
 } from '@ccp/common'
 import { logger } from './logger'
 import { Server } from 'socket.io'
@@ -69,6 +71,25 @@ io.on('connection', (socket) => {
 	})
 
 	/**
+	 * AUDIO CROWD STATE INPUT
+	 */
+	socket.on(AUDIO_INPUT_VALUE_UPDATE, (data: AudioInputValue) => {
+		logger.info(`received AUDIO_INPUT_VALUE_UPDATE ${data.averageFrequencyPower}`)
+
+		io.emit(AUDIO_INPUT_VALUE_UPDATE, data)
+
+		if (data.averageFrequencyPower >= CROWD_RUN_AUDIO_VALUE_THRESHOLD) {
+			io.emit(CROWD_RUN)
+			return
+		}
+		if (data.averageFrequencyPower >= CROWD_CROUCH_AUDIO_VALUE_THRESHOLD) {
+			io.emit(CROWD_CROUCH)
+			return
+		}
+		io.emit(CROWD_IDLE)
+	})
+
+	/**
 	 * MODERATOR
 	 */
 	socket.on(MODERATOR_SHOW, (data: ModeratorMessage) => {
@@ -102,14 +123,6 @@ io.on('connection', (socket) => {
 	socket.on(HOT_AIR_BALLON_START, (data: HotAirBalloonVariation) => {
 		logger.info(`received HOT_AIR_BALLON_START`)
 		io.emit(HOT_AIR_BALLON_START, data)
-	})
-
-	/**
-	 * AUDIO
-	 */
-	socket.on(AUDIO_INPUT_VALUE_UPDATE, (data: AudioInputValue) => {
-		logger.info(`received AUDIO_INPUT_VALUE_UPDATE`)
-		io.emit(AUDIO_INPUT_VALUE_UPDATE, data)
 	})
 
 	/**

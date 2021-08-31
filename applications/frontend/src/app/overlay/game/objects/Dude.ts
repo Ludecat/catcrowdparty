@@ -1,14 +1,6 @@
 import Phaser from 'phaser'
 import { Socket } from 'socket.io-client'
-import {
-	AudioInputValue,
-	AUDIO_INPUT_VALUE_UPDATE,
-	CROWD_CROUCH,
-	CROWD_HIDE,
-	CROWD_IDLE,
-	CROWD_RUN,
-	CROWD_SHOW,
-} from '@ccp/common/shared'
+import { CROWD_CROUCH, CROWD_HIDE, CROWD_IDLE, CROWD_RUN, CROWD_SHOW } from '@ccp/common/shared'
 
 interface DudeProps {
 	x: number
@@ -80,16 +72,6 @@ export class Dude extends Phaser.GameObjects.Sprite {
 		socket.on(CROWD_HIDE, () => {
 			console.log('received CROWD_HIDE')
 			this.setVisible(false)
-		})
-		socket.on(AUDIO_INPUT_VALUE_UPDATE, (data: AudioInputValue) => {
-			console.log(`received AUDIO_INPUT_VALUE_UPDATE: ${data.averageFrequencyPower}`)
-			if (data.averageFrequencyPower > 50 && data.averageFrequencyPower <= 150) {
-				this.play({ key: DUDE_STATE_KEY.CROUCH, repeat: -1 })
-			} else if (data.averageFrequencyPower > 150) {
-				this.play({ key: DUDE_STATE_KEY.RUN, repeat: -1 })
-			} else {
-				this.play({ key: DUDE_STATE_KEY.IDLE, repeat: -1 })
-			}
 		})
 
 		scene.add.existing(this)

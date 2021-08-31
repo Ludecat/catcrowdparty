@@ -9,6 +9,9 @@ export const CROWD_SHOW = 'crowdShow'
 export const CROWD_HIDE = 'crowdHide'
 export const CROWD_MODE_UPDATE = 'crowdModeUpdate'
 
+export const CROWD_CROUCH_AUDIO_VALUE_THRESHOLD = 50
+export const CROWD_RUN_AUDIO_VALUE_THRESHOLD = 150
+
 export type CrowdModeType = 'auto' | 'manuel'
 export interface CrowdMode {
 	mode: CrowdModeType
