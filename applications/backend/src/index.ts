@@ -1,19 +1,27 @@
 import '@ccp/common/env'
 import { createServer } from 'http'
 import {
+	ANNOUNCER_UPDATE,
+	BALLON_UPDATE,
 	CROWD_CROUCH,
 	CROWD_HIDE,
 	CROWD_IDLE,
 	CROWD_RUN,
 	CROWD_SHOW,
+	CROWD_UPDATE,
 	HotAirBalloonVariation,
 	HOT_AIR_BALLON_HIDE,
 	HOT_AIR_BALLON_SHOW,
 	HOT_AIR_BALLON_START,
+	IAnnouncerState,
+	IBallonState,
+	ICrowdState,
+	IState,
 	ModeratorMessage,
 	MODERATOR_HIDE,
 	MODERATOR_MESSAGE_UPDATE,
 	MODERATOR_SHOW,
+	STATE_UPDATE,
 } from '@ccp/common'
 import { logger } from './logger'
 import { Server } from 'socket.io'
@@ -99,3 +107,69 @@ io.on('connection', (socket) => {
 const port = process.env.PORT_BACKEND ?? 5000
 httpServer.listen(port)
 logger.info(`Backend ready on port ${port}`)
+
+let state: IState = {
+	crowd: {
+		mode: 'manuell',
+		intensity: 0,
+		visibility: true,
+	},
+	announcer: {
+		message: '',
+		visibility: false,
+	},
+	ballon: {
+		visibility: false,
+	},
+}
+
+const updateCrowd = (state: IState, crowdUpdate: ICrowdState): IState => {
+	return {
+		...state,
+		crowd: {
+			...crowdUpdate,
+		},
+	}
+}
+
+const updateAnnouncer = (state: IState, annoucerUpdate: IAnnouncerState): IState => {
+	return {
+		...state,
+		announcer: {
+			...annoucerUpdate,
+		},
+	}
+}
+
+const updateBallon = (state: IState, ballonUpdate: IBallonState): IState => {
+	return {
+		...state,
+		ballon: {
+			...ballonUpdate,
+		},
+	}
+}
+
+// state = updateAnnouncer(state, {
+// 	message: 'Hi there',
+// 	visibility: true,
+// })
+
+// state = updateCrowd(state, {
+// 	intensity: 30,
+// 	mode: 'manual',
+// 	visibility: true,
+// })
+
+// state = updateBallon(state, {
+// 	visibility: false,
+// })
+
+const updateAndEmit = <T>(fn: (state: IState, update: T) => IState, update: T) => {
+	state = fn(state, update)
+	io.emit(STATE_UPDATE, state)
+}
+
+io.on(CROWD_UPDATE, (crowdUpdate: ICrowdState) => updateAndEmit(updateCrowd, crowdUpdate))
+io.on(ANNOUNCER_UPDATE, (announcerUpdate: IAnnouncerState) => updateAndEmit(updateAnnouncer, announcerUpdate))
+io.on(BALLON_UPDATE, (ballonUpdate: IBallonState) => updateAndEmit(updateBallon, ballonUpdate))

@@ -30,3 +30,29 @@ export const HotAirBallonVationsValues = {
 	fritzCola: 'fritz-cola',
 	fhSalzburg: 'fh-salzburg',
 }
+
+export const STATE_UPDATE = 'stateUpdate'
+export const CROWD_UPDATE = 'crowdUpdate'
+export const ANNOUNCER_UPDATE = 'announcerUpdate'
+export const BALLON_UPDATE = 'ballonUpdate'
+
+export interface ICrowdState {
+	mode: string
+	intensity: number
+	visibility: boolean
+}
+
+export interface IAnnouncerState {
+	message: string
+	visibility: boolean
+}
+
+export interface IBallonState {
+	visibility: boolean
+}
+
+export interface IState {
+	crowd: ICrowdState
+	announcer: IAnnouncerState
+	ballon: IBallonState
+}
