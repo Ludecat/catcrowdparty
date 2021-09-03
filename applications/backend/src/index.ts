@@ -131,6 +131,7 @@ const updateCrowd = (state: IState, crowdUpdate: ICrowdState): IState => {
 	return {
 		...state,
 		crowd: {
+			...state.crowd,
 			...crowdUpdate,
 		},
 	}
@@ -140,6 +141,7 @@ const updateAnnouncer = (state: IState, annoucerUpdate: IAnnouncerState): IState
 	return {
 		...state,
 		announcer: {
+			...state.announcer,
 			...annoucerUpdate,
 		},
 	}
@@ -149,6 +151,7 @@ const updateBallon = (state: IState, ballonUpdate: IBallonState): IState => {
 	return {
 		...state,
 		ballon: {
+			...state.ballon,
 			...ballonUpdate,
 		},
 	}
