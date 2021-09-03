@@ -1,17 +1,16 @@
 import React, { FunctionComponent, useState } from 'react'
 import {
+	ANNOUNCER_UPDATE,
+	BALLON_UPDATE,
 	CROWD_CROUCH,
-	CROWD_HIDE,
 	CROWD_IDLE,
 	CROWD_RUN,
-	CROWD_SHOW,
+	CROWD_UPDATE,
 	HotAirBallonVationsValues,
-	HOT_AIR_BALLON_HIDE,
-	HOT_AIR_BALLON_SHOW,
 	HOT_AIR_BALLON_START,
-	MODERATOR_HIDE,
-	MODERATOR_MESSAGE_UPDATE,
-	MODERATOR_SHOW,
+	IAnnouncerState,
+	IBallonState,
+	ICrowdState,
 } from '@ccp/common/shared'
 import { useSocket } from '../../hooks/useSocket'
 import { styled } from '../../styles/Theme'
@@ -178,7 +177,10 @@ export const ControlPanelGrid = () => {
 					<Button
 						disabled={!layersActive['ccp-checkbox-moderator']}
 						onClick={() => {
-							socket?.emit(MODERATOR_MESSAGE_UPDATE, { message: moderatorMessage })
+							const updatedAnnouncerState: Partial<IAnnouncerState> = {
+								message: moderatorMessage,
+							}
+							socket?.emit(ANNOUNCER_UPDATE, updatedAnnouncerState)
 						}}
 					>
 						<GrUpdate size={16} />
@@ -192,13 +194,19 @@ export const ControlPanelGrid = () => {
 					id="ccp-checkbox-air-ballon"
 					value="ccp-checkbox-air-ballon"
 					onChange={(e) => {
+						let updatedBallonState: Partial<IBallonState>
 						if (e.currentTarget.checked) {
 							setCurrentLayer(e, true)
-							socket?.emit(HOT_AIR_BALLON_SHOW)
+							updatedBallonState = {
+								visibility: true,
+							}
 						} else {
 							setCurrentLayer(e, false)
-							socket?.emit(HOT_AIR_BALLON_HIDE)
+							updatedBallonState = {
+								visibility: false,
+							}
 						}
+						socket?.emit(BALLON_UPDATE, updatedBallonState)
 					}}
 					description="Air Ballon"
 				/>
@@ -206,13 +214,20 @@ export const ControlPanelGrid = () => {
 					id="ccp-checkbox-moderator"
 					value="ccp-checkbox-moderator"
 					onChange={(e) => {
+						let updatedAnnouncerState: Partial<IAnnouncerState>
 						if (e.currentTarget.checked) {
 							setCurrentLayer(e, true)
-							socket?.emit(MODERATOR_SHOW, { message: moderatorMessage })
+							updatedAnnouncerState = {
+								message: moderatorMessage,
+								visibility: true,
+							}
 						} else {
 							setCurrentLayer(e, false)
-							socket?.emit(MODERATOR_HIDE)
+							updatedAnnouncerState = {
+								visibility: false,
+							}
 						}
+						socket?.emit(ANNOUNCER_UPDATE, updatedAnnouncerState)
 					}}
 					description="Moderator"
 				/>
@@ -220,13 +235,19 @@ export const ControlPanelGrid = () => {
 					id="ccp-checkbox-crowd"
 					value="ccp-checkbox-crowd"
 					onChange={(e) => {
+						let updatedCrowdState: Partial<ICrowdState>
 						if (e.currentTarget.checked) {
 							setCurrentLayer(e, true)
-							socket?.emit(CROWD_SHOW)
+							updatedCrowdState = {
+								visibility: true,
+							}
 						} else {
 							setCurrentLayer(e, false)
-							socket?.emit(CROWD_HIDE)
+							updatedCrowdState = {
+								visibility: false,
+							}
 						}
+						socket?.emit(CROWD_UPDATE, updatedCrowdState)
 					}}
 					description="Crowd"
 				/>
