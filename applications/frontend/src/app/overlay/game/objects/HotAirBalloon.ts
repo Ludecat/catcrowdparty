@@ -3,9 +3,9 @@ import { Socket } from 'socket.io-client'
 import {
 	HotAirBalloonVariation,
 	HotAirBalloonVariations,
-	HOT_AIR_BALLON_HIDE,
-	HOT_AIR_BALLON_SHOW,
 	HOT_AIR_BALLON_START,
+	IState,
+	STATE_UPDATE,
 } from '@ccp/common/shared'
 
 interface HotAirBallonProps {
@@ -45,10 +45,6 @@ export class HotAirBalloon extends Phaser.GameObjects.Sprite {
 		scene.physics.add.existing(this)
 		scene.add.existing(this)
 
-		socket.on(HOT_AIR_BALLON_SHOW, () => {
-			console.log('received HOT_AIR_BALLON_SHOW')
-			this.setVisible(true)
-		})
 		socket.on(HOT_AIR_BALLON_START, (data: HotAirBalloonVariation) => {
 			console.log(`received HOT_AIR_BALLON_START: ${data.variation}`)
 			if (data.variation === options.variation) {
@@ -56,9 +52,9 @@ export class HotAirBalloon extends Phaser.GameObjects.Sprite {
 				this.body.velocity.x = this.velocity
 			}
 		})
-		socket.on(HOT_AIR_BALLON_HIDE, () => {
-			console.log('received HOT_AIR_BALLON_HIDE')
-			this.setVisible(false)
+
+		socket.on(STATE_UPDATE, (state: IState) => {
+			this.setVisible(state.ballon.visibility)
 		})
 
 		this.socket = socket
