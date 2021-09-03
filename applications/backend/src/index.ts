@@ -102,6 +102,10 @@ io.on('connection', (socket) => {
 	socket.on('disconnect', (reason) => {
 		logger.info(`socket ${socket.id} disconnected with reason: ${reason}`)
 	})
+
+	socket.on(CROWD_UPDATE, (crowdUpdate: ICrowdState) => updateAndEmit(updateCrowd, crowdUpdate))
+	socket.on(ANNOUNCER_UPDATE, (announcerUpdate: IAnnouncerState) => updateAndEmit(updateAnnouncer, announcerUpdate))
+	socket.on(BALLON_UPDATE, (ballonUpdate: IBallonState) => updateAndEmit(updateBallon, ballonUpdate))
 })
 
 const port = process.env.PORT_BACKEND ?? 5000
@@ -169,7 +173,3 @@ const updateAndEmit = <T>(fn: (state: IState, update: T) => IState, update: T) =
 	state = fn(state, update)
 	io.emit(STATE_UPDATE, state)
 }
-
-io.on(CROWD_UPDATE, (crowdUpdate: ICrowdState) => updateAndEmit(updateCrowd, crowdUpdate))
-io.on(ANNOUNCER_UPDATE, (announcerUpdate: IAnnouncerState) => updateAndEmit(updateAnnouncer, announcerUpdate))
-io.on(BALLON_UPDATE, (ballonUpdate: IBallonState) => updateAndEmit(updateBallon, ballonUpdate))
