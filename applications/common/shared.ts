@@ -37,23 +37,24 @@ export interface AudioInputValue {
 	averageFrequencyPower: number
 }
 
-export interface ICrowdState {
+// State
+export interface CrowdState {
 	mode: CrowdMode
 	intensity: number
 	visibility: boolean
 }
 
-export interface IModeratorState {
+export interface ModeratorState {
 	message: string
 	visibility: boolean
 }
 
-export interface IBallonState {
+export interface BallonState {
 	visibility: boolean
 }
 
-export interface IState {
-	crowd: ICrowdState
-	moderator: IModeratorState
-	ballon: IBallonState
+export interface State {
+	crowd: CrowdState
+	moderator: ModeratorState
+	ballon: BallonState
 }

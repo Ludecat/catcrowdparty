@@ -5,9 +5,9 @@ import {
 	CROWD_UPDATE,
 	HotAirBallonVationsValues,
 	HOT_AIR_BALLON_START,
-	IModeratorState,
-	IBallonState,
-	ICrowdState,
+	ModeratorState,
+	BallonState,
+	CrowdState,
 	CrowdMode,
 	CROWD_CROUCH_AUDIO_VALUE_THRESHOLD,
 	CROWD_RUN_AUDIO_VALUE_THRESHOLD,
@@ -146,7 +146,7 @@ export const ControlPanelGrid = () => {
 	)
 
 	useEffect(() => {
-		const updatedCrowdState: Partial<ICrowdState> = {
+		const updatedCrowdState: Partial<CrowdState> = {
 			mode: crowdMode,
 		}
 		socket?.emit(CROWD_UPDATE, updatedCrowdState)
@@ -200,7 +200,7 @@ export const ControlPanelGrid = () => {
 					<Button
 						disabled={!layersActive['ccp-checkbox-moderator']}
 						onClick={() => {
-							const updatedModeratorState: Partial<IModeratorState> = {
+							const updatedModeratorState: Partial<ModeratorState> = {
 								message: moderatorMessage,
 							}
 							socket?.emit(MODERATOR_UPDATE, updatedModeratorState)
@@ -217,7 +217,7 @@ export const ControlPanelGrid = () => {
 					id="ccp-checkbox-air-ballon"
 					value="ccp-checkbox-air-ballon"
 					onChange={(e) => {
-						let updatedBallonState: Partial<IBallonState>
+						let updatedBallonState: Partial<BallonState>
 						if (e.currentTarget.checked) {
 							setCurrentLayer(e, true)
 							updatedBallonState = {
@@ -237,7 +237,7 @@ export const ControlPanelGrid = () => {
 					id="ccp-checkbox-moderator"
 					value="ccp-checkbox-moderator"
 					onChange={(e) => {
-						let updatedModeratorState: Partial<IModeratorState>
+						let updatedModeratorState: Partial<ModeratorState>
 						if (e.currentTarget.checked) {
 							setCurrentLayer(e, true)
 							updatedModeratorState = {
@@ -258,7 +258,7 @@ export const ControlPanelGrid = () => {
 					id="ccp-checkbox-crowd"
 					value="ccp-checkbox-crowd"
 					onChange={(e) => {
-						let updatedCrowdState: Partial<ICrowdState>
+						let updatedCrowdState: Partial<CrowdState>
 						if (e.currentTarget.checked) {
 							setCurrentLayer(e, true)
 							updatedCrowdState = {

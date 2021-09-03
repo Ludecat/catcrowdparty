@@ -8,10 +8,10 @@ import {
 	CROWD_UPDATE,
 	HotAirBalloonVariation,
 	HOT_AIR_BALLON_START,
-	IModeratorState,
-	IBallonState,
-	ICrowdState,
-	IState,
+	ModeratorState,
+	BallonState,
+	CrowdState,
+	State,
 	STATE_UPDATE,
 	CrowdMode,
 } from '@ccp/common'
@@ -27,7 +27,7 @@ io.on('connection', (socket) => {
 	/**
 	 * CROWD
 	 */
-	socket.on(CROWD_UPDATE, (crowdUpdate: ICrowdState) => updateAndEmit(updateCrowd, crowdUpdate))
+	socket.on(CROWD_UPDATE, (crowdUpdate: CrowdState) => updateAndEmit(updateCrowd, crowdUpdate))
 
 	/**
 	 * AUDIO CROWD STATE INPUT
@@ -40,7 +40,7 @@ io.on('connection', (socket) => {
 			return
 		}
 
-		const crowdStateUpdate: Partial<ICrowdState> = {
+		const crowdStateUpdate: Partial<CrowdState> = {
 			intensity: data.averageFrequencyPower,
 		}
 		updateAndEmit(updateCrowd, crowdStateUpdate)
@@ -49,12 +49,12 @@ io.on('connection', (socket) => {
 	/**
 	 * MODERATOR
 	 */
-	socket.on(MODERATOR_UPDATE, (announcerUpdate: IModeratorState) => updateAndEmit(updateAnnouncer, announcerUpdate))
+	socket.on(MODERATOR_UPDATE, (announcerUpdate: ModeratorState) => updateAndEmit(updateAnnouncer, announcerUpdate))
 
 	/**
 	 * HOT AIR BALLOON
 	 */
-	socket.on(BALLON_UPDATE, (ballonUpdate: IBallonState) => updateAndEmit(updateBallon, ballonUpdate))
+	socket.on(BALLON_UPDATE, (ballonUpdate: BallonState) => updateAndEmit(updateBallon, ballonUpdate))
 
 	socket.on(HOT_AIR_BALLON_START, (data: HotAirBalloonVariation) => {
 		logger.info(`received HOT_AIR_BALLON_START`)
@@ -74,7 +74,7 @@ const port = process.env.PORT_BACKEND ?? 5000
 httpServer.listen(port)
 logger.info(`Backend ready on port ${port}`)
 
-let state: IState = {
+let state: State = {
 	crowd: {
 		mode: CrowdMode.manual,
 		intensity: 0,
@@ -89,7 +89,7 @@ let state: IState = {
 	},
 }
 
-const updateCrowd = (state: IState, crowdUpdate: Partial<ICrowdState>): IState => {
+const updateCrowd = (state: State, crowdUpdate: Partial<CrowdState>): State => {
 	return {
 		...state,
 		crowd: {
@@ -99,7 +99,7 @@ const updateCrowd = (state: IState, crowdUpdate: Partial<ICrowdState>): IState =
 	}
 }
 
-const updateAnnouncer = (state: IState, annoucerUpdate: Partial<IModeratorState>): IState => {
+const updateAnnouncer = (state: State, annoucerUpdate: Partial<ModeratorState>): State => {
 	return {
 		...state,
 		moderator: {
@@ -109,7 +109,7 @@ const updateAnnouncer = (state: IState, annoucerUpdate: Partial<IModeratorState>
 	}
 }
 
-const updateBallon = (state: IState, ballonUpdate: Partial<IBallonState>): IState => {
+const updateBallon = (state: State, ballonUpdate: Partial<BallonState>): State => {
 	return {
 		...state,
 		ballon: {
@@ -134,7 +134,7 @@ const updateBallon = (state: IState, ballonUpdate: Partial<IBallonState>): IStat
 // 	visibility: false,
 // })
 
-const updateAndEmit = <T>(fn: (state: IState, update: T) => IState, update: T) => {
+const updateAndEmit = <T>(fn: (state: State, update: T) => State, update: T) => {
 	state = fn(state, update)
 	io.emit(STATE_UPDATE, state)
 }
