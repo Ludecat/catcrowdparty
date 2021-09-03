@@ -5,7 +5,6 @@ import {
 	BALLON_UPDATE,
 	AudioInputValue,
 	AUDIO_INPUT_VALUE_UPDATE,
-	CrowdMode,
 	CROWD_CROUCH,
 	CROWD_HIDE,
 	CROWD_IDLE,
@@ -28,7 +27,8 @@ import {
 	MODERATOR_SHOW,
 	STATE_UPDATE,
 	CROWD_RUN_AUDIO_VALUE_THRESHOLD,
-	CrowdModeType,
+	CrowdModeUpdate,
+	CrowdMode,
 } from '@ccp/common'
 import { logger } from './logger'
 import { Server } from 'socket.io'
@@ -36,7 +36,7 @@ import { Server } from 'socket.io'
 const httpServer = createServer()
 const io = new Server(httpServer, {})
 
-let crowdControleMode: CrowdModeType = 'manuel'
+let crowdControleMode: CrowdMode = CrowdMode.manual
 
 io.on('connection', (socket) => {
 	logger.info(`new connection from ${socket.id}!`)
@@ -69,7 +69,7 @@ io.on('connection', (socket) => {
 		io.emit(CROWD_HIDE)
 	})
 
-	socket.on(CROWD_MODE_UPDATE, (data: CrowdMode) => {
+	socket.on(CROWD_MODE_UPDATE, (data: CrowdModeUpdate) => {
 		logger.info(`received CROWD_MODE_UPDATE: ${data.mode}`)
 		crowdControleMode = data.mode
 		io.emit(CROWD_MODE_UPDATE, data)
@@ -81,7 +81,8 @@ io.on('connection', (socket) => {
 	socket.on(AUDIO_INPUT_VALUE_UPDATE, (data: AudioInputValue) => {
 		logger.info(`received AUDIO_INPUT_VALUE_UPDATE ${data.averageFrequencyPower}`)
 
-		if (crowdControleMode === 'manuel') {
+		if (crowdControleMode === CrowdMode.manual) {
+			// eslint-disable-next-line @typescript-eslint/no-base-to-string
 			logger.info(`declined AUDIO_INPUT_VALUE_UPDATE caused by crowdControleMode set to: '${crowdControleMode}'.`)
 			return
 		}
@@ -153,7 +154,7 @@ logger.info(`Backend ready on port ${port}`)
 
 let state: IState = {
 	crowd: {
-		mode: 'manuell',
+		mode: CrowdMode.manual,
 		intensity: 0,
 		visibility: true,
 	},

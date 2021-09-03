@@ -2,7 +2,6 @@ import React, { FunctionComponent, useState } from 'react'
 import {
 	MODERATOR_UPDATE,
 	BALLON_UPDATE,
-	CrowdModeType,
 	CROWD_CROUCH,
 	CROWD_IDLE,
 	CROWD_MODE_UPDATE,
@@ -13,6 +12,7 @@ import {
 	IModeratorState,
 	IBallonState,
 	ICrowdState,
+	CrowdMode,
 } from '@ccp/common/shared'
 import { useSocket } from '../../hooks/useSocket'
 import { styled } from '../../styles/Theme'
@@ -109,7 +109,7 @@ const maxLinesThreshold = 8
 export const ControlPanelGrid = () => {
 	const { socket } = useSocket()
 	const [moderatorMessage, setModeratorMessage] = useState('')
-	const [crowdMode, setCrowdMode] = useState<CrowdModeType>('manuel')
+	const [crowdMode, setCrowdMode] = useState<CrowdMode>(CrowdMode.manual)
 	const [layersActive, setLayersActive] = useState<Layers>({
 		'ccp-checkbox-air-ballon': true,
 		'ccp-checkbox-moderator': true,
@@ -163,7 +163,7 @@ export const ControlPanelGrid = () => {
 				actions={
 					<Button
 						onClick={() => {
-							setCrowdMode(crowdMode === 'manuel' ? 'auto' : 'manuel')
+							setCrowdMode(crowdMode === CrowdMode.manual ? CrowdMode.auto : CrowdMode.auto)
 						}}
 					>
 						{crowdMode}

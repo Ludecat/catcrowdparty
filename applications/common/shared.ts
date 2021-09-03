@@ -12,9 +12,12 @@ export const CROWD_MODE_UPDATE = 'crowdModeUpdate'
 export const CROWD_CROUCH_AUDIO_VALUE_THRESHOLD = 50
 export const CROWD_RUN_AUDIO_VALUE_THRESHOLD = 150
 
-export type CrowdModeType = 'auto' | 'manuel'
-export interface CrowdMode {
-	mode: CrowdModeType
+export enum CrowdMode {
+	auto = 'auto',
+	manual = 'manual',
+}
+export interface CrowdModeUpdate {
+	mode: CrowdMode
 }
 
 export const MODERATOR_SHOW = 'moderatorShow'
@@ -52,7 +55,7 @@ export const MODERATOR_UPDATE = 'moderatorUpdate'
 export const BALLON_UPDATE = 'ballonUpdate'
 
 export interface ICrowdState {
-	mode: string
+	mode: CrowdMode
 	intensity: number
 	visibility: boolean
 }
