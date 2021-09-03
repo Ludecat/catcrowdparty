@@ -2,10 +2,6 @@ import React, { FunctionComponent, useState } from 'react'
 import {
 	MODERATOR_UPDATE,
 	BALLON_UPDATE,
-	CROWD_CROUCH,
-	CROWD_IDLE,
-	CROWD_MODE_UPDATE,
-	CROWD_RUN,
 	CROWD_UPDATE,
 	HotAirBallonVationsValues,
 	HOT_AIR_BALLON_START,
@@ -13,6 +9,8 @@ import {
 	IBallonState,
 	ICrowdState,
 	CrowdMode,
+	CROWD_CROUCH_AUDIO_VALUE_THRESHOLD,
+	CROWD_RUN_AUDIO_VALUE_THRESHOLD,
 } from '@ccp/common/shared'
 import { useSocket } from '../../hooks/useSocket'
 import { styled } from '../../styles/Theme'
@@ -148,7 +146,10 @@ export const ControlPanelGrid = () => {
 	)
 
 	useEffect(() => {
-		socket?.emit(CROWD_MODE_UPDATE, { mode: crowdMode })
+		const updatedCrowdState: Partial<ICrowdState> = {
+			mode: crowdMode,
+		}
+		socket?.emit(CROWD_UPDATE, updatedCrowdState)
 	}, [crowdMode])
 
 	const isDisabledManuelCrowdButton = !layersActive['ccp-checkbox-crowd'] || crowdMode === 'auto'
@@ -163,20 +164,32 @@ export const ControlPanelGrid = () => {
 				actions={
 					<Button
 						onClick={() => {
-							setCrowdMode(crowdMode === CrowdMode.manual ? CrowdMode.auto : CrowdMode.auto)
+							setCrowdMode(crowdMode === CrowdMode.manual ? CrowdMode.auto : CrowdMode.manual)
 						}}
 					>
 						{crowdMode}
 					</Button>
 				}
 			>
-				<Button onClick={() => socket?.emit(CROWD_IDLE)} value="CROWD_IDLE" disabled={isDisabledManuelCrowdButton}>
+				<Button
+					onClick={() => socket?.emit(CROWD_UPDATE, { intensity: 0 })}
+					value="CROWD_IDLE"
+					disabled={isDisabledManuelCrowdButton}
+				>
 					Idle
 				</Button>
-				<Button onClick={() => socket?.emit(CROWD_CROUCH)} value="CROWD_CROUCH" disabled={isDisabledManuelCrowdButton}>
+				<Button
+					onClick={() => socket?.emit(CROWD_UPDATE, { intensity: CROWD_CROUCH_AUDIO_VALUE_THRESHOLD })}
+					value="CROWD_CROUCH"
+					disabled={isDisabledManuelCrowdButton}
+				>
 					Crouch
 				</Button>
-				<Button onClick={() => socket?.emit(CROWD_RUN)} value="CROWD_RUN" disabled={isDisabledManuelCrowdButton}>
+				<Button
+					onClick={() => socket?.emit(CROWD_UPDATE, { intensity: CROWD_RUN_AUDIO_VALUE_THRESHOLD })}
+					value="CROWD_RUN"
+					disabled={isDisabledManuelCrowdButton}
+				>
 					Run
 				</Button>
 			</GridComponent>

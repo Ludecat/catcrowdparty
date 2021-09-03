@@ -1,6 +1,11 @@
 import Phaser from 'phaser'
 import { Socket } from 'socket.io-client'
-import { CROWD_CROUCH, CROWD_IDLE, CROWD_RUN, IState, STATE_UPDATE } from '@ccp/common/shared'
+import {
+	CROWD_CROUCH_AUDIO_VALUE_THRESHOLD,
+	CROWD_RUN_AUDIO_VALUE_THRESHOLD,
+	IState,
+	STATE_UPDATE,
+} from '@ccp/common/shared'
 
 interface DudeProps {
 	x: number
@@ -16,6 +21,7 @@ export const DUDE_STATE_KEY = {
 
 export class Dude extends Phaser.GameObjects.Sprite {
 	public socket: Socket
+	private currentAnimation = DUDE_STATE_KEY.IDLE
 
 	constructor(scene: Phaser.Scene, socket: Socket, options: DudeProps) {
 		super(scene, options.x, options.y, DUDE_SPRITESHEET_KEY)
@@ -53,20 +59,19 @@ export class Dude extends Phaser.GameObjects.Sprite {
 		 */
 		this.play({ key: DUDE_STATE_KEY.IDLE, repeat: -1 })
 
-		socket.on(CROWD_IDLE, () => {
-			console.log('received CROWD_IDLE')
-			this.play({ key: DUDE_STATE_KEY.IDLE, repeat: -1 })
-		})
-		socket.on(CROWD_CROUCH, () => {
-			console.log('received CROWD_CROUCH')
-			this.play({ key: DUDE_STATE_KEY.CROUCH, repeat: -1 })
-		})
-		socket.on(CROWD_RUN, () => {
-			console.log('received CROWD_RUN')
-			this.play({ key: DUDE_STATE_KEY.RUN, repeat: -1 })
-		})
-
 		socket.on(STATE_UPDATE, (state: IState) => {
+			let animation: string
+			if (state.crowd.intensity >= CROWD_RUN_AUDIO_VALUE_THRESHOLD) {
+				animation = DUDE_STATE_KEY.RUN
+			} else if (state.crowd.intensity >= CROWD_CROUCH_AUDIO_VALUE_THRESHOLD) {
+				animation = DUDE_STATE_KEY.CROUCH
+			} else {
+				animation = DUDE_STATE_KEY.IDLE
+			}
+			if (animation !== this.currentAnimation) {
+				this.play({ key: animation, repeat: -1 })
+				this.currentAnimation = animation
+			}
 			this.setVisible(state.crowd.visibility)
 		})
 
