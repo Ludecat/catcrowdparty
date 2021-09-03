@@ -7,6 +7,15 @@ export const CROWD_CROUCH = 'crowdCrouch'
 export const CROWD_RUN = 'crowdRun'
 export const CROWD_SHOW = 'crowdShow'
 export const CROWD_HIDE = 'crowdHide'
+export const CROWD_MODE_UPDATE = 'crowdModeUpdate'
+
+export const CROWD_CROUCH_AUDIO_VALUE_THRESHOLD = 50
+export const CROWD_RUN_AUDIO_VALUE_THRESHOLD = 150
+
+export type CrowdModeType = 'auto' | 'manuel'
+export interface CrowdMode {
+	mode: CrowdModeType
+}
 
 export const MODERATOR_SHOW = 'moderatorShow'
 export const MODERATOR_HIDE = 'moderatorHide'
@@ -29,6 +38,12 @@ export const HotAirBallonVationsValues = {
 	ludecat: 'ludecat',
 	fritzCola: 'fritz-cola',
 	fhSalzburg: 'fh-salzburg',
+}
+
+export const AUDIO_INPUT_VALUE_UPDATE = 'audioInputValueUpdate'
+
+export interface AudioInputValue {
+	averageFrequencyPower: number
 }
 
 export const STATE_UPDATE = 'stateUpdate'

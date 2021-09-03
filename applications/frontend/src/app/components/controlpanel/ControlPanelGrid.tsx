@@ -2,8 +2,10 @@ import React, { FunctionComponent, useState } from 'react'
 import {
 	ANNOUNCER_UPDATE,
 	BALLON_UPDATE,
+	CrowdModeType,
 	CROWD_CROUCH,
 	CROWD_IDLE,
+	CROWD_MODE_UPDATE,
 	CROWD_RUN,
 	CROWD_UPDATE,
 	HotAirBallonVationsValues,
@@ -21,6 +23,7 @@ import { GrUpdate } from 'react-icons/gr'
 import { useCallback } from 'react'
 import { toast } from 'react-toastify'
 import { longestWordCount } from '../../util/utils'
+import { useEffect } from 'react'
 
 const Grid = styled.div`
 	display: grid;
@@ -106,6 +109,7 @@ const maxLinesThreshold = 8
 export const ControlPanelGrid = () => {
 	const { socket } = useSocket()
 	const [moderatorMessage, setModeratorMessage] = useState('')
+	const [crowdMode, setCrowdMode] = useState<CrowdModeType>('manuel')
 	const [layersActive, setLayersActive] = useState<Layers>({
 		'ccp-checkbox-air-ballon': true,
 		'ccp-checkbox-moderator': true,
@@ -142,31 +146,37 @@ export const ControlPanelGrid = () => {
 		},
 		[setModeratorMessage]
 	)
+
+	useEffect(() => {
+		socket?.emit(CROWD_MODE_UPDATE, { mode: crowdMode })
+	}, [crowdMode])
+
+	const isDisabledManuelCrowdButton = !layersActive['ccp-checkbox-crowd'] || crowdMode === 'auto'
 	return (
 		<Grid>
 			<GridItem gridArea={'header'}>
 				<ControlPanelHeading>Cat Crowd Party - Control Panel</ControlPanelHeading>
 			</GridItem>
-			<GridComponent gridArea={'crowd-control'} title="Crowd Control">
-				<Button
-					onClick={() => socket?.emit(CROWD_IDLE)}
-					value="CROWD_IDLE"
-					disabled={!layersActive['ccp-checkbox-crowd']}
-				>
+			<GridComponent
+				gridArea={'crowd-control'}
+				title="Crowd Control"
+				actions={
+					<Button
+						onClick={() => {
+							setCrowdMode(crowdMode === 'manuel' ? 'auto' : 'manuel')
+						}}
+					>
+						{crowdMode}
+					</Button>
+				}
+			>
+				<Button onClick={() => socket?.emit(CROWD_IDLE)} value="CROWD_IDLE" disabled={isDisabledManuelCrowdButton}>
 					Idle
 				</Button>
-				<Button
-					onClick={() => socket?.emit(CROWD_CROUCH)}
-					value="CROWD_CROUCH"
-					disabled={!layersActive['ccp-checkbox-crowd']}
-				>
+				<Button onClick={() => socket?.emit(CROWD_CROUCH)} value="CROWD_CROUCH" disabled={isDisabledManuelCrowdButton}>
 					Crouch
 				</Button>
-				<Button
-					onClick={() => socket?.emit(CROWD_RUN)}
-					value="CROWD_RUN"
-					disabled={!layersActive['ccp-checkbox-crowd']}
-				>
+				<Button onClick={() => socket?.emit(CROWD_RUN)} value="CROWD_RUN" disabled={isDisabledManuelCrowdButton}>
 					Run
 				</Button>
 			</GridComponent>
