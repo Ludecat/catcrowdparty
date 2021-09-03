@@ -14,6 +14,7 @@ import {
 	State,
 	STATE_UPDATE,
 	CrowdMode,
+	REQUEST_STATE,
 } from '@ccp/common'
 import { logger } from './logger'
 import { Server } from 'socket.io'
@@ -68,6 +69,9 @@ io.on('connection', (socket) => {
 		logger.info(`socket ${socket.id} disconnected with reason: ${reason}`)
 	})
 
+	socket.emit(STATE_UPDATE, state)
+
+	socket.on(REQUEST_STATE, () => socket.emit(STATE_UPDATE, state))
 })
 
 const port = process.env.PORT_BACKEND ?? 5000

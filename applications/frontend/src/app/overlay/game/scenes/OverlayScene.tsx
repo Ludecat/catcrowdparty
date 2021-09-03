@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
 import { Socket } from 'socket.io-client'
-import { HotAirBallonVationsValues } from '@ccp/common/shared'
+import { HotAirBallonVationsValues, REQUEST_STATE } from '@ccp/common/shared'
 import { SCENES } from '../config'
 import { Dude, DUDE_SPRITESHEET_KEY } from '../objects/Dude'
 import { HotAirBalloon } from '../objects/HotAirBalloon'
@@ -56,6 +56,7 @@ export default class OverlayScene extends Phaser.Scene {
 		new HotAirBalloon(this, socket, { x: -100, y: 400, variation: 'fritz-cola' })
 		new HotAirBalloon(this, socket, { x: -100, y: 400, variation: 'fh-salzburg' })
 		console.log(`${SCENES.OVERLAY}: create()`)
+		socket.emit(REQUEST_STATE)
 	}
 	update() {}
 }

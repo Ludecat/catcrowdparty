@@ -3,6 +3,7 @@ export const SOCKET_URL = 'http://localhost:5000'
 
 // SOCKET IO EVENTS
 export const STATE_UPDATE = 'stateUpdate'
+export const REQUEST_STATE = 'requestState'
 export const CROWD_UPDATE = 'crowdUpdate'
 export const MODERATOR_UPDATE = 'moderatorUpdate'
 export const BALLON_UPDATE = 'ballonUpdate'
