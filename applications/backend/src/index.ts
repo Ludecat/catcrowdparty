@@ -119,21 +119,6 @@ const updateBallon = (state: State, ballonUpdate: Partial<BallonState>): State =
 	}
 }
 
-// state = updateAnnouncer(state, {
-// 	message: 'Hi there',
-// 	visibility: true,
-// })
-
-// state = updateCrowd(state, {
-// 	intensity: 30,
-// 	mode: 'manual',
-// 	visibility: true,
-// })
-
-// state = updateBallon(state, {
-// 	visibility: false,
-// })
-
 const updateAndEmit = <T>(fn: (state: State, update: T) => State, update: T) => {
 	state = fn(state, update)
 	io.emit(STATE_UPDATE, state)
