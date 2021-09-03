@@ -2,14 +2,14 @@ import '@ccp/common/env'
 import { createServer } from 'http'
 import {
 	MODERATOR_UPDATE,
-	BALLON_UPDATE,
+	HOT_AIR_BALLON_UPDATE,
 	AudioInputValue,
 	AUDIO_INPUT_VALUE_UPDATE,
 	CROWD_UPDATE,
 	HotAirBalloonVariation,
 	HOT_AIR_BALLON_START,
 	ModeratorState,
-	BallonState,
+	HotAirBallonState,
 	CrowdState,
 	State,
 	STATE_UPDATE,
@@ -55,7 +55,7 @@ io.on('connection', (socket) => {
 	/**
 	 * HOT AIR BALLOON
 	 */
-	socket.on(BALLON_UPDATE, (ballonUpdate: BallonState) => updateAndEmit(updateBallon, ballonUpdate))
+	socket.on(HOT_AIR_BALLON_UPDATE, (hotAirBallonUpdate: HotAirBallonState) => updateAndEmit(updateHotAirBallon, hotAirBallonUpdate))
 
 	socket.on(HOT_AIR_BALLON_START, (data: HotAirBalloonVariation) => {
 		logger.info(`received HOT_AIR_BALLON_START`)
@@ -88,7 +88,7 @@ let state: State = {
 		message: '',
 		visibility: false,
 	},
-	ballon: {
+	hotAirballon: {
 		visibility: false,
 	},
 }
@@ -113,12 +113,12 @@ const updateAnnouncer = (state: State, annoucerUpdate: Partial<ModeratorState>):
 	}
 }
 
-const updateBallon = (state: State, ballonUpdate: Partial<BallonState>): State => {
+const updateHotAirBallon = (state: State, hotAirBallonUpdate: Partial<HotAirBallonState>): State => {
 	return {
 		...state,
-		ballon: {
-			...state.ballon,
-			...ballonUpdate,
+		hotAirballon: {
+			...state.hotAirballon,
+			...hotAirBallonUpdate,
 		},
 	}
 }

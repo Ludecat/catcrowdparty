@@ -1,12 +1,12 @@
 import React, { FunctionComponent, useState } from 'react'
 import {
 	MODERATOR_UPDATE,
-	BALLON_UPDATE,
+	HOT_AIR_BALLON_UPDATE,
 	CROWD_UPDATE,
 	HotAirBallonVationsValues,
 	HOT_AIR_BALLON_START,
 	ModeratorState,
-	BallonState,
+	HotAirBallonState,
 	CrowdState,
 	CrowdMode,
 	CROWD_CROUCH_AUDIO_VALUE_THRESHOLD,
@@ -217,19 +217,19 @@ export const ControlPanelGrid = () => {
 					id="ccp-checkbox-air-ballon"
 					value="ccp-checkbox-air-ballon"
 					onChange={(e) => {
-						let updatedBallonState: Partial<BallonState>
+						let updatedHotAirBallonState: Partial<HotAirBallonState>
 						if (e.currentTarget.checked) {
 							setCurrentLayer(e, true)
-							updatedBallonState = {
+							updatedHotAirBallonState = {
 								visibility: true,
 							}
 						} else {
 							setCurrentLayer(e, false)
-							updatedBallonState = {
+							updatedHotAirBallonState = {
 								visibility: false,
 							}
 						}
-						socket?.emit(BALLON_UPDATE, updatedBallonState)
+						socket?.emit(HOT_AIR_BALLON_UPDATE, updatedHotAirBallonState)
 					}}
 					description="Air Ballon"
 				/>

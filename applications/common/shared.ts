@@ -6,7 +6,7 @@ export const STATE_UPDATE = 'stateUpdate'
 export const REQUEST_STATE = 'requestState'
 export const CROWD_UPDATE = 'crowdUpdate'
 export const MODERATOR_UPDATE = 'moderatorUpdate'
-export const BALLON_UPDATE = 'ballonUpdate'
+export const HOT_AIR_BALLON_UPDATE = 'hotAirBallonUpdate'
 
 export const CROWD_CROUCH_AUDIO_VALUE_THRESHOLD = 50
 export const CROWD_RUN_AUDIO_VALUE_THRESHOLD = 150
@@ -50,12 +50,12 @@ export interface ModeratorState {
 	visibility: boolean
 }
 
-export interface BallonState {
+export interface HotAirBallonState {
 	visibility: boolean
 }
 
 export interface State {
 	crowd: CrowdState
 	moderator: ModeratorState
-	ballon: BallonState
+	hotAirballon: HotAirBallonState
 }
