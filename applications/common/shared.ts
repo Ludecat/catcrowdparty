@@ -15,9 +15,6 @@ export enum CrowdMode {
 	auto = 'auto',
 	manual = 'manual',
 }
-export interface CrowdModeUpdate {
-	mode: CrowdMode
-}
 
 export const HOT_AIR_BALLON_START = 'hotAirBallonStart'
 
