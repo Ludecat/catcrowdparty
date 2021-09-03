@@ -167,7 +167,7 @@ let state: IState = {
 	},
 }
 
-const updateCrowd = (state: IState, crowdUpdate: ICrowdState): IState => {
+const updateCrowd = (state: IState, crowdUpdate: Partial<ICrowdState>): IState => {
 	return {
 		...state,
 		crowd: {
@@ -177,7 +177,7 @@ const updateCrowd = (state: IState, crowdUpdate: ICrowdState): IState => {
 	}
 }
 
-const updateAnnouncer = (state: IState, annoucerUpdate: IModeratorState): IState => {
+const updateAnnouncer = (state: IState, annoucerUpdate: Partial<IModeratorState>): IState => {
 	return {
 		...state,
 		moderator: {
@@ -187,7 +187,7 @@ const updateAnnouncer = (state: IState, annoucerUpdate: IModeratorState): IState
 	}
 }
 
-const updateBallon = (state: IState, ballonUpdate: IBallonState): IState => {
+const updateBallon = (state: IState, ballonUpdate: Partial<IBallonState>): IState => {
 	return {
 		...state,
 		ballon: {
