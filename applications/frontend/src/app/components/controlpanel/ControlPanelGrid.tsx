@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useState } from 'react'
 import {
-	ANNOUNCER_UPDATE,
+	MODERATOR_UPDATE,
 	BALLON_UPDATE,
 	CrowdModeType,
 	CROWD_CROUCH,
@@ -10,7 +10,7 @@ import {
 	CROWD_UPDATE,
 	HotAirBallonVationsValues,
 	HOT_AIR_BALLON_START,
-	IAnnouncerState,
+	IModeratorState,
 	IBallonState,
 	ICrowdState,
 } from '@ccp/common/shared'
@@ -187,10 +187,10 @@ export const ControlPanelGrid = () => {
 					<Button
 						disabled={!layersActive['ccp-checkbox-moderator']}
 						onClick={() => {
-							const updatedAnnouncerState: Partial<IAnnouncerState> = {
+							const updatedModeratorState: Partial<IModeratorState> = {
 								message: moderatorMessage,
 							}
-							socket?.emit(ANNOUNCER_UPDATE, updatedAnnouncerState)
+							socket?.emit(MODERATOR_UPDATE, updatedModeratorState)
 						}}
 					>
 						<GrUpdate size={16} />
@@ -224,20 +224,20 @@ export const ControlPanelGrid = () => {
 					id="ccp-checkbox-moderator"
 					value="ccp-checkbox-moderator"
 					onChange={(e) => {
-						let updatedAnnouncerState: Partial<IAnnouncerState>
+						let updatedModeratorState: Partial<IModeratorState>
 						if (e.currentTarget.checked) {
 							setCurrentLayer(e, true)
-							updatedAnnouncerState = {
+							updatedModeratorState = {
 								message: moderatorMessage,
 								visibility: true,
 							}
 						} else {
 							setCurrentLayer(e, false)
-							updatedAnnouncerState = {
+							updatedModeratorState = {
 								visibility: false,
 							}
 						}
-						socket?.emit(ANNOUNCER_UPDATE, updatedAnnouncerState)
+						socket?.emit(MODERATOR_UPDATE, updatedModeratorState)
 					}}
 					description="Moderator"
 				/>

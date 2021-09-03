@@ -1,7 +1,7 @@
 import '@ccp/common/env'
 import { createServer } from 'http'
 import {
-	ANNOUNCER_UPDATE,
+	MODERATOR_UPDATE,
 	BALLON_UPDATE,
 	AudioInputValue,
 	AUDIO_INPUT_VALUE_UPDATE,
@@ -18,7 +18,7 @@ import {
 	HOT_AIR_BALLON_HIDE,
 	HOT_AIR_BALLON_SHOW,
 	HOT_AIR_BALLON_START,
-	IAnnouncerState,
+	IModeratorState,
 	IBallonState,
 	ICrowdState,
 	IState,
@@ -143,7 +143,7 @@ io.on('connection', (socket) => {
 	})
 
 	socket.on(CROWD_UPDATE, (crowdUpdate: ICrowdState) => updateAndEmit(updateCrowd, crowdUpdate))
-	socket.on(ANNOUNCER_UPDATE, (announcerUpdate: IAnnouncerState) => updateAndEmit(updateAnnouncer, announcerUpdate))
+	socket.on(MODERATOR_UPDATE, (announcerUpdate: IModeratorState) => updateAndEmit(updateAnnouncer, announcerUpdate))
 	socket.on(BALLON_UPDATE, (ballonUpdate: IBallonState) => updateAndEmit(updateBallon, ballonUpdate))
 })
 
@@ -157,7 +157,7 @@ let state: IState = {
 		intensity: 0,
 		visibility: true,
 	},
-	announcer: {
+	moderator: {
 		message: '',
 		visibility: false,
 	},
@@ -176,11 +176,11 @@ const updateCrowd = (state: IState, crowdUpdate: ICrowdState): IState => {
 	}
 }
 
-const updateAnnouncer = (state: IState, annoucerUpdate: IAnnouncerState): IState => {
+const updateAnnouncer = (state: IState, annoucerUpdate: IModeratorState): IState => {
 	return {
 		...state,
-		announcer: {
-			...state.announcer,
+		moderator: {
+			...state.moderator,
 			...annoucerUpdate,
 		},
 	}

@@ -48,7 +48,7 @@ export interface AudioInputValue {
 
 export const STATE_UPDATE = 'stateUpdate'
 export const CROWD_UPDATE = 'crowdUpdate'
-export const ANNOUNCER_UPDATE = 'announcerUpdate'
+export const MODERATOR_UPDATE = 'moderatorUpdate'
 export const BALLON_UPDATE = 'ballonUpdate'
 
 export interface ICrowdState {
@@ -57,7 +57,7 @@ export interface ICrowdState {
 	visibility: boolean
 }
 
-export interface IAnnouncerState {
+export interface IModeratorState {
 	message: string
 	visibility: boolean
 }
@@ -68,6 +68,6 @@ export interface IBallonState {
 
 export interface IState {
 	crowd: ICrowdState
-	announcer: IAnnouncerState
+	moderator: IModeratorState
 	ballon: IBallonState
 }

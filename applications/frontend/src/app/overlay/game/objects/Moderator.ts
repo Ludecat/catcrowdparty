@@ -44,12 +44,12 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 
 		socket.on(STATE_UPDATE, (state: IState) => {
 			this.text.destroy()
-			if (state.announcer.visibility) {
-				this.text = this.createBubbleText(scene, state.announcer.message, BUBBLE_WIDTH, BUBBLE_HEIGHT)
+			if (state.moderator.visibility) {
+				this.text = this.createBubbleText(scene, state.moderator.message, BUBBLE_WIDTH, BUBBLE_HEIGHT)
 			}
 
-			this.setVisible(state.announcer.visibility)
-			this.bubble.setVisible(state.announcer.visibility)
+			this.setVisible(state.moderator.visibility)
+			this.bubble.setVisible(state.moderator.visibility)
 		})
 
 		scene.add.existing(this)
