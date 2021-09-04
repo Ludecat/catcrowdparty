@@ -55,7 +55,9 @@ io.on('connection', (socket) => {
 	/**
 	 * HOT AIR BALLOON
 	 */
-	socket.on(HOT_AIR_BALLON_UPDATE, (hotAirBallonUpdate: HotAirBallonState) => updateAndEmit(updateHotAirBallon, hotAirBallonUpdate))
+	socket.on(HOT_AIR_BALLON_UPDATE, (hotAirBallonUpdate: HotAirBallonState) =>
+		updateAndEmit(updateHotAirBallon, hotAirBallonUpdate)
+	)
 
 	socket.on(HOT_AIR_BALLON_START, (data: HotAirBalloonVariation) => {
 		logger.info(`received HOT_AIR_BALLON_START`)
