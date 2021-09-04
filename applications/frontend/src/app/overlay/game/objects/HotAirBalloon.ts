@@ -20,7 +20,7 @@ export const HOT_AIR_BALLOON_STATE_KEY = {
 
 export class HotAirBalloon extends Phaser.GameObjects.Sprite {
 	public socket: Socket
-	private velocity: number = 200
+	private velocity = 200
 
 	constructor(scene: Phaser.Scene, socket: Socket, options: HotAirBallonProps) {
 		super(scene, options.x, options.y, options.variation)

@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import OverlayScene from './scenes/OverlayScene'
+import { OverlayScene } from './scenes/OverlayScene'
 
 export const gameConfig = {
 	type: Phaser.AUTO,
