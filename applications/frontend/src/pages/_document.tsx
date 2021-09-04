@@ -20,6 +20,7 @@ export default class MyDocument extends Document {
 		try {
 			ctx.renderPage = () =>
 				view({
+					// eslint-disable-next-line react/display-name
 					enhanceApp: (App) => (props) => sheet.collectStyles(<App {...props} />),
 				})
 

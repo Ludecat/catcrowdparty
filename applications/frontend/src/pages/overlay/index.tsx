@@ -11,7 +11,7 @@ export interface OverlayPageProps {
 }
 
 const OverlayWrapper = styled.div`
-	background-image: url('/ccp_bg_placeholder.png');
+	// background-image: url('/ccp_bg_placeholder.png');
 	background-repeat: no-repeat;
 	width: 1920px;
 	height: 1080px;

@@ -150,7 +150,7 @@ export const ControlPanelGrid = () => {
 
 	useEffect(() => {
 		socket?.emit(CROWD_MODE_UPDATE, { mode: crowdMode })
-	}, [crowdMode])
+	}, [crowdMode, socket])
 
 	const isDisabledManuelCrowdButton = !layersActive['ccp-checkbox-crowd'] || crowdMode === 'auto'
 	return (

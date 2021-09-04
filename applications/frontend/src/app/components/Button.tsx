@@ -35,7 +35,7 @@ const StyledButton = styled.button`
 	}
 `
 
-export const Button = ({ title, children, value, disabled, ...props }: ButtonProps) => {
+export const Button = ({ children, value, disabled, ...props }: ButtonProps) => {
 	return (
 		<StyledButton type="button" {...props} value={value} disabled={disabled}>
 			{children}

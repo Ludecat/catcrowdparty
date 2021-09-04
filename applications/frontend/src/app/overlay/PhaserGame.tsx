@@ -18,7 +18,7 @@ const PhaserGame = () => {
 		if (isMounted && socket?.connected) {
 			new Game(socket, 1080, 1920)
 		}
-	}, [isMounted])
+	}, [isMounted, socket])
 
 	return <PhaserDiv id="ccp-overlay" />
 }

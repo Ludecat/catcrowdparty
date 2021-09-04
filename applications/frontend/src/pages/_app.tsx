@@ -11,6 +11,8 @@ import 'react-toastify/dist/ReactToastify.css'
 
 function App({ Component, pageProps }: AppProps) {
 	// Casting to any workaround for static prop
+
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const Layout = (Component as any).layout ? (Component as any).layout : React.Fragment
 
 	return (

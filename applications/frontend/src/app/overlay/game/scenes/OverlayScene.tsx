@@ -57,5 +57,4 @@ export default class OverlayScene extends Phaser.Scene {
 		new HotAirBalloon(this, socket, { x: -100, y: 400, variation: 'fh-salzburg' })
 		console.log(`${SCENES.OVERLAY}: create()`)
 	}
-	update() {}
 }

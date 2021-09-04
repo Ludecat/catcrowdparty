@@ -49,21 +49,21 @@ const AudioPage: NextPage<OverlayPageProps> = (props: OverlayPageProps) => {
 		return mediaDevices.filter((device) => device.kind === 'audioinput')
 	}, [])
 
-	useEffect(() => {
-		resizeCanvas()
-		// https://developer.mozilla.org/en-US/docs/Web/API/Window/focus
-		window.focus()
-		window.addEventListener('resize', resizeCanvas)
-		return () => window.removeEventListener('resize', resizeCanvas)
-	}, [])
-
 	const resizeCanvas = useCallback(() => {
 		if (canvasRef.current) {
 			canvasRef.current.width = window.innerWidth
 			canvasRef.current.height = window.innerHeight - dropDownHeight
 		}
 		window.focus()
-	}, [canvasRef.current])
+	}, [canvasRef])
+
+	useEffect(() => {
+		resizeCanvas()
+		// https://developer.mozilla.org/en-US/docs/Web/API/Window/focus
+		window.focus()
+		window.addEventListener('resize', resizeCanvas)
+		return () => window.removeEventListener('resize', resizeCanvas)
+	}, [resizeCanvas])
 
 	useEffect(() => {
 		const setAudioInputDevices = async () => {
@@ -87,7 +87,7 @@ const AudioPage: NextPage<OverlayPageProps> = (props: OverlayPageProps) => {
 			}
 		}
 		setAudioInputDevices()
-	}, [isMounted, setIsAudioContextEnabled, setInputMediaDevices, setCurrentInputdevice])
+	}, [isMounted, setIsAudioContextEnabled, setInputMediaDevices, setCurrentInputdevice, getAudioInputDevices, socket])
 
 	useEffect(() => {
 		if (currentInputDevice) {
