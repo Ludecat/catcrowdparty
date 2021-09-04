@@ -3,16 +3,17 @@ import { styled } from '../styles/Theme'
 
 interface CheckBoxProps extends React.HTMLAttributes<HTMLInputElement> {
 	value?: string
+	checked: boolean
 	description?: string
 }
 
 /**
  * Inspired by https://codesandbox.io/s/6v7n1vr8yn?file=/src/index.js
  */
-export const CheckBoxToggle = ({ description, ...props }: CheckBoxProps) => {
+export const CheckBoxToggle = ({ description, checked, ...props }: CheckBoxProps) => {
 	return (
 		<CheckBoxWrapper>
-			<CheckBox {...props} type="checkbox" defaultChecked={true} />
+			<CheckBox {...props} type="checkbox" checked={checked} />
 			<CheckBoxLabel htmlFor={props.id} />
 			<CheckBoxDescription>{description}</CheckBoxDescription>
 		</CheckBoxWrapper>
@@ -28,16 +29,16 @@ const CheckBoxDescription = styled.p`
 const CheckBoxWrapper = styled.div`
 	width: 100%;
 	position: relative;
+	height: 24px;
+	margin: 12px 0;
 `
 const CheckBoxLabel = styled.label`
 	position: absolute;
 	top: 0;
 	left: 0;
 	width: 42px;
-	height: 26px;
 	border-radius: 15px;
 	background: ${(p) => p.theme.color.decentBeton};
-	cursor: pointer;
 	&::after {
 		content: '';
 		display: block;
@@ -55,7 +56,10 @@ const CheckBox = styled.input`
 	z-index: 1;
 	border-radius: 15px;
 	width: 42px;
-	height: 26px;
+	height: 24px;
+	margin: 0;
+	position: absolute;
+	cursor: pointer;
 	&:checked + ${CheckBoxLabel} {
 		background: ${(p) => p.theme.color.ludecatyellow};
 		&::after {

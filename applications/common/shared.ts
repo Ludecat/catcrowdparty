@@ -2,38 +2,28 @@
 export const SOCKET_URL = 'http://localhost:5000'
 
 // SOCKET IO EVENTS
-export const CROWD_IDLE = 'crowdIdle'
-export const CROWD_CROUCH = 'crowdCrouch'
-export const CROWD_RUN = 'crowdRun'
-export const CROWD_SHOW = 'crowdShow'
-export const CROWD_HIDE = 'crowdHide'
-export const CROWD_MODE_UPDATE = 'crowdModeUpdate'
+export const STATE_UPDATE = 'stateUpdate'
+export const REQUEST_STATE = 'requestState'
+export const CROWD_UPDATE = 'crowdUpdate'
+export const MODERATOR_UPDATE = 'moderatorUpdate'
+export const HOT_AIR_BALLON_UPDATE = 'hotAirBallonUpdate'
+export const EMOTES_UPDATE = 'emotesUpdate'
+export const BUBBLES_UPDATE = 'bubblesUpdate'
 
 export const CROWD_CROUCH_AUDIO_VALUE_THRESHOLD = 50
 export const CROWD_RUN_AUDIO_VALUE_THRESHOLD = 150
 
-export type CrowdModeType = 'auto' | 'manuel'
-export interface CrowdMode {
-	mode: CrowdModeType
+export enum CrowdMode {
+	auto = 'auto',
+	manual = 'manual',
 }
 
-export const MODERATOR_SHOW = 'moderatorShow'
-export const MODERATOR_HIDE = 'moderatorHide'
-export const MODERATOR_MESSAGE_UPDATE = 'moderatorMessageUpdate'
-
-export interface ModeratorMessage {
-	message: string
-}
-
-export const HOT_AIR_BALLON_SHOW = 'hodeAirBalloonShow'
-export const HOT_AIR_BALLON_HIDE = 'hodeAirBalloonHide'
 export const HOT_AIR_BALLON_START = 'hotAirBallonStart'
-
 export interface HotAirBalloonVariation {
-	variation: HotAirBalloonVariations
+	variation: HotAirBalloonVariationsType
 }
 
-export type HotAirBalloonVariations = 'ludecat' | 'fritz-cola' | 'fh-salzburg'
+export type HotAirBalloonVariationsType = 'ludecat' | 'fritz-cola' | 'fh-salzburg'
 export const HotAirBallonVationsValues = {
 	ludecat: 'ludecat',
 	fritzCola: 'fritz-cola',
@@ -44,4 +34,48 @@ export const AUDIO_INPUT_VALUE_UPDATE = 'audioInputValueUpdate'
 
 export interface AudioInputValue {
 	averageFrequencyPower: number
+}
+
+// State
+export interface CrowdState {
+	mode: CrowdMode
+	intensity: number
+	visibility: boolean
+}
+
+export interface ModeratorState {
+	message: string
+	visibility: boolean
+}
+
+export interface HotAirBallonState {
+	visibility: boolean
+}
+
+export interface EmotesState {
+	visibility: boolean
+}
+
+export interface BubblesState {
+	visibility: boolean
+}
+
+export interface GlobalState {
+	crowd: CrowdState
+	moderator: ModeratorState
+	hotAirballon: HotAirBallonState
+	emotes: EmotesState
+	bubbles: BubblesState
+}
+
+export interface CCPSocketEventsMap {
+	[CROWD_UPDATE]: (crowdUpdate: Partial<CrowdState>) => void
+	[MODERATOR_UPDATE]: (moderatorUpdate: Partial<ModeratorState>) => void
+	[HOT_AIR_BALLON_UPDATE]: (hotAirBallonUpdate: Partial<HotAirBallonState>) => void
+	[EMOTES_UPDATE]: (emotesUpdate: Partial<EmotesState>) => void
+	[BUBBLES_UPDATE]: (bubblesUpdate: Partial<BubblesState>) => void
+	[AUDIO_INPUT_VALUE_UPDATE]: (data: AudioInputValue) => void
+	[HOT_AIR_BALLON_START]: (data: HotAirBalloonVariation) => void
+	[STATE_UPDATE]: (state: GlobalState) => void
+	[REQUEST_STATE]: () => void
 }

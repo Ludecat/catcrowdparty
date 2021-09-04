@@ -1,6 +1,5 @@
 import Phaser from 'phaser'
-import { Socket } from 'socket.io-client'
-import { CROWD_CROUCH, CROWD_HIDE, CROWD_IDLE, CROWD_RUN, CROWD_SHOW } from '@ccp/common/shared'
+import { CrowdState, CROWD_CROUCH_AUDIO_VALUE_THRESHOLD, CROWD_RUN_AUDIO_VALUE_THRESHOLD } from '@ccp/common/shared'
 
 interface DudeProps {
 	x: number
@@ -15,9 +14,7 @@ export const DUDE_STATE_KEY = {
 }
 
 export class Dude extends Phaser.GameObjects.Sprite {
-	public socket: Socket
-
-	constructor(scene: Phaser.Scene, socket: Socket, options: DudeProps) {
+	constructor(scene: Phaser.Scene, crowdState: CrowdState, options: DudeProps) {
 		super(scene, options.x, options.y, DUDE_SPRITESHEET_KEY)
 
 		this.anims.create({
@@ -46,35 +43,38 @@ export class Dude extends Phaser.GameObjects.Sprite {
 		})
 
 		this.setScale(2)
-
-		/**
-		 * Suggestion
-		 * Get initial state from backend
-		 */
-		this.play({ key: DUDE_STATE_KEY.IDLE, repeat: -1 })
-
-		socket.on(CROWD_IDLE, () => {
-			console.log('received CROWD_IDLE')
-			this.play({ key: DUDE_STATE_KEY.IDLE, repeat: -1 })
-		})
-		socket.on(CROWD_CROUCH, () => {
-			console.log('received CROWD_CROUCH')
-			this.play({ key: DUDE_STATE_KEY.CROUCH, repeat: -1 })
-		})
-		socket.on(CROWD_RUN, () => {
-			console.log('received CROWD_RUN')
-			this.play({ key: DUDE_STATE_KEY.RUN, repeat: -1 })
-		})
-		socket.on(CROWD_SHOW, () => {
-			console.log('received CROWD_SHOW')
-			this.setVisible(true)
-		})
-		socket.on(CROWD_HIDE, () => {
-			console.log('received CROWD_HIDE')
-			this.setVisible(false)
-		})
-
+		this.handleState(crowdState)
 		scene.add.existing(this)
-		this.socket = socket
+	}
+
+	public handleState(state: CrowdState) {
+		if (state.intensity >= CROWD_RUN_AUDIO_VALUE_THRESHOLD) {
+			this.run()
+		} else if (state.intensity >= CROWD_CROUCH_AUDIO_VALUE_THRESHOLD) {
+			this.crouch()
+		} else {
+			this.idle()
+		}
+		this.setVisible(state.visibility)
+	}
+
+	public run() {
+		if (this.anims.currentAnim && this.anims.currentAnim.key === DUDE_STATE_KEY.RUN) return
+		this.play({ key: DUDE_STATE_KEY.RUN, repeat: -1 })
+	}
+
+	public crouch() {
+		if (this.anims.currentAnim && this.anims.currentAnim.key === DUDE_STATE_KEY.CROUCH) return
+		this.play({ key: DUDE_STATE_KEY.CROUCH, repeat: -1 })
+	}
+
+	public idle() {
+		if (this.anims.currentAnim && this.anims.currentAnim.key === DUDE_STATE_KEY.IDLE) return
+		this.play({ key: DUDE_STATE_KEY.IDLE, repeat: -1 })
+	}
+
+	public setIsVisible(visible: boolean) {
+		if (this.visible === visible) return
+		this.setVisible(visible)
 	}
 }

@@ -1,19 +1,21 @@
 import React, { FunctionComponent, useState } from 'react'
 import {
-	CrowdModeType,
-	CROWD_CROUCH,
-	CROWD_HIDE,
-	CROWD_IDLE,
-	CROWD_MODE_UPDATE,
-	CROWD_RUN,
-	CROWD_SHOW,
+	MODERATOR_UPDATE,
+	HOT_AIR_BALLON_UPDATE,
+	CROWD_UPDATE,
 	HotAirBallonVationsValues,
-	HOT_AIR_BALLON_HIDE,
-	HOT_AIR_BALLON_SHOW,
 	HOT_AIR_BALLON_START,
-	MODERATOR_HIDE,
-	MODERATOR_MESSAGE_UPDATE,
-	MODERATOR_SHOW,
+	ModeratorState,
+	HotAirBallonState,
+	CrowdState,
+	CrowdMode,
+	CROWD_CROUCH_AUDIO_VALUE_THRESHOLD,
+	CROWD_RUN_AUDIO_VALUE_THRESHOLD,
+	GlobalState,
+	EMOTES_UPDATE,
+	EmotesState,
+	BUBBLES_UPDATE,
+	HotAirBalloonVariationsType,
 } from '@ccp/common/shared'
 import { useSocket } from '../../hooks/useSocket'
 import { styled } from '../../styles/Theme'
@@ -24,7 +26,6 @@ import { GrUpdate } from 'react-icons/gr'
 import { useCallback } from 'react'
 import { toast } from 'react-toastify'
 import { longestWordCount } from '../../util/utils'
-import { useEffect } from 'react'
 
 const Grid = styled.div`
 	display: grid;
@@ -99,35 +100,13 @@ const GridComponent: FunctionComponent<GridComponentProps> = (props) => {
 	)
 }
 
-interface Layers {
-	[key: string]: boolean
-}
-
 const longestWordMaxThreshold = 15
 const maxCharThreshold = 128
 const maxLinesThreshold = 8
 
-export const ControlPanelGrid = () => {
+export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> = ({ globalState }) => {
 	const { socket } = useSocket()
-	const [moderatorMessage, setModeratorMessage] = useState('')
-	const [crowdMode, setCrowdMode] = useState<CrowdModeType>('manuel')
-	const [layersActive, setLayersActive] = useState<Layers>({
-		'ccp-checkbox-air-ballon': true,
-		'ccp-checkbox-moderator': true,
-		'ccp-checkbox-crowd': true,
-		'ccp-checkbox-emotes': true,
-		'ccp-checkbox-speech-bubble': true,
-	})
-
-	const setCurrentLayer = useCallback(
-		(e: React.FormEvent<HTMLInputElement>, isShown: boolean) => {
-			setLayersActive({
-				...layersActive,
-				[e.currentTarget.value]: isShown,
-			})
-		},
-		[layersActive, setLayersActive]
-	)
+	const [moderatorMessage, setModeratorMessage] = useState(globalState.moderator.message)
 
 	const onModeratorMessageChange = useCallback(
 		(e: React.FormEvent<HTMLTextAreaElement>) => {
@@ -148,11 +127,93 @@ export const ControlPanelGrid = () => {
 		[setModeratorMessage]
 	)
 
-	useEffect(() => {
-		socket?.emit(CROWD_MODE_UPDATE, { mode: crowdMode })
-	}, [crowdMode, socket])
+	const setAndEmitCrowdMode = useCallback(
+		(e: React.MouseEvent<HTMLButtonElement>) => {
+			const newCrowdMode = e.currentTarget.value === CrowdMode.manual ? CrowdMode.auto : CrowdMode.manual
+			socket?.emit(CROWD_UPDATE, {
+				mode: newCrowdMode,
+			})
+		},
+		[socket]
+	)
 
-	const isDisabledManuelCrowdButton = !layersActive['ccp-checkbox-crowd'] || crowdMode === 'auto'
+	const setAndEmitCrowdIntensity = useCallback(
+		(e: React.MouseEvent<HTMLButtonElement>) => {
+			socket?.emit(CROWD_UPDATE, {
+				intensity: parseInt(e.currentTarget.value, 10),
+			})
+		},
+		[socket]
+	)
+
+	const setAndEmitModeratorMessage = useCallback(() => {
+		socket?.emit(MODERATOR_UPDATE, {
+			message: moderatorMessage,
+		})
+	}, [socket, moderatorMessage])
+
+	const setAndEmitModeratorVisilibity = useCallback(
+		(e: React.MouseEvent<HTMLInputElement>) => {
+			let updatedModeratorState: Partial<ModeratorState>
+			if (e.currentTarget.checked) {
+				updatedModeratorState = {
+					message: moderatorMessage,
+					visibility: true,
+				}
+			} else {
+				updatedModeratorState = {
+					visibility: false,
+				}
+			}
+			socket?.emit(MODERATOR_UPDATE, updatedModeratorState)
+		},
+		[socket, moderatorMessage]
+	)
+
+	const setAndEmitHotAirBalloonVisibility = useCallback(
+		(e: React.MouseEvent<HTMLInputElement>) => {
+			socket?.emit(HOT_AIR_BALLON_UPDATE, {
+				visibility: e.currentTarget.checked,
+			})
+		},
+		[socket]
+	)
+
+	const setAndEmitCrowdVisilibity = useCallback(
+		(e: React.MouseEvent<HTMLInputElement>) => {
+			socket?.emit(CROWD_UPDATE, {
+				visibility: e.currentTarget.checked,
+			})
+		},
+		[socket]
+	)
+
+	const setAndEmitEmotesVisibility = useCallback(
+		(e: React.MouseEvent<HTMLInputElement>) => {
+			socket?.emit(EMOTES_UPDATE, {
+				visibility: e.currentTarget.checked,
+			})
+		},
+		[socket]
+	)
+
+	const setAndEmitBubblesVisibility = useCallback(
+		(e: React.MouseEvent<HTMLInputElement>) => {
+			socket?.emit(BUBBLES_UPDATE, {
+				visibility: e.currentTarget.checked,
+			})
+		},
+		[socket]
+	)
+
+	const setAndEmitBalloonTrigger = useCallback(
+		(e: React.MouseEvent<HTMLButtonElement>) => {
+			socket?.emit(HOT_AIR_BALLON_START, { variation: e.currentTarget.value as HotAirBalloonVariationsType })
+		},
+		[socket]
+	)
+
+	const isDisabledManualCrowdButton = !globalState.crowd.visibility || globalState?.crowd.mode === 'auto'
 	return (
 		<Grid>
 			<GridItem gridArea={'header'}>
@@ -162,22 +223,26 @@ export const ControlPanelGrid = () => {
 				gridArea={'crowd-control'}
 				title="Crowd Control"
 				actions={
-					<Button
-						onClick={() => {
-							setCrowdMode(crowdMode === 'manuel' ? 'auto' : 'manuel')
-						}}
-					>
-						{crowdMode}
+					<Button value={globalState?.crowd.mode} onClick={setAndEmitCrowdMode}>
+						{globalState?.crowd.mode}
 					</Button>
 				}
 			>
-				<Button onClick={() => socket?.emit(CROWD_IDLE)} value="CROWD_IDLE" disabled={isDisabledManuelCrowdButton}>
+				<Button onClick={setAndEmitCrowdIntensity} value={'0'} disabled={isDisabledManualCrowdButton}>
 					Idle
 				</Button>
-				<Button onClick={() => socket?.emit(CROWD_CROUCH)} value="CROWD_CROUCH" disabled={isDisabledManuelCrowdButton}>
+				<Button
+					onClick={setAndEmitCrowdIntensity}
+					value={`${CROWD_CROUCH_AUDIO_VALUE_THRESHOLD}`}
+					disabled={isDisabledManualCrowdButton}
+				>
 					Crouch
 				</Button>
-				<Button onClick={() => socket?.emit(CROWD_RUN)} value="CROWD_RUN" disabled={isDisabledManuelCrowdButton}>
+				<Button
+					onClick={setAndEmitCrowdIntensity}
+					value={`${CROWD_RUN_AUDIO_VALUE_THRESHOLD}`}
+					disabled={isDisabledManualCrowdButton}
+				>
 					Run
 				</Button>
 			</GridComponent>
@@ -185,83 +250,38 @@ export const ControlPanelGrid = () => {
 				gridArea={'moderator-control'}
 				title="Moderator"
 				actions={
-					<Button
-						disabled={!layersActive['ccp-checkbox-moderator']}
-						onClick={() => {
-							socket?.emit(MODERATOR_MESSAGE_UPDATE, { message: moderatorMessage })
-						}}
-					>
+					<Button disabled={!globalState.moderator.visibility} onClick={setAndEmitModeratorMessage}>
 						<GrUpdate size={16} />
 					</Button>
 				}
 			>
 				<TextArea onChange={onModeratorMessageChange} value={moderatorMessage} />
 			</GridComponent>
+
 			<GridComponent gridArea={'layer-control'} title="Layers">
 				<CheckBoxToggle
-					id="ccp-checkbox-air-ballon"
-					value="ccp-checkbox-air-ballon"
-					onChange={(e) => {
-						if (e.currentTarget.checked) {
-							setCurrentLayer(e, true)
-							socket?.emit(HOT_AIR_BALLON_SHOW)
-						} else {
-							setCurrentLayer(e, false)
-							socket?.emit(HOT_AIR_BALLON_HIDE)
-						}
-					}}
+					checked={globalState.hotAirballon.visibility}
+					onClick={setAndEmitHotAirBalloonVisibility}
 					description="Air Ballon"
 				/>
 				<CheckBoxToggle
-					id="ccp-checkbox-moderator"
-					value="ccp-checkbox-moderator"
-					onChange={(e) => {
-						if (e.currentTarget.checked) {
-							setCurrentLayer(e, true)
-							socket?.emit(MODERATOR_SHOW, { message: moderatorMessage })
-						} else {
-							setCurrentLayer(e, false)
-							socket?.emit(MODERATOR_HIDE)
-						}
-					}}
+					checked={globalState.moderator.visibility}
+					onChange={setAndEmitModeratorVisilibity}
 					description="Moderator"
 				/>
 				<CheckBoxToggle
-					id="ccp-checkbox-crowd"
-					value="ccp-checkbox-crowd"
-					onChange={(e) => {
-						if (e.currentTarget.checked) {
-							setCurrentLayer(e, true)
-							socket?.emit(CROWD_SHOW)
-						} else {
-							setCurrentLayer(e, false)
-							socket?.emit(CROWD_HIDE)
-						}
-					}}
+					checked={globalState.crowd.visibility}
+					onChange={setAndEmitCrowdVisilibity}
 					description="Crowd"
 				/>
 				<CheckBoxToggle
-					id="ccp-checkbox-emotes"
-					value="ccp-checkbox-emotes"
-					onChange={(e) => {
-						if (e.currentTarget.checked) {
-							setCurrentLayer(e, true)
-						} else {
-							setCurrentLayer(e, false)
-						}
-					}}
+					checked={globalState.emotes.visibility}
+					onChange={setAndEmitEmotesVisibility}
 					description="Emotes"
 				/>
 				<CheckBoxToggle
-					id="ccp-checkbox-speech-bubble"
-					value="ccp-checkbox-speech-bubble"
-					onChange={(e) => {
-						if (e.currentTarget.checked) {
-							setCurrentLayer(e, true)
-						} else {
-							setCurrentLayer(e, false)
-						}
-					}}
+					checked={globalState.bubbles.visibility}
+					onChange={setAndEmitBubblesVisibility}
 					description="Twitch Speech Bubble"
 				/>
 			</GridComponent>
@@ -270,22 +290,22 @@ export const ControlPanelGrid = () => {
 			</GridComponent>
 			<GridComponent gridArea={'triggers-control'} title="Triggers">
 				<Button
-					onClick={(e) => socket?.emit(HOT_AIR_BALLON_START, { variation: e.currentTarget.value })}
-					disabled={!layersActive['ccp-checkbox-air-ballon']}
+					onClick={setAndEmitBalloonTrigger}
+					disabled={!globalState.hotAirballon.visibility}
 					value={HotAirBallonVationsValues.ludecat}
 				>
 					LudeCat Air Ballon
 				</Button>
 				<Button
-					onClick={(e) => socket?.emit(HOT_AIR_BALLON_START, { variation: e.currentTarget.value })}
-					disabled={!layersActive['ccp-checkbox-air-ballon']}
+					onClick={setAndEmitBalloonTrigger}
+					disabled={!globalState.hotAirballon.visibility}
 					value={HotAirBallonVationsValues.fritzCola}
 				>
 					Fritz Cola Ballon
 				</Button>
 				<Button
-					onClick={(e) => socket?.emit(HOT_AIR_BALLON_START, { variation: e.currentTarget.value })}
-					disabled={!layersActive['ccp-checkbox-air-ballon']}
+					onClick={setAndEmitBalloonTrigger}
+					disabled={!globalState.hotAirballon.visibility}
 					value={HotAirBallonVationsValues.fhSalzburg}
 				>
 					FH Ballon
