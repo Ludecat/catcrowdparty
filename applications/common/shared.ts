@@ -19,12 +19,11 @@ export enum CrowdMode {
 }
 
 export const HOT_AIR_BALLON_START = 'hotAirBallonStart'
-
 export interface HotAirBalloonVariation {
-	variation: HotAirBalloonVariations
+	variation: HotAirBalloonVariationsType
 }
 
-export type HotAirBalloonVariations = 'ludecat' | 'fritz-cola' | 'fh-salzburg'
+export type HotAirBalloonVariationsType = 'ludecat' | 'fritz-cola' | 'fh-salzburg'
 export const HotAirBallonVationsValues = {
 	ludecat: 'ludecat',
 	fritzCola: 'fritz-cola',
@@ -67,4 +66,16 @@ export interface GlobalState {
 	hotAirballon: HotAirBallonState
 	emotes: EmotesState
 	bubbles: BubblesState
+}
+
+export interface CCPSocketEventsMap {
+	[CROWD_UPDATE]: (crowdUpdate: Partial<CrowdState>) => void
+	[MODERATOR_UPDATE]: (moderatorUpdate: Partial<ModeratorState>) => void
+	[HOT_AIR_BALLON_UPDATE]: (hotAirBallonUpdate: Partial<HotAirBallonState>) => void
+	[EMOTES_UPDATE]: (emotesUpdate: Partial<EmotesState>) => void
+	[BUBBLES_UPDATE]: (bubblesUpdate: Partial<BubblesState>) => void
+	[AUDIO_INPUT_VALUE_UPDATE]: (data: AudioInputValue) => void
+	[HOT_AIR_BALLON_START]: (data: HotAirBalloonVariation) => void
+	[STATE_UPDATE]: (state: GlobalState) => void
+	[REQUEST_STATE]: () => void
 }

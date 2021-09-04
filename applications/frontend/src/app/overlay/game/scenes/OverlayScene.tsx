@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
 import { Socket } from 'socket.io-client'
 import {
+	CCPSocketEventsMap,
 	GlobalState,
 	HotAirBallonVationsValues,
 	HotAirBalloonVariation,
@@ -22,7 +23,7 @@ export class OverlayScene extends Phaser.Scene {
 		super({ key: SCENES.OVERLAY })
 	}
 
-	init(config: { socket: Socket; initialState: GlobalState }) {
+	init(config: { socket: Socket<CCPSocketEventsMap>; initialState: GlobalState }) {
 		config.socket.on(STATE_UPDATE, (state: GlobalState) => {
 			for (const dude of this.crowd) {
 				dude.handleState(state.crowd)
@@ -72,7 +73,7 @@ export class OverlayScene extends Phaser.Scene {
 		console.log(`${SCENES.OVERLAY}: preload()`)
 	}
 
-	create(config: { socket: Socket; initialState: GlobalState }) {
+	create(config: { socket: Socket<CCPSocketEventsMap>; initialState: GlobalState }) {
 		const { socket, initialState } = config
 
 		for (let i = 0; i < 23; i++) {

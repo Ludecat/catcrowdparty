@@ -1,5 +1,5 @@
 import { Socket } from 'socket.io-client'
-import { AUDIO_INPUT_VALUE_UPDATE } from '@ccp/common/shared'
+import { AUDIO_INPUT_VALUE_UPDATE, CCPSocketEventsMap } from '@ccp/common/shared'
 import { getMediaStreamByDeviceId, resumeMediaPlay } from '../util/utils'
 
 export class AudioManager {
@@ -11,11 +11,11 @@ export class AudioManager {
 	private canvas: HTMLCanvasElement
 	public canvasContext: CanvasRenderingContext2D
 
-	private socket: Socket
+	private socket: Socket<CCPSocketEventsMap>
 	private intervalId: number | undefined
 	private currentFrequenciesPowerBatch: number[] = [0]
 
-	constructor(socket: Socket, canvas: HTMLCanvasElement, initialDeviceId: string) {
+	constructor(socket: Socket<CCPSocketEventsMap>, canvas: HTMLCanvasElement, initialDeviceId: string) {
 		this.audioContext = new window.AudioContext()
 		this.canvas = canvas
 		this.socket = socket

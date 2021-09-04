@@ -19,17 +19,18 @@ import {
 	BubblesState,
 	BUBBLES_UPDATE,
 	EMOTES_UPDATE,
+	CCPSocketEventsMap,
 } from '@ccp/common'
 import { logger } from './logger'
 import { Server } from 'socket.io'
 
 const httpServer = createServer()
-const io = new Server(httpServer, {})
+const io = new Server<CCPSocketEventsMap>(httpServer, {})
 
 io.on('connection', (socket) => {
 	logger.info(`new connection from ${socket.id}!`)
 
-	socket.on(CROWD_UPDATE, (crowdUpdate: CrowdState) => updateAndEmit(updateCrowd, crowdUpdate))
+	socket.on(CROWD_UPDATE, (crowdUpdate: Partial<CrowdState>) => updateAndEmit(updateCrowd, crowdUpdate))
 	socket.on(AUDIO_INPUT_VALUE_UPDATE, (data: AudioInputValue) => {
 		logger.debug(`received AUDIO_INPUT_VALUE_UPDATE ${data.averageFrequencyPower}`)
 
@@ -43,16 +44,18 @@ io.on('connection', (socket) => {
 		}
 		updateAndEmit(updateCrowd, crowdStateUpdate)
 	})
-	socket.on(MODERATOR_UPDATE, (moderatorUpdate: ModeratorState) => updateAndEmit(updateModerator, moderatorUpdate))
-	socket.on(HOT_AIR_BALLON_UPDATE, (hotAirBallonUpdate: HotAirBallonState) =>
+	socket.on(MODERATOR_UPDATE, (moderatorUpdate: Partial<ModeratorState>) =>
+		updateAndEmit(updateModerator, moderatorUpdate)
+	)
+	socket.on(HOT_AIR_BALLON_UPDATE, (hotAirBallonUpdate: Partial<HotAirBallonState>) =>
 		updateAndEmit(updateHotAirBallon, hotAirBallonUpdate)
 	)
 	socket.on(HOT_AIR_BALLON_START, (data: HotAirBalloonVariation) => {
 		logger.info(`received HOT_AIR_BALLON_START`)
 		io.emit(HOT_AIR_BALLON_START, data)
 	})
-	socket.on(EMOTES_UPDATE, (emotesUpdate: EmotesState) => updateAndEmit(updateEmotes, emotesUpdate))
-	socket.on(BUBBLES_UPDATE, (bubblesUpdate: BubblesState) => updateAndEmit(updateBubbles, bubblesUpdate))
+	socket.on(EMOTES_UPDATE, (emotesUpdate: Partial<EmotesState>) => updateAndEmit(updateEmotes, emotesUpdate))
+	socket.on(BUBBLES_UPDATE, (bubblesUpdate: Partial<BubblesState>) => updateAndEmit(updateBubbles, bubblesUpdate))
 	socket.on('disconnect', (reason) => {
 		logger.info(`socket ${socket.id} disconnected with reason: ${reason}`)
 	})

@@ -1,10 +1,10 @@
 import Phaser from 'phaser'
-import { HotAirBalloonVariation, HotAirBalloonVariations, HotAirBallonState } from '@ccp/common/shared'
+import { HotAirBalloonVariation, HotAirBalloonVariationsType, HotAirBallonState } from '@ccp/common/shared'
 
 interface HotAirBallonProps {
 	x: number
 	y: number
-	variation: HotAirBalloonVariations
+	variation: HotAirBalloonVariationsType
 }
 
 export const HOT_AIR_BALLOON_STATE_KEY = {
@@ -13,7 +13,7 @@ export const HOT_AIR_BALLOON_STATE_KEY = {
 
 export class HotAirBalloon extends Phaser.GameObjects.Sprite {
 	private velocity = 200
-	private variation: HotAirBalloonVariations
+	private variation: HotAirBalloonVariationsType
 	private startX
 	private startY
 

@@ -15,6 +15,7 @@ import {
 	EMOTES_UPDATE,
 	EmotesState,
 	BUBBLES_UPDATE,
+	HotAirBalloonVariationsType,
 } from '@ccp/common/shared'
 import { useSocket } from '../../hooks/useSocket'
 import { styled } from '../../styles/Theme'
@@ -229,7 +230,7 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 
 	const setAndEmitBalloonTrigger = useCallback(
 		(e: React.MouseEvent<HTMLButtonElement>) => {
-			socket?.emit(HOT_AIR_BALLON_START, { variation: e.currentTarget.value })
+			socket?.emit(HOT_AIR_BALLON_START, { variation: e.currentTarget.value as HotAirBalloonVariationsType })
 		},
 		[socket]
 	)

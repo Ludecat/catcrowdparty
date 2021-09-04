@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react'
 import { createContext, FunctionComponent, useState } from 'react'
 import { io, Socket } from 'socket.io-client'
-import { SOCKET_URL } from '@ccp/common/shared'
+import { CCPSocketEventsMap, SOCKET_URL } from '@ccp/common/shared'
 
 export interface SockerContextState {
-	socket: Socket | null
+	socket: Socket<CCPSocketEventsMap> | null
 }
 
 const socketDefaultValue: SockerContextState = {
@@ -13,7 +13,7 @@ const socketDefaultValue: SockerContextState = {
 
 export const SocketContext = createContext<SockerContextState>(socketDefaultValue)
 export const SocketProvider: FunctionComponent = ({ children }) => {
-	const [socket, setSocket] = useState<Socket | null>(socketDefaultValue.socket)
+	const [socket, setSocket] = useState<Socket<CCPSocketEventsMap> | null>(socketDefaultValue.socket)
 
 	useEffect(() => {
 		setSocket(io(SOCKET_URL, { transports: ['websocket', 'polling'] }))
