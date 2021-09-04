@@ -33,13 +33,13 @@ export class HotAirBalloon extends Phaser.GameObjects.Sprite {
 		})
 
 		this.setScale(3)
-		this.setVisible(initialState.visibility)
-		this.idle()
+		this.handleState(initialState)
 		scene.physics.add.existing(this)
 		scene.add.existing(this)
 	}
 
 	public idle() {
+		if (this.anims.currentAnim && this.anims.currentAnim.key === HOT_AIR_BALLOON_STATE_KEY.IDLE) return
 		this.play({ key: HOT_AIR_BALLOON_STATE_KEY.IDLE, repeat: -1 })
 	}
 
@@ -51,7 +51,13 @@ export class HotAirBalloon extends Phaser.GameObjects.Sprite {
 	}
 
 	public handleState(state: HotAirBallonState) {
-		this.setVisible(state.visibility)
+		this.idle()
+		this.setIsVisible(state.visibility)
+	}
+
+	public setIsVisible(visible: boolean) {
+		if (this.visible === visible) return
+		this.setVisible(visible)
 	}
 
 	private reset(x: number, y: number) {

@@ -34,22 +34,29 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 		this.text = this.createBubbleText(scene, initialState.message, BUBBLE_WIDTH, BUBBLE_HEIGHT)
 
 		this.setScale(6)
-		this.idle()
+		this.handleState(initialState)
 		scene.add.existing(this)
 	}
 
 	public idle() {
+		if (this.anims.currentAnim && this.anims.currentAnim.key === MODERATOR_STATE_KEY.IDLE) return
 		this.play({ key: MODERATOR_STATE_KEY.IDLE, repeat: -1 })
 	}
 
 	public handleState(state: ModeratorState) {
+		this.idle()
 		this.text.destroy()
 		if (state.visibility) {
 			this.text = this.createBubbleText(this.scene, state.message, BUBBLE_WIDTH, BUBBLE_HEIGHT)
 		}
 
-		this.setVisible(state.visibility)
-		this.bubble.setVisible(state.visibility)
+		this.setIsVisible(state.visibility)
+	}
+
+	public setIsVisible(visible: boolean) {
+		if (this.visible === visible) return
+		this.setVisible(visible)
+		this.bubble.setVisible(visible)
 	}
 
 	/**

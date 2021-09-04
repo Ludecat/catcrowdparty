@@ -59,18 +59,22 @@ export class Dude extends Phaser.GameObjects.Sprite {
 	}
 
 	public run() {
+		if (this.anims.currentAnim && this.anims.currentAnim.key === DUDE_STATE_KEY.RUN) return
 		this.play({ key: DUDE_STATE_KEY.RUN, repeat: -1 })
 	}
 
 	public crouch() {
+		if (this.anims.currentAnim && this.anims.currentAnim.key === DUDE_STATE_KEY.CROUCH) return
 		this.play({ key: DUDE_STATE_KEY.CROUCH, repeat: -1 })
 	}
 
 	public idle() {
+		if (this.anims.currentAnim && this.anims.currentAnim.key === DUDE_STATE_KEY.IDLE) return
 		this.play({ key: DUDE_STATE_KEY.IDLE, repeat: -1 })
 	}
 
 	public setIsVisible(visible: boolean) {
+		if (this.visible === visible) return
 		this.setVisible(visible)
 	}
 }
