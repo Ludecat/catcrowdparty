@@ -50,7 +50,7 @@ io.on('connection', (socket) => {
 	/**
 	 * MODERATOR
 	 */
-	socket.on(MODERATOR_UPDATE, (announcerUpdate: ModeratorState) => updateAndEmit(updateAnnouncer, announcerUpdate))
+	socket.on(MODERATOR_UPDATE, (moderatorUpdate: ModeratorState) => updateAndEmit(updateModerator, moderatorUpdate))
 
 	/**
 	 * HOT AIR BALLOON
@@ -103,12 +103,12 @@ const updateCrowd = (state: State, crowdUpdate: Partial<CrowdState>): State => {
 	}
 }
 
-const updateAnnouncer = (state: State, annoucerUpdate: Partial<ModeratorState>): State => {
+const updateModerator = (state: State, moderatorUpdate: Partial<ModeratorState>): State => {
 	return {
 		...state,
 		moderator: {
 			...state.moderator,
-			...annoucerUpdate,
+			...moderatorUpdate,
 		},
 	}
 }
