@@ -3,14 +3,14 @@ import { useEffect } from 'react'
 import { useIsMounted } from '../hooks/useIsMounted'
 import { useSocket } from '../hooks/useSocket'
 import { styled } from '../styles/Theme'
-import Game from './game/Game'
+import { Game } from './game/Game'
 
 const PhaserDiv = styled.div`
 	width: 100%;
 	height: 100%;
 `
 
-const PhaserGame = () => {
+export const PhaserGame = () => {
 	const isMounted = useIsMounted()
 	const { socket } = useSocket()
 

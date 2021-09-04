@@ -1,8 +1,8 @@
 import React from 'react'
 import { NextPage, GetStaticProps } from 'next'
 import Head from 'next/head'
-import MainLayout from '../../app/layout/Layout'
-import PageWithLayoutType from '../../app/layout/PageWithLayout'
+import { MainLayout } from '../../app/layout/Layout'
+import { PageWithLayoutType } from '../../app/layout/PageWithLayout'
 import { Overlay } from '../../app/overlay/Overlay'
 import styled from 'styled-components'
 

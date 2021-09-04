@@ -6,7 +6,7 @@ import { Dude, DUDE_SPRITESHEET_KEY } from '../objects/Dude'
 import { HotAirBalloon } from '../objects/HotAirBalloon'
 import { Moderator, MODERATOR_SPRITESHEET_KEY } from '../objects/Moderator'
 
-export default class OverlayScene extends Phaser.Scene {
+export class OverlayScene extends Phaser.Scene {
 	constructor() {
 		super({ key: SCENES.OVERLAY })
 	}

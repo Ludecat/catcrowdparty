@@ -1,8 +1,6 @@
 import { NextPage } from 'next'
-import Layout from './Layout'
+import { MainLayout } from './Layout'
 
-type PageWithMainLayoutType = NextPage & { layout: typeof Layout }
+type PageWithMainLayoutType = NextPage & { layout: typeof MainLayout }
 
-type PageWithLayoutType = PageWithMainLayoutType
-
-export default PageWithLayoutType
+export type PageWithLayoutType = PageWithMainLayoutType

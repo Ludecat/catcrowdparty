@@ -17,7 +17,15 @@
 			}
 		}
 	},
-	"plugins": ["jsx-a11y", "@typescript-eslint"],
+	"plugins": ["jsx-a11y", "@typescript-eslint", "import"],
+	"overrides": [
+		{
+			"files": ["**/pages/**/*.tsx", "PhaserGame.tsx"],
+			"rules": {
+				"import/no-default-export": "off"
+			}
+		}
+	],
 	"extends": [
 		"eslint:recommended",
 		"plugin:react/recommended",
@@ -33,6 +41,7 @@
 		// e.g. "@typescript-eslint/explicit-function-return-type": "off",
 		"@typescript-eslint/no-explicit-any": "error",
 		"@typescript-eslint/explicit-module-boundary-types": "off",
-		"@typescript-eslint/no-non-null-assertion": "off"
+		"@typescript-eslint/no-non-null-assertion": "off",
+		"import/no-default-export": "error"
 	}
 }
