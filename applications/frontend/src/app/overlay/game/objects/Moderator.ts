@@ -1,6 +1,5 @@
 import Phaser from 'phaser'
-import { Socket } from 'socket.io-client'
-import { GlobalState, STATE_UPDATE } from '@ccp/common/shared'
+import { ModeratorState } from '@ccp/common/shared'
 
 interface ModeratorProps {
 	x: number
@@ -16,11 +15,10 @@ const BUBBLE_WIDTH = 300
 const BUBBLE_HEIGHT = 200
 
 export class Moderator extends Phaser.GameObjects.Sprite {
-	public socket: Socket
 	public bubble: Phaser.GameObjects.Graphics
 	public text: Phaser.GameObjects.Text
 
-	constructor(scene: Phaser.Scene, socket: Socket, options: ModeratorProps) {
+	constructor(scene: Phaser.Scene, initialState: ModeratorState, options: ModeratorProps) {
 		super(scene, options.x, options.y, MODERATOR_SPRITESHEET_KEY)
 
 		this.anims.create({
@@ -32,28 +30,26 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 			frameRate: 6,
 		})
 
-		this.setScale(6)
-
-		/**
-		 * Suggestion:
-		 * Get initial state from backend
-		 */
-		this.play({ key: MODERATOR_STATE_KEY.IDLE, repeat: -1 })
 		this.bubble = this.createSpeechBubble(scene, scene.game.canvas.width - 375, 510, BUBBLE_WIDTH, BUBBLE_HEIGHT)
-		this.text = this.createBubbleText(scene, 'PLACE_HOLDER', BUBBLE_WIDTH, BUBBLE_HEIGHT)
+		this.text = this.createBubbleText(scene, initialState.message, BUBBLE_WIDTH, BUBBLE_HEIGHT)
 
-		socket.on(STATE_UPDATE, (state: GlobalState) => {
-			this.text.destroy()
-			if (state.moderator.visibility) {
-				this.text = this.createBubbleText(scene, state.moderator.message, BUBBLE_WIDTH, BUBBLE_HEIGHT)
-			}
-
-			this.setVisible(state.moderator.visibility)
-			this.bubble.setVisible(state.moderator.visibility)
-		})
-
+		this.setScale(6)
+		this.idle()
 		scene.add.existing(this)
-		this.socket = socket
+	}
+
+	public idle() {
+		this.play({ key: MODERATOR_STATE_KEY.IDLE, repeat: -1 })
+	}
+
+	public handleState(state: ModeratorState) {
+		this.text.destroy()
+		if (state.visibility) {
+			this.text = this.createBubbleText(this.scene, state.message, BUBBLE_WIDTH, BUBBLE_HEIGHT)
+		}
+
+		this.setVisible(state.visibility)
+		this.bubble.setVisible(state.visibility)
 	}
 
 	/**

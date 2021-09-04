@@ -1,12 +1,5 @@
 import Phaser from 'phaser'
-import { Socket } from 'socket.io-client'
-import {
-	HotAirBalloonVariation,
-	HotAirBalloonVariations,
-	HOT_AIR_BALLON_START,
-	GlobalState,
-	STATE_UPDATE,
-} from '@ccp/common/shared'
+import { HotAirBalloonVariation, HotAirBalloonVariations, HotAirBallonState } from '@ccp/common/shared'
 
 interface HotAirBallonProps {
 	x: number
@@ -19,11 +12,16 @@ export const HOT_AIR_BALLOON_STATE_KEY = {
 }
 
 export class HotAirBalloon extends Phaser.GameObjects.Sprite {
-	public socket: Socket
 	private velocity = 200
+	private variation: HotAirBalloonVariations
+	private startX
+	private startY
 
-	constructor(scene: Phaser.Scene, socket: Socket, options: HotAirBallonProps) {
+	constructor(scene: Phaser.Scene, initialState: HotAirBallonState, options: HotAirBallonProps) {
 		super(scene, options.x, options.y, options.variation)
+		this.variation = options.variation
+		this.startX = options.x
+		this.startY = options.y
 
 		this.anims.create({
 			key: HOT_AIR_BALLOON_STATE_KEY.IDLE,
@@ -35,29 +33,25 @@ export class HotAirBalloon extends Phaser.GameObjects.Sprite {
 		})
 
 		this.setScale(3)
-
-		/**
-		 * Suggestion:
-		 * Get initial state from backend
-		 */
-		this.play({ key: HOT_AIR_BALLOON_STATE_KEY.IDLE, repeat: -1 })
-
+		this.setVisible(initialState.visibility)
+		this.idle()
 		scene.physics.add.existing(this)
 		scene.add.existing(this)
+	}
 
-		socket.on(HOT_AIR_BALLON_START, (data: HotAirBalloonVariation) => {
-			console.log(`received HOT_AIR_BALLON_START: ${data.variation}`)
-			if (data.variation === options.variation) {
-				this.reset(options.x, options.y)
-				this.body.velocity.x = this.velocity
-			}
-		})
+	public idle() {
+		this.play({ key: HOT_AIR_BALLOON_STATE_KEY.IDLE, repeat: -1 })
+	}
 
-		socket.on(STATE_UPDATE, (state: GlobalState) => {
-			this.setVisible(state.hotAirballon.visibility)
-		})
+	public handleTrigger(data: HotAirBalloonVariation) {
+		if (data.variation === this.variation) {
+			this.reset(this.startX, this.startY)
+			this.body.velocity.x = this.velocity
+		}
+	}
 
-		this.socket = socket
+	public handleState(state: HotAirBallonState) {
+		this.setVisible(state.visibility)
 	}
 
 	private reset(x: number, y: number) {
