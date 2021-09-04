@@ -105,7 +105,7 @@ const maxLinesThreshold = 8
 
 export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> = ({ globalState }) => {
 	const { socket } = useSocket()
-	const [moderatorMessage, setModeratorMessage] = useState('')
+	const [moderatorMessage, setModeratorMessage] = useState(globalState.moderator.message)
 
 	const onModeratorMessageChange = useCallback(
 		(e: React.FormEvent<HTMLTextAreaElement>) => {
