@@ -15,6 +15,10 @@ import {
 	STATE_UPDATE,
 	CrowdMode,
 	REQUEST_STATE,
+	EmotesState,
+	BubblesState,
+	BUBBLES_UPDATE,
+	EMOTES_UPDATE,
 } from '@ccp/common'
 import { logger } from './logger'
 import { Server } from 'socket.io'
@@ -25,14 +29,7 @@ const io = new Server(httpServer, {})
 io.on('connection', (socket) => {
 	logger.info(`new connection from ${socket.id}!`)
 
-	/**
-	 * CROWD
-	 */
 	socket.on(CROWD_UPDATE, (crowdUpdate: CrowdState) => updateAndEmit(updateCrowd, crowdUpdate))
-
-	/**
-	 * AUDIO CROWD STATE INPUT
-	 */
 	socket.on(AUDIO_INPUT_VALUE_UPDATE, (data: AudioInputValue) => {
 		logger.debug(`received AUDIO_INPUT_VALUE_UPDATE ${data.averageFrequencyPower}`)
 
@@ -46,27 +43,16 @@ io.on('connection', (socket) => {
 		}
 		updateAndEmit(updateCrowd, crowdStateUpdate)
 	})
-
-	/**
-	 * MODERATOR
-	 */
 	socket.on(MODERATOR_UPDATE, (moderatorUpdate: ModeratorState) => updateAndEmit(updateModerator, moderatorUpdate))
-
-	/**
-	 * HOT AIR BALLOON
-	 */
 	socket.on(HOT_AIR_BALLON_UPDATE, (hotAirBallonUpdate: HotAirBallonState) =>
 		updateAndEmit(updateHotAirBallon, hotAirBallonUpdate)
 	)
-
 	socket.on(HOT_AIR_BALLON_START, (data: HotAirBalloonVariation) => {
 		logger.info(`received HOT_AIR_BALLON_START`)
 		io.emit(HOT_AIR_BALLON_START, data)
 	})
-
-	/**
-	 * DISCONNECT
-	 */
+	socket.on(EMOTES_UPDATE, (emotesUpdate: EmotesState) => updateAndEmit(updateEmotes, emotesUpdate))
+	socket.on(BUBBLES_UPDATE, (bubblesUpdate: BubblesState) => updateAndEmit(updateBubbles, bubblesUpdate))
 	socket.on('disconnect', (reason) => {
 		logger.info(`socket ${socket.id} disconnected with reason: ${reason}`)
 	})
@@ -91,6 +77,12 @@ let state: GlobalState = {
 		visibility: false,
 	},
 	hotAirballon: {
+		visibility: false,
+	},
+	emotes: {
+		visibility: false,
+	},
+	bubbles: {
 		visibility: false,
 	},
 }
@@ -121,6 +113,26 @@ const updateHotAirBallon = (state: GlobalState, hotAirBallonUpdate: Partial<HotA
 		hotAirballon: {
 			...state.hotAirballon,
 			...hotAirBallonUpdate,
+		},
+	}
+}
+
+const updateEmotes = (state: GlobalState, emotesUpdate: Partial<EmotesState>): GlobalState => {
+	return {
+		...state,
+		emotes: {
+			...state.emotes,
+			...emotesUpdate,
+		},
+	}
+}
+
+const updateBubbles = (state: GlobalState, bubblesUpdate: Partial<BubblesState>): GlobalState => {
+	return {
+		...state,
+		bubbles: {
+			...state.bubbles,
+			...bubblesUpdate,
 		},
 	}
 }

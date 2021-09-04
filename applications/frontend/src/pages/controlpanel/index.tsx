@@ -5,6 +5,7 @@ import { MainLayout } from '../../app/layout/Layout'
 import { PageWithLayoutType } from '../../app/layout/PageWithLayout'
 import { ControlPanelGrid } from '../../app/components/controlpanel/ControlPanelGrid'
 import { styled } from '../../app/styles/Theme'
+import { useGlobalState } from '../../app/hooks/useGlobalState'
 
 export interface ControlPanelPageProps {
 	title?: string
@@ -12,13 +13,15 @@ export interface ControlPanelPageProps {
 
 const ControlPanelPage: NextPage<ControlPanelPageProps> = (props: ControlPanelPageProps) => {
 	const { title } = props
+	const { globalState } = useGlobalState()
+
 	return (
 		<>
 			<Head>
 				<title>{title}</title>
 			</Head>
 			<ControlPanelPageWrapper>
-				<ControlPanelGrid />
+				{globalState && <ControlPanelGrid globalState={globalState!} />}
 			</ControlPanelPageWrapper>
 		</>
 	)

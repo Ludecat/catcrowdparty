@@ -11,6 +11,10 @@ import {
 	CrowdMode,
 	CROWD_CROUCH_AUDIO_VALUE_THRESHOLD,
 	CROWD_RUN_AUDIO_VALUE_THRESHOLD,
+	GlobalState,
+	EMOTES_UPDATE,
+	EmotesState,
+	BUBBLES_UPDATE,
 } from '@ccp/common/shared'
 import { useSocket } from '../../hooks/useSocket'
 import { styled } from '../../styles/Theme'
@@ -21,7 +25,6 @@ import { GrUpdate } from 'react-icons/gr'
 import { useCallback } from 'react'
 import { toast } from 'react-toastify'
 import { longestWordCount } from '../../util/utils'
-import { useEffect } from 'react'
 
 const Grid = styled.div`
 	display: grid;
@@ -96,35 +99,13 @@ const GridComponent: FunctionComponent<GridComponentProps> = (props) => {
 	)
 }
 
-interface Layers {
-	[key: string]: boolean
-}
-
 const longestWordMaxThreshold = 15
 const maxCharThreshold = 128
 const maxLinesThreshold = 8
 
-export const ControlPanelGrid = () => {
+export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> = ({ globalState }) => {
 	const { socket } = useSocket()
 	const [moderatorMessage, setModeratorMessage] = useState('')
-	const [crowdMode, setCrowdMode] = useState<CrowdMode>(CrowdMode.manual)
-	const [layersActive, setLayersActive] = useState<Layers>({
-		'ccp-checkbox-air-ballon': true,
-		'ccp-checkbox-moderator': true,
-		'ccp-checkbox-crowd': true,
-		'ccp-checkbox-emotes': true,
-		'ccp-checkbox-speech-bubble': true,
-	})
-
-	const setCurrentLayer = useCallback(
-		(e: React.FormEvent<HTMLInputElement>, isShown: boolean) => {
-			setLayersActive({
-				...layersActive,
-				[e.currentTarget.value]: isShown,
-			})
-		},
-		[layersActive, setLayersActive]
-	)
 
 	const onModeratorMessageChange = useCallback(
 		(e: React.FormEvent<HTMLTextAreaElement>) => {
@@ -145,14 +126,115 @@ export const ControlPanelGrid = () => {
 		[setModeratorMessage]
 	)
 
-	useEffect(() => {
-		const updatedCrowdState: Partial<CrowdState> = {
-			mode: crowdMode,
-		}
-		socket?.emit(CROWD_UPDATE, updatedCrowdState)
-	}, [crowdMode, socket])
+	const setAndEmitCrowdMode = useCallback(
+		(e: React.MouseEvent<HTMLButtonElement>) => {
+			const newCrowdMode = e.currentTarget.value === CrowdMode.manual ? CrowdMode.auto : CrowdMode.manual
+			const updatedCrowdState: Partial<CrowdState> = {
+				mode: newCrowdMode,
+			}
+			socket?.emit(CROWD_UPDATE, updatedCrowdState)
+		},
+		[socket]
+	)
 
-	const isDisabledManuelCrowdButton = !layersActive['ccp-checkbox-crowd'] || crowdMode === 'auto'
+	const setAndEmitCrowdIntensity = useCallback(
+		(e: React.MouseEvent<HTMLButtonElement>) => {
+			const updatedCrowdState: Partial<CrowdState> = {
+				intensity: parseInt(e.currentTarget.value, 10),
+			}
+			socket?.emit(CROWD_UPDATE, updatedCrowdState)
+		},
+		[socket]
+	)
+
+	const setAndEmitModeratorMessage = useCallback(() => {
+		const updatedModeratorState: Partial<ModeratorState> = {
+			message: moderatorMessage,
+		}
+		socket?.emit(MODERATOR_UPDATE, updatedModeratorState)
+	}, [socket, moderatorMessage])
+
+	const setAndEmitModeratorVisilibity = useCallback(
+		(e: React.MouseEvent<HTMLInputElement>) => {
+			let updatedModeratorState: Partial<ModeratorState>
+			if (e.currentTarget.checked) {
+				updatedModeratorState = {
+					message: moderatorMessage,
+					visibility: true,
+				}
+			} else {
+				updatedModeratorState = {
+					visibility: false,
+				}
+			}
+			socket?.emit(MODERATOR_UPDATE, updatedModeratorState)
+		},
+		[socket, moderatorMessage]
+	)
+
+	const setAndEmitHotAirBalloonVisibility = useCallback(
+		(e: React.MouseEvent<HTMLInputElement>) => {
+			let updatedHotAirBallonState: Partial<HotAirBallonState>
+			console.log('hi')
+			if (e.currentTarget.checked) {
+				updatedHotAirBallonState = {
+					visibility: true,
+				}
+			} else {
+				updatedHotAirBallonState = {
+					visibility: false,
+				}
+			}
+			socket?.emit(HOT_AIR_BALLON_UPDATE, updatedHotAirBallonState)
+		},
+		[socket]
+	)
+
+	const setAndEmitCrowdVisilibity = useCallback(
+		(e: React.MouseEvent<HTMLInputElement>) => {
+			let updatedCrowdState: Partial<CrowdState>
+			if (e.currentTarget.checked) {
+				updatedCrowdState = {
+					visibility: true,
+				}
+			} else {
+				updatedCrowdState = {
+					visibility: false,
+				}
+			}
+			socket?.emit(CROWD_UPDATE, updatedCrowdState)
+		},
+		[socket]
+	)
+
+	const setAndEmitEmotesVisibility = useCallback(
+		(e: React.MouseEvent<HTMLInputElement>) => {
+			const updatedEmotesState: Partial<EmotesState> = {
+				visibility: e.currentTarget.checked,
+			}
+			socket?.emit(EMOTES_UPDATE, updatedEmotesState)
+		},
+		[socket]
+	)
+
+	const setAndEmitBubblesVisibility = useCallback(
+		(e: React.MouseEvent<HTMLInputElement>) => {
+			const updatedBubblesState: Partial<EmotesState> = {
+				visibility: e.currentTarget.checked,
+			}
+			socket?.emit(BUBBLES_UPDATE, updatedBubblesState)
+		},
+		[socket]
+	)
+
+	const setAndEmitBalloonTrigger = useCallback(
+		(e: React.MouseEvent<HTMLButtonElement>) => {
+			socket?.emit(HOT_AIR_BALLON_START, { variation: e.currentTarget.value })
+		},
+		[socket]
+	)
+
+	const isDisabledManualCrowdButton = !globalState.crowd.visibility || globalState?.crowd.mode === 'auto'
 	return (
 		<Grid>
 			<GridItem gridArea={'header'}>
@@ -162,33 +244,25 @@ export const ControlPanelGrid = () => {
 				gridArea={'crowd-control'}
 				title="Crowd Control"
 				actions={
-					<Button
-						onClick={() => {
-							setCrowdMode(crowdMode === CrowdMode.manual ? CrowdMode.auto : CrowdMode.manual)
-						}}
-					>
-						{crowdMode}
+					<Button value={globalState?.crowd.mode} onClick={setAndEmitCrowdMode}>
+						{globalState?.crowd.mode}
 					</Button>
 				}
 			>
-				<Button
-					onClick={() => socket?.emit(CROWD_UPDATE, { intensity: 0 })}
-					value="CROWD_IDLE"
-					disabled={isDisabledManuelCrowdButton}
-				>
+				<Button onClick={setAndEmitCrowdIntensity} value={'0'} disabled={isDisabledManualCrowdButton}>
 					Idle
 				</Button>
 				<Button
-					onClick={() => socket?.emit(CROWD_UPDATE, { intensity: CROWD_CROUCH_AUDIO_VALUE_THRESHOLD })}
-					value="CROWD_CROUCH"
-					disabled={isDisabledManuelCrowdButton}
+					onClick={setAndEmitCrowdIntensity}
+					value={`${CROWD_CROUCH_AUDIO_VALUE_THRESHOLD}`}
+					disabled={isDisabledManualCrowdButton}
 				>
 					Crouch
 				</Button>
 				<Button
-					onClick={() => socket?.emit(CROWD_UPDATE, { intensity: CROWD_RUN_AUDIO_VALUE_THRESHOLD })}
-					value="CROWD_RUN"
-					disabled={isDisabledManuelCrowdButton}
+					onClick={setAndEmitCrowdIntensity}
+					value={`${CROWD_RUN_AUDIO_VALUE_THRESHOLD}`}
+					disabled={isDisabledManualCrowdButton}
 				>
 					Run
 				</Button>
@@ -197,105 +271,38 @@ export const ControlPanelGrid = () => {
 				gridArea={'moderator-control'}
 				title="Moderator"
 				actions={
-					<Button
-						disabled={!layersActive['ccp-checkbox-moderator']}
-						onClick={() => {
-							const updatedModeratorState: Partial<ModeratorState> = {
-								message: moderatorMessage,
-							}
-							socket?.emit(MODERATOR_UPDATE, updatedModeratorState)
-						}}
-					>
+					<Button disabled={!globalState.moderator.visibility} onClick={setAndEmitModeratorMessage}>
 						<GrUpdate size={16} />
 					</Button>
 				}
 			>
 				<TextArea onChange={onModeratorMessageChange} value={moderatorMessage} />
 			</GridComponent>
+
 			<GridComponent gridArea={'layer-control'} title="Layers">
 				<CheckBoxToggle
-					id="ccp-checkbox-air-ballon"
-					value="ccp-checkbox-air-ballon"
-					onChange={(e) => {
-						let updatedHotAirBallonState: Partial<HotAirBallonState>
-						if (e.currentTarget.checked) {
-							setCurrentLayer(e, true)
-							updatedHotAirBallonState = {
-								visibility: true,
-							}
-						} else {
-							setCurrentLayer(e, false)
-							updatedHotAirBallonState = {
-								visibility: false,
-							}
-						}
-						socket?.emit(HOT_AIR_BALLON_UPDATE, updatedHotAirBallonState)
-					}}
+					checked={globalState.hotAirballon.visibility}
+					onClick={setAndEmitHotAirBalloonVisibility}
 					description="Air Ballon"
 				/>
 				<CheckBoxToggle
-					id="ccp-checkbox-moderator"
-					value="ccp-checkbox-moderator"
-					onChange={(e) => {
-						let updatedModeratorState: Partial<ModeratorState>
-						if (e.currentTarget.checked) {
-							setCurrentLayer(e, true)
-							updatedModeratorState = {
-								message: moderatorMessage,
-								visibility: true,
-							}
-						} else {
-							setCurrentLayer(e, false)
-							updatedModeratorState = {
-								visibility: false,
-							}
-						}
-						socket?.emit(MODERATOR_UPDATE, updatedModeratorState)
-					}}
+					checked={globalState.moderator.visibility}
+					onChange={setAndEmitModeratorVisilibity}
 					description="Moderator"
 				/>
 				<CheckBoxToggle
-					id="ccp-checkbox-crowd"
-					value="ccp-checkbox-crowd"
-					onChange={(e) => {
-						let updatedCrowdState: Partial<CrowdState>
-						if (e.currentTarget.checked) {
-							setCurrentLayer(e, true)
-							updatedCrowdState = {
-								visibility: true,
-							}
-						} else {
-							setCurrentLayer(e, false)
-							updatedCrowdState = {
-								visibility: false,
-							}
-						}
-						socket?.emit(CROWD_UPDATE, updatedCrowdState)
-					}}
+					checked={globalState.crowd.visibility}
+					onChange={setAndEmitCrowdVisilibity}
 					description="Crowd"
 				/>
 				<CheckBoxToggle
-					id="ccp-checkbox-emotes"
-					value="ccp-checkbox-emotes"
-					onChange={(e) => {
-						if (e.currentTarget.checked) {
-							setCurrentLayer(e, true)
-						} else {
-							setCurrentLayer(e, false)
-						}
-					}}
+					checked={globalState.emotes.visibility}
+					onChange={setAndEmitEmotesVisibility}
 					description="Emotes"
 				/>
 				<CheckBoxToggle
-					id="ccp-checkbox-speech-bubble"
-					value="ccp-checkbox-speech-bubble"
-					onChange={(e) => {
-						if (e.currentTarget.checked) {
-							setCurrentLayer(e, true)
-						} else {
-							setCurrentLayer(e, false)
-						}
-					}}
+					checked={globalState.bubbles.visibility}
+					onChange={setAndEmitBubblesVisibility}
 					description="Twitch Speech Bubble"
 				/>
 			</GridComponent>
@@ -304,22 +311,22 @@ export const ControlPanelGrid = () => {
 			</GridComponent>
 			<GridComponent gridArea={'triggers-control'} title="Triggers">
 				<Button
-					onClick={(e) => socket?.emit(HOT_AIR_BALLON_START, { variation: e.currentTarget.value })}
-					disabled={!layersActive['ccp-checkbox-air-ballon']}
+					onClick={setAndEmitBalloonTrigger}
+					disabled={!globalState.hotAirballon.visibility}
 					value={HotAirBallonVationsValues.ludecat}
 				>
 					LudeCat Air Ballon
 				</Button>
 				<Button
-					onClick={(e) => socket?.emit(HOT_AIR_BALLON_START, { variation: e.currentTarget.value })}
-					disabled={!layersActive['ccp-checkbox-air-ballon']}
+					onClick={setAndEmitBalloonTrigger}
+					disabled={!globalState.hotAirballon.visibility}
 					value={HotAirBallonVationsValues.fritzCola}
 				>
 					Fritz Cola Ballon
 				</Button>
 				<Button
-					onClick={(e) => socket?.emit(HOT_AIR_BALLON_START, { variation: e.currentTarget.value })}
-					disabled={!layersActive['ccp-checkbox-air-ballon']}
+					onClick={setAndEmitBalloonTrigger}
+					disabled={!globalState.hotAirballon.visibility}
 					value={HotAirBallonVationsValues.fhSalzburg}
 				>
 					FH Ballon
