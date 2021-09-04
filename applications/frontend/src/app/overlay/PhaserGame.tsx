@@ -24,7 +24,6 @@ export const PhaserGame = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isMounted])
 
-	console.log(globalState)
 	return <PhaserDiv id="ccp-overlay" />
 }
 
