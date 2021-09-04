@@ -34,10 +34,10 @@ io.on('connection', (socket) => {
 	 * AUDIO CROWD STATE INPUT
 	 */
 	socket.on(AUDIO_INPUT_VALUE_UPDATE, (data: AudioInputValue) => {
-		logger.info(`received AUDIO_INPUT_VALUE_UPDATE ${data.averageFrequencyPower}`)
+		logger.debug(`received AUDIO_INPUT_VALUE_UPDATE ${data.averageFrequencyPower}`)
 
 		if (state.crowd.mode === CrowdMode.manual) {
-			logger.info(`declined AUDIO_INPUT_VALUE_UPDATE caused by state.crowd.mode set to: '${CrowdMode.manual}'.`)
+			logger.debug(`declined AUDIO_INPUT_VALUE_UPDATE caused by state.crowd.mode set to: '${CrowdMode.manual}'.`)
 			return
 		}
 
