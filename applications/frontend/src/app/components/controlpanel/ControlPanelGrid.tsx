@@ -130,29 +130,26 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 	const setAndEmitCrowdMode = useCallback(
 		(e: React.MouseEvent<HTMLButtonElement>) => {
 			const newCrowdMode = e.currentTarget.value === CrowdMode.manual ? CrowdMode.auto : CrowdMode.manual
-			const updatedCrowdState: Partial<CrowdState> = {
+			socket?.emit(CROWD_UPDATE, {
 				mode: newCrowdMode,
-			}
-			socket?.emit(CROWD_UPDATE, updatedCrowdState)
+			})
 		},
 		[socket]
 	)
 
 	const setAndEmitCrowdIntensity = useCallback(
 		(e: React.MouseEvent<HTMLButtonElement>) => {
-			const updatedCrowdState: Partial<CrowdState> = {
+			socket?.emit(CROWD_UPDATE, {
 				intensity: parseInt(e.currentTarget.value, 10),
-			}
-			socket?.emit(CROWD_UPDATE, updatedCrowdState)
+			})
 		},
 		[socket]
 	)
 
 	const setAndEmitModeratorMessage = useCallback(() => {
-		const updatedModeratorState: Partial<ModeratorState> = {
+		socket?.emit(MODERATOR_UPDATE, {
 			message: moderatorMessage,
-		}
-		socket?.emit(MODERATOR_UPDATE, updatedModeratorState)
+		})
 	}, [socket, moderatorMessage])
 
 	const setAndEmitModeratorVisilibity = useCallback(
@@ -175,54 +172,36 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 
 	const setAndEmitHotAirBalloonVisibility = useCallback(
 		(e: React.MouseEvent<HTMLInputElement>) => {
-			let updatedHotAirBallonState: Partial<HotAirBallonState>
-			if (e.currentTarget.checked) {
-				updatedHotAirBallonState = {
-					visibility: true,
-				}
-			} else {
-				updatedHotAirBallonState = {
-					visibility: false,
-				}
-			}
-			socket?.emit(HOT_AIR_BALLON_UPDATE, updatedHotAirBallonState)
+			socket?.emit(HOT_AIR_BALLON_UPDATE, {
+				visibility: e.currentTarget.checked,
+			})
 		},
 		[socket]
 	)
 
 	const setAndEmitCrowdVisilibity = useCallback(
 		(e: React.MouseEvent<HTMLInputElement>) => {
-			let updatedCrowdState: Partial<CrowdState>
-			if (e.currentTarget.checked) {
-				updatedCrowdState = {
-					visibility: true,
-				}
-			} else {
-				updatedCrowdState = {
-					visibility: false,
-				}
-			}
-			socket?.emit(CROWD_UPDATE, updatedCrowdState)
+			socket?.emit(CROWD_UPDATE, {
+				visibility: e.currentTarget.checked,
+			})
 		},
 		[socket]
 	)
 
 	const setAndEmitEmotesVisibility = useCallback(
 		(e: React.MouseEvent<HTMLInputElement>) => {
-			const updatedEmotesState: Partial<EmotesState> = {
+			socket?.emit(EMOTES_UPDATE, {
 				visibility: e.currentTarget.checked,
-			}
-			socket?.emit(EMOTES_UPDATE, updatedEmotesState)
+			})
 		},
 		[socket]
 	)
 
 	const setAndEmitBubblesVisibility = useCallback(
 		(e: React.MouseEvent<HTMLInputElement>) => {
-			const updatedBubblesState: Partial<EmotesState> = {
+			socket?.emit(BUBBLES_UPDATE, {
 				visibility: e.currentTarget.checked,
-			}
-			socket?.emit(BUBBLES_UPDATE, updatedBubblesState)
+			})
 		},
 		[socket]
 	)
