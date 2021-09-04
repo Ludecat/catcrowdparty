@@ -3,7 +3,7 @@ import { Socket } from 'socket.io-client'
 import {
 	CROWD_CROUCH_AUDIO_VALUE_THRESHOLD,
 	CROWD_RUN_AUDIO_VALUE_THRESHOLD,
-	State,
+	GlobalState,
 	STATE_UPDATE,
 } from '@ccp/common/shared'
 
@@ -59,7 +59,7 @@ export class Dude extends Phaser.GameObjects.Sprite {
 		 */
 		this.play({ key: DUDE_STATE_KEY.IDLE, repeat: -1 })
 
-		socket.on(STATE_UPDATE, (state: State) => {
+		socket.on(STATE_UPDATE, (state: GlobalState) => {
 			let animation: string
 			if (state.crowd.intensity >= CROWD_RUN_AUDIO_VALUE_THRESHOLD) {
 				animation = DUDE_STATE_KEY.RUN

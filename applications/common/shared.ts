@@ -51,7 +51,7 @@ export interface HotAirBallonState {
 	visibility: boolean
 }
 
-export interface State {
+export interface GlobalState {
 	crowd: CrowdState
 	moderator: ModeratorState
 	hotAirballon: HotAirBallonState

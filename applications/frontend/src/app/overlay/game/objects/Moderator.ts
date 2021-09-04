@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
 import { Socket } from 'socket.io-client'
-import { State, STATE_UPDATE } from '@ccp/common/shared'
+import { GlobalState, STATE_UPDATE } from '@ccp/common/shared'
 
 interface ModeratorProps {
 	x: number
@@ -42,7 +42,7 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 		this.bubble = this.createSpeechBubble(scene, scene.game.canvas.width - 375, 510, BUBBLE_WIDTH, BUBBLE_HEIGHT)
 		this.text = this.createBubbleText(scene, 'PLACE_HOLDER', BUBBLE_WIDTH, BUBBLE_HEIGHT)
 
-		socket.on(STATE_UPDATE, (state: State) => {
+		socket.on(STATE_UPDATE, (state: GlobalState) => {
 			this.text.destroy()
 			if (state.moderator.visibility) {
 				this.text = this.createBubbleText(scene, state.moderator.message, BUBBLE_WIDTH, BUBBLE_HEIGHT)

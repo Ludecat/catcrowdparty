@@ -4,7 +4,7 @@ import {
 	HotAirBalloonVariation,
 	HotAirBalloonVariations,
 	HOT_AIR_BALLON_START,
-	State,
+	GlobalState,
 	STATE_UPDATE,
 } from '@ccp/common/shared'
 
@@ -53,7 +53,7 @@ export class HotAirBalloon extends Phaser.GameObjects.Sprite {
 			}
 		})
 
-		socket.on(STATE_UPDATE, (state: State) => {
+		socket.on(STATE_UPDATE, (state: GlobalState) => {
 			this.setVisible(state.hotAirballon.visibility)
 		})
 

@@ -11,7 +11,7 @@ import {
 	ModeratorState,
 	HotAirBallonState,
 	CrowdState,
-	State,
+	GlobalState,
 	STATE_UPDATE,
 	CrowdMode,
 	REQUEST_STATE,
@@ -80,7 +80,7 @@ const port = process.env.PORT_BACKEND ?? 5000
 httpServer.listen(port)
 logger.info(`Backend ready on port ${port}`)
 
-let state: State = {
+let state: GlobalState = {
 	crowd: {
 		mode: CrowdMode.manual,
 		intensity: 0,
@@ -95,7 +95,7 @@ let state: State = {
 	},
 }
 
-const updateCrowd = (state: State, crowdUpdate: Partial<CrowdState>): State => {
+const updateCrowd = (state: GlobalState, crowdUpdate: Partial<CrowdState>): GlobalState => {
 	return {
 		...state,
 		crowd: {
@@ -105,7 +105,7 @@ const updateCrowd = (state: State, crowdUpdate: Partial<CrowdState>): State => {
 	}
 }
 
-const updateModerator = (state: State, moderatorUpdate: Partial<ModeratorState>): State => {
+const updateModerator = (state: GlobalState, moderatorUpdate: Partial<ModeratorState>): GlobalState => {
 	return {
 		...state,
 		moderator: {
@@ -115,7 +115,7 @@ const updateModerator = (state: State, moderatorUpdate: Partial<ModeratorState>)
 	}
 }
 
-const updateHotAirBallon = (state: State, hotAirBallonUpdate: Partial<HotAirBallonState>): State => {
+const updateHotAirBallon = (state: GlobalState, hotAirBallonUpdate: Partial<HotAirBallonState>): GlobalState => {
 	return {
 		...state,
 		hotAirballon: {
@@ -125,7 +125,7 @@ const updateHotAirBallon = (state: State, hotAirBallonUpdate: Partial<HotAirBall
 	}
 }
 
-const updateAndEmit = <T>(fn: (state: State, update: T) => State, update: T) => {
+const updateAndEmit = <T>(fn: (state: GlobalState, update: T) => GlobalState, update: T) => {
 	state = fn(state, update)
 	io.emit(STATE_UPDATE, state)
 }
