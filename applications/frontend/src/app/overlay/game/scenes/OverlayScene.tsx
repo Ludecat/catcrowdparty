@@ -1,17 +1,24 @@
 import Phaser from 'phaser'
 import { Socket } from 'socket.io-client'
-import { HotAirBallonVationsValues, REQUEST_STATE } from '@ccp/common/shared'
+import { GlobalState, HotAirBallonVationsValues, REQUEST_STATE, STATE_UPDATE } from '@ccp/common/shared'
 import { SCENES } from '../config'
 import { Dude, DUDE_SPRITESHEET_KEY } from '../objects/Dude'
 import { HotAirBalloon } from '../objects/HotAirBalloon'
 import { Moderator, MODERATOR_SPRITESHEET_KEY } from '../objects/Moderator'
 
 export class OverlayScene extends Phaser.Scene {
+	public crowd: Dude[] = []
+
 	constructor() {
 		super({ key: SCENES.OVERLAY })
 	}
 
-	init() {
+	init(config: { socket: Socket; initialState: GlobalState }) {
+		config.socket.on(STATE_UPDATE, (state: GlobalState) => {
+			for (const dude of this.crowd) {
+				dude.handleState(state.crowd)
+			}
+		})
 		console.log(`${SCENES.OVERLAY}: init()`)
 	}
 
@@ -44,12 +51,10 @@ export class OverlayScene extends Phaser.Scene {
 		console.log(`${SCENES.OVERLAY}: preload()`)
 	}
 
-	create(socket: Socket) {
-		/**
-		 * Placeholder
-		 */
+	create(config: { socket: Socket; initialState: GlobalState }) {
+		const { socket, initialState } = config
 		for (let i = 0; i < 23; i++) {
-			new Dude(this, socket, { x: i * 75, y: 1000 })
+			this.crowd.push(new Dude(this, initialState.crowd, { x: i * 75, y: 1000 }))
 		}
 		new Moderator(this, socket, { x: this.game.canvas.width - 130, y: this.game.canvas.height - 200 })
 		new HotAirBalloon(this, socket, { x: -100, y: 400, variation: 'ludecat' })
