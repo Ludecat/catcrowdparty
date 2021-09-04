@@ -176,7 +176,6 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 	const setAndEmitHotAirBalloonVisibility = useCallback(
 		(e: React.MouseEvent<HTMLInputElement>) => {
 			let updatedHotAirBallonState: Partial<HotAirBallonState>
-			console.log('hi')
 			if (e.currentTarget.checked) {
 				updatedHotAirBallonState = {
 					visibility: true,

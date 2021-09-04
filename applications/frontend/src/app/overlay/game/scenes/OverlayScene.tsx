@@ -41,7 +41,6 @@ export class OverlayScene extends Phaser.Scene {
 				hotAirBalloon.handleTrigger(data)
 			}
 		})
-		console.log(`${SCENES.OVERLAY}: init()`)
 	}
 
 	preload() {
@@ -70,7 +69,6 @@ export class OverlayScene extends Phaser.Scene {
 			frameWidth: 61,
 			frameHeight: 92,
 		})
-		console.log(`${SCENES.OVERLAY}: preload()`)
 	}
 
 	create(config: { socket: Socket<CCPSocketEventsMap>; initialState: GlobalState }) {
@@ -95,7 +93,6 @@ export class OverlayScene extends Phaser.Scene {
 			new HotAirBalloon(this, initialState.hotAirballon, { x: -100, y: 400, variation: 'fh-salzburg' })
 		)
 
-		console.log(`${SCENES.OVERLAY}: create()`)
 		socket.emit(REQUEST_STATE)
 	}
 }
