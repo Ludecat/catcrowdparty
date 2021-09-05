@@ -1,95 +1,70 @@
 import '@ccp/common/env'
 import { createServer } from 'http'
 import {
-	CROWD_CROUCH,
-	CROWD_HIDE,
-	CROWD_IDLE,
-	CROWD_RUN,
-	CROWD_SHOW,
-	EmoteMessage,
-	EMOTE_MESSAGE,
-	HOT_AIR_BALLON_HIDE,
-	HOT_AIR_BALLON_SHOW,
-	ModeratorMessage,
-	MODERATOR_HIDE,
-	MODERATOR_MESSAGE_UPDATE,
-	MODERATOR_SHOW,
+	MODERATOR_UPDATE,
+	HOT_AIR_BALLON_UPDATE,
+	AudioInputValue,
+	AUDIO_INPUT_VALUE_UPDATE,
+	CROWD_UPDATE,
+	HotAirBalloonVariation,
+	HOT_AIR_BALLON_START,
+	ModeratorState,
+	HotAirBallonState,
+	CrowdState,
+	GlobalState,
+	STATE_UPDATE,
+	CrowdMode,
+	REQUEST_STATE,
+	EmotesState,
+	BubblesState,
+	BUBBLES_UPDATE,
+	EMOTES_UPDATE,
+	CCPSocketEventsMap,
+	NEW_EMOTES_TRIGGER,
 } from '@ccp/common'
 import { logger } from './logger'
 import { Server } from 'socket.io'
 import TwitchChatHandler from './TwitchChatHandler'
 
 const httpServer = createServer()
-const io = new Server(httpServer, {})
+const io = new Server<CCPSocketEventsMap>(httpServer, {})
 
 io.on('connection', (socket) => {
 	logger.info(`new connection from ${socket.id}!`)
 
-	/**
-	 * CROWD
-	 */
-	socket.on(CROWD_IDLE, () => {
-		logger.info(`received CROWD_IDLE`)
-		io.emit(CROWD_IDLE)
-	})
+	socket.on(CROWD_UPDATE, (crowdUpdate: Partial<CrowdState>) => updateAndEmit(updateCrowd, crowdUpdate))
+	socket.on(AUDIO_INPUT_VALUE_UPDATE, (data: AudioInputValue) => {
+		logger.debug(`received AUDIO_INPUT_VALUE_UPDATE ${data.averageFrequencyPower}`)
 
-	socket.on(CROWD_CROUCH, () => {
-		logger.info(`received CROWD_CROUCH`)
-		io.emit(CROWD_CROUCH)
-	})
+		if (state.crowd.mode === CrowdMode.manual) {
+			logger.debug(`declined AUDIO_INPUT_VALUE_UPDATE caused by state.crowd.mode set to: '${CrowdMode.manual}'.`)
+			return
+		}
 
-	socket.on(CROWD_RUN, () => {
-		logger.info(`received CROWD_RUN`)
-		io.emit(CROWD_RUN)
+		const crowdStateUpdate: Partial<CrowdState> = {
+			intensity: data.averageFrequencyPower,
+		}
+		updateAndEmit(updateCrowd, crowdStateUpdate)
 	})
-
-	socket.on(CROWD_SHOW, () => {
-		logger.info(`received CROWD_SHOW`)
-		io.emit(CROWD_SHOW)
+	socket.on(MODERATOR_UPDATE, (moderatorUpdate: Partial<ModeratorState>) =>
+		updateAndEmit(updateModerator, moderatorUpdate)
+	)
+	socket.on(HOT_AIR_BALLON_UPDATE, (hotAirBallonUpdate: Partial<HotAirBallonState>) =>
+		updateAndEmit(updateHotAirBallon, hotAirBallonUpdate)
+	)
+	socket.on(HOT_AIR_BALLON_START, (data: HotAirBalloonVariation) => {
+		logger.info(`received HOT_AIR_BALLON_START`)
+		io.emit(HOT_AIR_BALLON_START, data)
 	})
-
-	socket.on(CROWD_HIDE, () => {
-		logger.info(`received CROWD_HIDE`)
-		io.emit(CROWD_HIDE)
-	})
-
-	/**
-	 * MODERATOR
-	 */
-	socket.on(MODERATOR_SHOW, (data: ModeratorMessage) => {
-		logger.info(`received MODERATOR_SHOW`)
-		io.emit(MODERATOR_SHOW, data)
-	})
-
-	socket.on(MODERATOR_MESSAGE_UPDATE, (data: ModeratorMessage) => {
-		logger.info(`received MODERATOR_MESSAGE_UPDATE`)
-		io.emit(MODERATOR_MESSAGE_UPDATE, data)
-	})
-
-	socket.on(MODERATOR_HIDE, () => {
-		logger.info(`received MODERATOR_HIDE`)
-		io.emit(MODERATOR_HIDE)
-	})
-
-	/**
-	 * HOT AIR BALLOON
-	 */
-	socket.on(HOT_AIR_BALLON_SHOW, () => {
-		logger.info(`received HOT_AIR_BALLON_SHOW`)
-		io.emit(HOT_AIR_BALLON_SHOW)
-	})
-
-	socket.on(HOT_AIR_BALLON_HIDE, () => {
-		logger.info(`received HOT_AIR_BALLON_HIDE`)
-		io.emit(HOT_AIR_BALLON_HIDE)
-	})
-
-	/**
-	 * DISCONNECT
-	 */
+	socket.on(EMOTES_UPDATE, (emotesUpdate: Partial<EmotesState>) => updateAndEmit(updateEmotes, emotesUpdate))
+	socket.on(BUBBLES_UPDATE, (bubblesUpdate: Partial<BubblesState>) => updateAndEmit(updateBubbles, bubblesUpdate))
 	socket.on('disconnect', (reason) => {
 		logger.info(`socket ${socket.id} disconnected with reason: ${reason}`)
 	})
+
+	socket.emit(STATE_UPDATE, state)
+
+	socket.on(REQUEST_STATE, () => socket.emit(STATE_UPDATE, state))
 })
 
 const port = process.env.PORT_BACKEND ?? 5000
@@ -97,10 +72,87 @@ httpServer.listen(port)
 logger.info(`Backend ready on port ${port}`)
 
 const twitchChatHandler = new TwitchChatHandler()
-twitchChatHandler.on('newEmotes', (emotes: string[]) => {
+twitchChatHandler.on(NEW_EMOTES_TRIGGER, (emotes: string[]) => {
 	logger.info(JSON.stringify(emotes))
-	const message: EmoteMessage = {
+	const state: Partial<EmotesState> = {
 		emoteUrls: emotes,
 	}
-	io.emit(EMOTE_MESSAGE, message)
+	io.emit(EMOTES_UPDATE, state)
 })
+
+let state: GlobalState = {
+	crowd: {
+		mode: CrowdMode.manual,
+		intensity: 0,
+		visibility: true,
+	},
+	moderator: {
+		message: '',
+		visibility: false,
+	},
+	hotAirballon: {
+		visibility: false,
+	},
+	emotes: {
+		visibility: false,
+		emoteUrls: [],
+	},
+	bubbles: {
+		visibility: false,
+	},
+}
+
+const updateCrowd = (state: GlobalState, crowdUpdate: Partial<CrowdState>): GlobalState => {
+	return {
+		...state,
+		crowd: {
+			...state.crowd,
+			...crowdUpdate,
+		},
+	}
+}
+
+const updateModerator = (state: GlobalState, moderatorUpdate: Partial<ModeratorState>): GlobalState => {
+	return {
+		...state,
+		moderator: {
+			...state.moderator,
+			...moderatorUpdate,
+		},
+	}
+}
+
+const updateHotAirBallon = (state: GlobalState, hotAirBallonUpdate: Partial<HotAirBallonState>): GlobalState => {
+	return {
+		...state,
+		hotAirballon: {
+			...state.hotAirballon,
+			...hotAirBallonUpdate,
+		},
+	}
+}
+
+const updateEmotes = (state: GlobalState, emotesUpdate: Partial<EmotesState>): GlobalState => {
+	return {
+		...state,
+		emotes: {
+			...state.emotes,
+			...emotesUpdate,
+		},
+	}
+}
+
+const updateBubbles = (state: GlobalState, bubblesUpdate: Partial<BubblesState>): GlobalState => {
+	return {
+		...state,
+		bubbles: {
+			...state.bubbles,
+			...bubblesUpdate,
+		},
+	}
+}
+
+const updateAndEmit = <T>(fn: (state: GlobalState, update: T) => GlobalState, update: T) => {
+	state = fn(state, update)
+	io.emit(STATE_UPDATE, state)
+}

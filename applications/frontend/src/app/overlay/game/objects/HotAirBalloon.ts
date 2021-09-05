@@ -1,27 +1,31 @@
 import Phaser from 'phaser'
-import { Socket } from 'socket.io-client'
-import { HOT_AIR_BALLON_HIDE, HOT_AIR_BALLON_SHOW } from '@ccp/common/shared'
+import { HotAirBalloonVariation, HotAirBalloonVariationsType, HotAirBallonState } from '@ccp/common/shared'
 
-interface ModeratorProps {
+interface HotAirBallonProps {
 	x: number
 	y: number
+	variation: HotAirBalloonVariationsType
 }
 
-export const HOT_AIR_BALLOON_SPRITESHEET_KEY = 'hotAirBalloon'
 export const HOT_AIR_BALLOON_STATE_KEY = {
 	IDLE: 'idle',
 }
 
 export class HotAirBalloon extends Phaser.GameObjects.Sprite {
-	public socket: Socket
-	private velocity: number = 200
+	private velocity = 200
+	private variation: HotAirBalloonVariationsType
+	private startX
+	private startY
 
-	constructor(scene: Phaser.Scene, socket: Socket, options: ModeratorProps) {
-		super(scene, options.x, options.y, HOT_AIR_BALLOON_SPRITESHEET_KEY)
+	constructor(scene: Phaser.Scene, initialState: HotAirBallonState, options: HotAirBallonProps) {
+		super(scene, options.x, options.y, options.variation)
+		this.variation = options.variation
+		this.startX = options.x
+		this.startY = options.y
 
 		this.anims.create({
 			key: HOT_AIR_BALLOON_STATE_KEY.IDLE,
-			frames: this.anims.generateFrameNumbers(HOT_AIR_BALLOON_SPRITESHEET_KEY, {
+			frames: this.anims.generateFrameNumbers(options.variation, {
 				start: 0,
 				end: 4,
 			}),
@@ -29,30 +33,31 @@ export class HotAirBalloon extends Phaser.GameObjects.Sprite {
 		})
 
 		this.setScale(3)
-
-		/**
-		 * Suggestion:
-		 * Get initial state from backend
-		 */
-		this.play({ key: HOT_AIR_BALLOON_STATE_KEY.IDLE, repeat: -1 })
-
+		this.handleState(initialState)
 		scene.physics.add.existing(this)
 		scene.add.existing(this)
+	}
 
-		this.body.velocity.x = this.velocity
+	public idle() {
+		if (this.anims.currentAnim && this.anims.currentAnim.key === HOT_AIR_BALLOON_STATE_KEY.IDLE) return
+		this.play({ key: HOT_AIR_BALLOON_STATE_KEY.IDLE, repeat: -1 })
+	}
 
-		socket.on(HOT_AIR_BALLON_SHOW, () => {
-			console.log('received HOT_AIR_BALLON_SHOW')
+	public handleTrigger(data: HotAirBalloonVariation) {
+		if (data.variation === this.variation) {
+			this.reset(this.startX, this.startY)
 			this.body.velocity.x = this.velocity
-			this.setVisible(true)
-		})
-		socket.on(HOT_AIR_BALLON_HIDE, () => {
-			console.log('received HOT_AIR_BALLON_HIDE')
-			this.reset(options.x, options.y)
-			this.setVisible(false)
-		})
+		}
+	}
 
-		this.socket = socket
+	public handleState(state: HotAirBallonState) {
+		this.idle()
+		this.setIsVisible(state.visibility)
+	}
+
+	public setIsVisible(visible: boolean) {
+		if (this.visible === visible) return
+		this.setVisible(visible)
 	}
 
 	private reset(x: number, y: number) {

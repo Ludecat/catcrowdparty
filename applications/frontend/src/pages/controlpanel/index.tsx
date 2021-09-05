@@ -1,10 +1,11 @@
 import React from 'react'
 import { NextPage, GetStaticProps } from 'next'
 import Head from 'next/head'
-import MainLayout from '../../app/layout/Layout'
-import PageWithLayoutType from '../../app/layout/PageWithLayout'
+import { MainLayout } from '../../app/layout/Layout'
+import { PageWithLayoutType } from '../../app/layout/PageWithLayout'
 import { ControlPanelGrid } from '../../app/components/controlpanel/ControlPanelGrid'
 import { styled } from '../../app/styles/Theme'
+import { useGlobalState } from '../../app/hooks/useGlobalState'
 
 export interface ControlPanelPageProps {
 	title?: string
@@ -12,13 +13,15 @@ export interface ControlPanelPageProps {
 
 const ControlPanelPage: NextPage<ControlPanelPageProps> = (props: ControlPanelPageProps) => {
 	const { title } = props
+	const { globalState } = useGlobalState()
+
 	return (
 		<>
 			<Head>
 				<title>{title}</title>
 			</Head>
 			<ControlPanelPageWrapper>
-				<ControlPanelGrid />
+				{globalState && <ControlPanelGrid globalState={globalState!} />}
 			</ControlPanelPageWrapper>
 		</>
 	)
@@ -34,7 +37,7 @@ export const getStaticProps: GetStaticProps<ControlPanelPageProps> = async () =>
 ;(ControlPanelPage as PageWithLayoutType).layout = MainLayout
 
 const ControlPanelPageWrapper = styled.div`
-	padding: ${(p) => p.theme.space.xl}px;
+	padding: ${(p) => p.theme.space.m}px ${(p) => p.theme.space.l}px;
 	background-color: black;
 	height: 100%;
 	background-color: #363636;

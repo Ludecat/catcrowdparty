@@ -1,6 +1,5 @@
 import Phaser from 'phaser'
-import { Socket } from 'socket.io-client'
-import { ModeratorMessage, MODERATOR_HIDE, MODERATOR_MESSAGE_UPDATE, MODERATOR_SHOW } from '@ccp/common/shared'
+import { ModeratorState } from '@ccp/common/shared'
 
 interface ModeratorProps {
 	x: number
@@ -16,11 +15,10 @@ const BUBBLE_WIDTH = 300
 const BUBBLE_HEIGHT = 200
 
 export class Moderator extends Phaser.GameObjects.Sprite {
-	public socket: Socket
 	public bubble: Phaser.GameObjects.Graphics
 	public text: Phaser.GameObjects.Text
 
-	constructor(scene: Phaser.Scene, socket: Socket, options: ModeratorProps) {
+	constructor(scene: Phaser.Scene, initialState: ModeratorState, options: ModeratorProps) {
 		super(scene, options.x, options.y, MODERATOR_SPRITESHEET_KEY)
 
 		this.anims.create({
@@ -32,37 +30,33 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 			frameRate: 6,
 		})
 
-		this.setScale(6)
-
-		/**
-		 * Suggestion:
-		 * Get initial state from backend
-		 */
-		this.play({ key: MODERATOR_STATE_KEY.IDLE, repeat: -1 })
 		this.bubble = this.createSpeechBubble(scene, scene.game.canvas.width - 375, 510, BUBBLE_WIDTH, BUBBLE_HEIGHT)
-		this.text = this.createBubbleText(scene, 'PLACE_HOLDER', BUBBLE_WIDTH, BUBBLE_HEIGHT)
+		this.text = this.createBubbleText(scene, initialState.message, BUBBLE_WIDTH, BUBBLE_HEIGHT)
 
-		socket.on(MODERATOR_SHOW, (data: ModeratorMessage) => {
-			console.log('received MODERATOR_SHOW')
-			this.text = this.createBubbleText(scene, data.message, BUBBLE_WIDTH, BUBBLE_HEIGHT)
-			this.setVisible(true)
-			this.text.setVisible(true)
-			this.bubble.setVisible(true)
-		})
-		socket.on(MODERATOR_HIDE, () => {
-			console.log('received MODERATOR_HIDE')
-			this.setVisible(false)
-			this.text.destroy()
-			this.bubble.setVisible(false)
-		})
-		socket.on(MODERATOR_MESSAGE_UPDATE, (data: ModeratorMessage) => {
-			console.log('received MODERATOR_MESSAGE_UPDATE')
-			this.text.destroy()
-			this.text = this.createBubbleText(scene, data.message, BUBBLE_WIDTH, BUBBLE_HEIGHT)
-		})
-
+		this.setScale(6)
+		this.handleState(initialState)
 		scene.add.existing(this)
-		this.socket = socket
+	}
+
+	public idle() {
+		if (this.anims.currentAnim && this.anims.currentAnim.key === MODERATOR_STATE_KEY.IDLE) return
+		this.play({ key: MODERATOR_STATE_KEY.IDLE, repeat: -1 })
+	}
+
+	public handleState(state: ModeratorState) {
+		this.idle()
+		this.text.destroy()
+		if (state.visibility) {
+			this.text = this.createBubbleText(this.scene, state.message, BUBBLE_WIDTH, BUBBLE_HEIGHT)
+		}
+
+		this.setIsVisible(state.visibility)
+	}
+
+	public setIsVisible(visible: boolean) {
+		if (this.visible === visible) return
+		this.setVisible(visible)
+		this.bubble.setVisible(visible)
 	}
 
 	/**
@@ -113,7 +107,7 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 		const bubblePadding = 10
 
 		const content = scene.add.text(0, 0, message, {
-			fontFamily: 'Arial',
+			fontFamily: 'Roboto',
 			fontSize: '20px',
 			color: '#000000',
 			align: 'center',
