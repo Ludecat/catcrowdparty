@@ -1,10 +1,6 @@
 import Phaser from 'phaser'
 import { ModeratorState } from '@ccp/common/shared'
-
-interface ModeratorProps {
-	x: number
-	y: number
-}
+import { CCPGameObjectProps } from '../scenes/OverlayScene'
 
 export const MODERATOR_SPRITESHEET_KEY = 'moderator'
 export const MODERATOR_STATE_KEY = {
@@ -18,7 +14,7 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 	public bubble: Phaser.GameObjects.Graphics
 	public text: Phaser.GameObjects.Text
 
-	constructor(scene: Phaser.Scene, initialState: ModeratorState, options: ModeratorProps) {
+	constructor(scene: Phaser.Scene, initialState: ModeratorState, options: CCPGameObjectProps) {
 		super(scene, options.x, options.y, MODERATOR_SPRITESHEET_KEY)
 		this.setName('moderator')
 
@@ -36,6 +32,7 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 
 		this.setScale(6)
 		this.handleState(initialState)
+		options.layer.add(this)
 		scene.add.existing(this)
 	}
 

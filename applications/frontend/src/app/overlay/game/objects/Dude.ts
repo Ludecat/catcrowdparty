@@ -1,10 +1,6 @@
 import Phaser from 'phaser'
 import { CrowdState, CROWD_CROUCH_AUDIO_VALUE_THRESHOLD, CROWD_RUN_AUDIO_VALUE_THRESHOLD } from '@ccp/common/shared'
-
-interface DudeProps {
-	x: number
-	y: number
-}
+import { CCPGameObjectProps } from '../scenes/OverlayScene'
 
 export const DUDE_SPRITESHEET_KEY = 'dude'
 export const DUDE_STATE_KEY = {
@@ -14,7 +10,7 @@ export const DUDE_STATE_KEY = {
 }
 
 export class Dude extends Phaser.GameObjects.Sprite {
-	constructor(scene: Phaser.Scene, crowdState: CrowdState, options: DudeProps) {
+	constructor(scene: Phaser.Scene, crowdState: CrowdState, options: CCPGameObjectProps) {
 		super(scene, options.x, options.y, DUDE_SPRITESHEET_KEY)
 		this.setName('dude')
 
@@ -45,6 +41,7 @@ export class Dude extends Phaser.GameObjects.Sprite {
 
 		this.setScale(2)
 		this.handleState(crowdState)
+		options.layer.add(this)
 		scene.add.existing(this)
 	}
 

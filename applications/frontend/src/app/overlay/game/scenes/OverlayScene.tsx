@@ -16,17 +16,21 @@ import { Dude, DUDE_SPRITESHEET_KEY } from '../objects/Dude'
 import { HotAirBalloon } from '../objects/HotAirBalloon'
 import { Moderator, MODERATOR_SPRITESHEET_KEY } from '../objects/Moderator'
 import { Emote, EMOTE_SPRITESHEET_KEY } from '../objects/Emote'
+import { getRandomInt } from '../../../util/utils'
 
 export class OverlayScene extends Phaser.Scene {
 	public crowd: Dude[] = []
 	public moderator: Moderator | null = null
 	public hotAirBalloons: HotAirBalloon[] = []
+	public mainLayer: Phaser.GameObjects.Layer | null = null
 
 	constructor() {
 		super({ key: SCENES.OVERLAY })
 	}
 
 	init(config: { socket: Socket<CCPSocketEventsMap>; initialState: GlobalState }) {
+		this.mainLayer = this.add.layer()
+
 		config.socket.on(STATE_UPDATE, (state: GlobalState) => {
 			for (const dude of this.crowd) {
 				dude.handleState(state.crowd)
@@ -54,12 +58,20 @@ export class OverlayScene extends Phaser.Scene {
 			if (state.emoteUrls && state.visibility) {
 				for (const emoteURL of state.emoteUrls) {
 					if (this.textures.exists(emoteURL)) {
-						new Emote(this, state, emoteURL)
+						new Emote(this, state, emoteURL, {
+							y: 900,
+							x: getRandomInt(100, this.game.canvas.width - 100),
+							layer: this.mainLayer!,
+						})
 						continue
 					}
 					const imageLoading = this.load.image(emoteURL, emoteURL)
 					imageLoading.on('filecomplete-image-' + emoteURL, () => {
-						new Emote(this, state, emoteURL)
+						new Emote(this, state, emoteURL, {
+							y: 900,
+							x: getRandomInt(100, this.game.canvas.width - 100),
+							layer: this.mainLayer!,
+						})
 					})
 					imageLoading.on('loaderror', () => {
 						console.log('error while loading emote.')
@@ -103,24 +115,46 @@ export class OverlayScene extends Phaser.Scene {
 		const { socket, initialState } = config
 
 		for (let i = 0; i < 23; i++) {
-			this.crowd.push(new Dude(this, initialState.crowd, { x: i * 75, y: 1000 }))
+			this.crowd.push(new Dude(this, initialState.crowd, { x: i * 75, y: 1000, layer: this.mainLayer! }))
 		}
 
 		this.hotAirBalloons.push(
-			new HotAirBalloon(this, initialState.hotAirballon, { x: -100, y: 400, variation: 'ludecat' })
+			new HotAirBalloon(this, initialState.hotAirballon, {
+				x: -100,
+				y: 400,
+				variation: 'ludecat',
+				layer: this.mainLayer!,
+			})
 		)
 		this.hotAirBalloons.push(
-			new HotAirBalloon(this, initialState.hotAirballon, { x: -100, y: 400, variation: 'fritz-cola' })
+			new HotAirBalloon(this, initialState.hotAirballon, {
+				x: -100,
+				y: 400,
+				variation: 'fritz-cola',
+				layer: this.mainLayer!,
+			})
 		)
 		this.hotAirBalloons.push(
-			new HotAirBalloon(this, initialState.hotAirballon, { x: -100, y: 400, variation: 'fh-salzburg' })
+			new HotAirBalloon(this, initialState.hotAirballon, {
+				x: -100,
+				y: 400,
+				variation: 'fh-salzburg',
+				layer: this.mainLayer!,
+			})
 		)
 
 		this.moderator = new Moderator(this, initialState.moderator, {
 			x: this.game.canvas.width - 130,
 			y: this.game.canvas.height - 200,
+			layer: this.mainLayer!,
 		})
 
 		socket.emit(REQUEST_STATE)
 	}
+}
+
+export interface CCPGameObjectProps {
+	x: number
+	y: number
+	layer: Phaser.GameObjects.Layer
 }

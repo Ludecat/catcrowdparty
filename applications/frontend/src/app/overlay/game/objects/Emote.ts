@@ -1,14 +1,14 @@
 import Phaser from 'phaser'
 import { EmotesState } from '@ccp/common/shared'
 import { getRandomInt } from '../../../util/utils'
+import { CCPGameObjectProps } from '../scenes/OverlayScene'
 
 export const EMOTE_SPRITESHEET_KEY = 'kappa'
 export const POS_Y = 700
 
 export class Emote extends Phaser.GameObjects.Sprite {
-	constructor(scene: Phaser.Scene, state: EmotesState, texture: string) {
-		const POS_X = getRandomInt(100, scene.game.canvas.width - 100)
-		super(scene, POS_X, POS_Y, texture)
+	constructor(scene: Phaser.Scene, state: EmotesState, texture: string, options: CCPGameObjectProps) {
+		super(scene, options.x, options.y, texture)
 
 		this.setName('emote')
 		this.setScale(2)
@@ -21,13 +21,13 @@ export class Emote extends Phaser.GameObjects.Sprite {
 			props: {
 				x: {
 					value: function () {
-						return POS_X
+						return options.x
 					},
 					ease: 'Power1',
 				},
 				y: {
 					value: function () {
-						return POS_Y - 200
+						return options.y - 200
 					},
 					ease: 'Power3',
 				},
@@ -60,6 +60,8 @@ export class Emote extends Phaser.GameObjects.Sprite {
 		})
 
 		this.handleState(state)
+		options.layer.add(this)
+		this.setDepth(-1)
 		scene.add.existing(this)
 	}
 
