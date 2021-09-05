@@ -72,7 +72,7 @@ httpServer.listen(port)
 logger.info(`Backend ready on port ${port}`)
 
 const twitchChatHandler = new TwitchChatHandler()
-twitchChatHandler.on(NEW_EMOTES_TRIGGER, (emotes: string[]) => {
+twitchChatHandler.on(NEW_EMOTES_TRIGGER, (emotes) => {
 	logger.info(JSON.stringify(emotes))
 	const emoteState: EmotesState = {
 		...state.emotes,

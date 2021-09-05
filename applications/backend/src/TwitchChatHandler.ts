@@ -1,9 +1,13 @@
 import { Client as TmiClient } from 'tmi.js'
 import { twitchLogger as logger } from './logger'
-import { EventEmitter } from 'events'
 import { NEW_EMOTES_TRIGGER } from '@ccp/common'
+import { TypedEmitter } from 'tiny-typed-emitter'
 
-export default class TwitchChatHandler extends EventEmitter {
+interface TwitchChatHandlerEvents {
+	[NEW_EMOTES_TRIGGER]: (emotes: string[]) => void
+}
+
+export default class TwitchChatHandler extends TypedEmitter<TwitchChatHandlerEvents> {
 	private readonly tmi: TmiClient
 
 	constructor() {
