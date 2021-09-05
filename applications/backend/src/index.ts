@@ -24,7 +24,7 @@ import {
 } from '@ccp/common'
 import { logger } from './logger'
 import { Server } from 'socket.io'
-import TwitchChatHandler, { NEW_EMOTES } from './TwitchChatHandler'
+import TwitchChatHandler, { NEW_EMOTE, NEW_EMOTES } from './TwitchChatHandler'
 
 const httpServer = createServer()
 const io = new Server<CCPSocketEventsMap>(httpServer, {})
@@ -79,6 +79,9 @@ twitchChatHandler.on(NEW_EMOTES, (emotes) => {
 		emoteUrls: emotes,
 	}
 	io.emit(NEW_EMOTES_TRIGGER, emoteState)
+})
+twitchChatHandler.on(NEW_EMOTE, (emoteUrl) => {
+	logger.info(emoteUrl)
 })
 
 let state: GlobalState = {
