@@ -10,6 +10,8 @@ export const HOT_AIR_BALLON_UPDATE = 'hotAirBallonUpdate'
 export const EMOTES_UPDATE = 'emotesUpdate'
 export const BUBBLES_UPDATE = 'bubblesUpdate'
 
+export const NEW_EMOTES_TRIGGER = 'newEmotes'
+
 export const CROWD_CROUCH_AUDIO_VALUE_THRESHOLD = 50
 export const CROWD_RUN_AUDIO_VALUE_THRESHOLD = 150
 
