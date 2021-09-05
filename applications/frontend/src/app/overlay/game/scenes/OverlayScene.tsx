@@ -21,7 +21,6 @@ export class OverlayScene extends Phaser.Scene {
 	public crowd: Dude[] = []
 	public moderator: Moderator | null = null
 	public hotAirBalloons: HotAirBalloon[] = []
-	public emotes: Emote[] = []
 
 	constructor() {
 		super({ key: SCENES.OVERLAY })
@@ -39,7 +38,8 @@ export class OverlayScene extends Phaser.Scene {
 				hotAirBalloon.handleState(state.hotAirballon)
 			}
 
-			for (const emotes of this.emotes) {
+			const emotesInScene = this.children.list.filter((child) => child.name === 'emote') as Emote[]
+			for (const emotes of emotesInScene) {
 				emotes.handleState(state.emotes)
 			}
 		})
@@ -52,8 +52,19 @@ export class OverlayScene extends Phaser.Scene {
 
 		config.socket.on(NEW_EMOTES_TRIGGER, (state: EmotesState) => {
 			if (state.emoteUrls && state.visibility) {
-				for (const newEmote of state.emoteUrls) {
-					this.emotes.push(new Emote(this, state))
+				for (const emoteURL of state.emoteUrls) {
+					if (this.textures.exists(emoteURL)) {
+						new Emote(this, state, emoteURL)
+						continue
+					}
+					const imageLoading = this.load.image(emoteURL, emoteURL)
+					imageLoading.on('filecomplete-image-' + emoteURL, () => {
+						new Emote(this, state, emoteURL)
+					})
+					imageLoading.on('loaderror', () => {
+						console.log('error while loading emote.')
+					})
+					imageLoading.start()
 				}
 			}
 		})

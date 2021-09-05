@@ -20,6 +20,7 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 
 	constructor(scene: Phaser.Scene, initialState: ModeratorState, options: ModeratorProps) {
 		super(scene, options.x, options.y, MODERATOR_SPRITESHEET_KEY)
+		this.setName('moderator')
 
 		this.anims.create({
 			key: MODERATOR_STATE_KEY.IDLE,

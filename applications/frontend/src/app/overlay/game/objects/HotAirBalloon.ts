@@ -19,6 +19,7 @@ export class HotAirBalloon extends Phaser.GameObjects.Sprite {
 
 	constructor(scene: Phaser.Scene, initialState: HotAirBallonState, options: HotAirBallonProps) {
 		super(scene, options.x, options.y, options.variation)
+		this.setName('hotAirBallon')
 		this.variation = options.variation
 		this.startX = options.x
 		this.startY = options.y

@@ -16,6 +16,7 @@ export const DUDE_STATE_KEY = {
 export class Dude extends Phaser.GameObjects.Sprite {
 	constructor(scene: Phaser.Scene, crowdState: CrowdState, options: DudeProps) {
 		super(scene, options.x, options.y, DUDE_SPRITESHEET_KEY)
+		this.setName('dude')
 
 		this.anims.create({
 			key: DUDE_STATE_KEY.IDLE,
