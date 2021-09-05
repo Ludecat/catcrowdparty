@@ -2,10 +2,12 @@ import Phaser from 'phaser'
 import { Socket } from 'socket.io-client'
 import {
 	CCPSocketEventsMap,
+	EmotesState,
 	GlobalState,
 	HotAirBallonVationsValues,
 	HotAirBalloonVariation,
 	HOT_AIR_BALLON_START,
+	NEW_EMOTES_TRIGGER,
 	REQUEST_STATE,
 	STATE_UPDATE,
 } from '@ccp/common/shared'
@@ -37,14 +39,22 @@ export class OverlayScene extends Phaser.Scene {
 				hotAirBalloon.handleState(state.hotAirballon)
 			}
 
-			for (const emote of this.emotes) {
-				emote.handleState(state.emotes)
+			for (const emotes of this.emotes) {
+				emotes.handleState(state.emotes)
 			}
 		})
 
 		config.socket.on(HOT_AIR_BALLON_START, (data: HotAirBalloonVariation) => {
 			for (const hotAirBalloon of this.hotAirBalloons) {
 				hotAirBalloon.handleTrigger(data)
+			}
+		})
+
+		config.socket.on(NEW_EMOTES_TRIGGER, (state: EmotesState) => {
+			if (state.emoteUrls && state.visibility) {
+				for (const newEmote of state.emoteUrls) {
+					this.emotes.push(new Emote(this, state))
+				}
 			}
 		})
 	}
@@ -83,10 +93,6 @@ export class OverlayScene extends Phaser.Scene {
 
 		for (let i = 0; i < 23; i++) {
 			this.crowd.push(new Dude(this, initialState.crowd, { x: i * 75, y: 1000 }))
-		}
-
-		for (let i = 0; i < 23; i++) {
-			this.emotes.push(new Emote(this, initialState.emotes, { x: i * 75, y: this.game.canvas.height - 230 }))
 		}
 
 		this.hotAirBalloons.push(

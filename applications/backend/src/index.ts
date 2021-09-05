@@ -74,10 +74,11 @@ logger.info(`Backend ready on port ${port}`)
 const twitchChatHandler = new TwitchChatHandler()
 twitchChatHandler.on(NEW_EMOTES_TRIGGER, (emotes: string[]) => {
 	logger.info(JSON.stringify(emotes))
-	const state: Partial<EmotesState> = {
+	const emoteState: EmotesState = {
+		...state.emotes,
 		emoteUrls: emotes,
 	}
-	io.emit(EMOTES_UPDATE, state)
+	io.emit(NEW_EMOTES_TRIGGER, emoteState)
 })
 
 let state: GlobalState = {

@@ -82,4 +82,5 @@ export interface CCPSocketEventsMap {
 	[HOT_AIR_BALLON_START]: (data: HotAirBalloonVariation) => void
 	[STATE_UPDATE]: (state: GlobalState) => void
 	[REQUEST_STATE]: () => void
+	[NEW_EMOTES_TRIGGER]: (emotesUpdate: EmotesState) => void
 }
