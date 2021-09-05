@@ -1,10 +1,11 @@
 import { Client as TmiClient } from 'tmi.js'
 import { twitchLogger as logger } from './logger'
-import { NEW_EMOTES_TRIGGER } from '@ccp/common'
 import { TypedEmitter } from 'tiny-typed-emitter'
 
+export const NEW_EMOTES = 'newEmotes'
+
 interface TwitchChatHandlerEvents {
-	[NEW_EMOTES_TRIGGER]: (emotes: string[]) => void
+	[NEW_EMOTES]: (emotes: string[]) => void
 }
 
 export default class TwitchChatHandler extends TypedEmitter<TwitchChatHandlerEvents> {
@@ -28,7 +29,7 @@ export default class TwitchChatHandler extends TypedEmitter<TwitchChatHandlerEve
 				const emotes = Object.keys(userstate.emotes).map(
 					(emoteId) => `https://static-cdn.jtvnw.net/emoticons/v2/${emoteId}/static/light/2.0`
 				)
-				this.emit(NEW_EMOTES_TRIGGER, emotes)
+				this.emit(NEW_EMOTES, emotes)
 			}
 		})
 
