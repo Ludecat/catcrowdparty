@@ -13,11 +13,13 @@ import { SCENES } from '../config'
 import { Dude, DUDE_SPRITESHEET_KEY } from '../objects/Dude'
 import { HotAirBalloon } from '../objects/HotAirBalloon'
 import { Moderator, MODERATOR_SPRITESHEET_KEY } from '../objects/Moderator'
+import { Emote, EMOTE_SPRITESHEET_KEY } from '../objects/Emote'
 
 export class OverlayScene extends Phaser.Scene {
 	public crowd: Dude[] = []
 	public moderator: Moderator | null = null
 	public hotAirBalloons: HotAirBalloon[] = []
+	public emotes: Emote[] = []
 
 	constructor() {
 		super({ key: SCENES.OVERLAY })
@@ -34,6 +36,10 @@ export class OverlayScene extends Phaser.Scene {
 			for (const hotAirBalloon of this.hotAirBalloons) {
 				hotAirBalloon.handleState(state.hotAirballon)
 			}
+
+			for (const emote of this.emotes) {
+				emote.handleState(state.emotes)
+			}
 		})
 
 		config.socket.on(HOT_AIR_BALLON_START, (data: HotAirBalloonVariation) => {
@@ -49,6 +55,7 @@ export class OverlayScene extends Phaser.Scene {
 		 * https://rvros.itch.io/animated-pixel-hero
 		 * https://glusoft.com/tutorials/sdl2/sprite-animations
 		 */
+		this.load.image(EMOTE_SPRITESHEET_KEY, '/kappa.png')
 		this.load.spritesheet(DUDE_SPRITESHEET_KEY, '/dude.png', {
 			frameWidth: 77.42857142857143,
 			frameHeight: 57.2727272727,
@@ -78,10 +85,9 @@ export class OverlayScene extends Phaser.Scene {
 			this.crowd.push(new Dude(this, initialState.crowd, { x: i * 75, y: 1000 }))
 		}
 
-		this.moderator = new Moderator(this, initialState.moderator, {
-			x: this.game.canvas.width - 130,
-			y: this.game.canvas.height - 200,
-		})
+		for (let i = 0; i < 23; i++) {
+			this.emotes.push(new Emote(this, initialState.emotes, { x: i * 75, y: this.game.canvas.height - 230 }))
+		}
 
 		this.hotAirBalloons.push(
 			new HotAirBalloon(this, initialState.hotAirballon, { x: -100, y: 400, variation: 'ludecat' })
@@ -92,6 +98,11 @@ export class OverlayScene extends Phaser.Scene {
 		this.hotAirBalloons.push(
 			new HotAirBalloon(this, initialState.hotAirballon, { x: -100, y: 400, variation: 'fh-salzburg' })
 		)
+
+		this.moderator = new Moderator(this, initialState.moderator, {
+			x: this.game.canvas.width - 130,
+			y: this.game.canvas.height - 200,
+		})
 
 		socket.emit(REQUEST_STATE)
 	}
