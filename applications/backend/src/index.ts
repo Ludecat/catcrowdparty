@@ -15,6 +15,8 @@ import {
 	BUBBLES_UPDATE,
 	EMOTES_UPDATE,
 	CCPSocketEventsMap,
+	NEW_EMOTES_TRIGGER,
+	EmotesState,
 } from '@ccp/common'
 import { logger } from './logger'
 import { Server } from 'socket.io'
@@ -31,6 +33,7 @@ import {
 	updateHotAirBallon,
 	updateModerator,
 } from './State'
+import TwitchChatHandler, { NEW_EMOTE, NEW_EMOTES } from './TwitchChatHandler'
 
 const store = configureStore<GlobalState>({
 	reducer: {
@@ -88,3 +91,16 @@ store.subscribe(() => {
 const port = process.env.PORT_BACKEND ?? 5000
 httpServer.listen(port)
 logger.info(`Backend ready on port ${port}`)
+
+const twitchChatHandler = new TwitchChatHandler()
+twitchChatHandler.on(NEW_EMOTES, (emotes) => {
+	logger.info(JSON.stringify(emotes))
+	const emoteState: EmotesState = {
+		...store.getState().emotes,
+		emoteUrls: emotes,
+	}
+	io.emit(NEW_EMOTES_TRIGGER, emoteState)
+})
+twitchChatHandler.on(NEW_EMOTE, (emoteUrl) => {
+	logger.info(emoteUrl)
+})

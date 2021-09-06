@@ -1,9 +1,8 @@
 import Phaser from 'phaser'
 import { HotAirBalloonVariation, HotAirBalloonVariationsType, HotAirBallonState } from '@ccp/common/shared'
+import { CCPGameObjectProps } from '../scenes/OverlayScene'
 
-interface HotAirBallonProps {
-	x: number
-	y: number
+interface HotAirBallonProps extends CCPGameObjectProps {
 	variation: HotAirBalloonVariationsType
 }
 
@@ -19,6 +18,7 @@ export class HotAirBalloon extends Phaser.GameObjects.Sprite {
 
 	constructor(scene: Phaser.Scene, initialState: HotAirBallonState, options: HotAirBallonProps) {
 		super(scene, options.x, options.y, options.variation)
+		this.setName('hotAirBallon')
 		this.variation = options.variation
 		this.startX = options.x
 		this.startY = options.y
@@ -35,6 +35,7 @@ export class HotAirBalloon extends Phaser.GameObjects.Sprite {
 		this.setScale(3)
 		this.handleState(initialState)
 		scene.physics.add.existing(this)
+		options.layer.add(this)
 		scene.add.existing(this)
 	}
 

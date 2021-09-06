@@ -74,6 +74,7 @@ const bubblesSlice = createSlice({
 
 const initialEmotesState: EmotesState = {
 	visibility: false,
+	emoteUrls: Array<string>(),
 }
 
 const emotesSlice = createSlice({

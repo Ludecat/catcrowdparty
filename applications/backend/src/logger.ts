@@ -12,3 +12,4 @@ const createLogger = (label: string): Logger =>
 	})
 
 export const logger = createLogger('Web')
+export const twitchLogger = createLogger('Twitch')
