@@ -1,10 +1,11 @@
 import { TypedEmitter } from 'tiny-typed-emitter'
 import { Userstate } from 'tmi.js'
 
+export const NEW_EMOTES = 'newEmotes'
 const COOLDOWN = 5000
 
 interface TwitchChatEmotesEvents {
-	newEmote: (emoteId: string) => void
+	[NEW_EMOTES]: (emoteIds: string[]) => void
 }
 
 export default class TwitchChatEmotes extends TypedEmitter<TwitchChatEmotesEvents> {
@@ -17,7 +18,7 @@ export default class TwitchChatEmotes extends TypedEmitter<TwitchChatEmotesEvent
 
 		if (containsEmotes && !isOnCooldown) {
 			this.lastEmoteEmitted = now
-			this.emit('newEmote', Object.keys(userstate.emotes ?? {})[0])
+			this.emit(NEW_EMOTES, Object.keys(userstate.emotes ?? {}))
 		}
 	}
 }

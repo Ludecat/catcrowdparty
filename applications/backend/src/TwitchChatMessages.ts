@@ -1,8 +1,10 @@
 import { TypedEmitter } from 'tiny-typed-emitter'
 import { Userstate } from 'tmi.js'
 
+export const NEW_EMOTE_MESSAGE = 'newEmoteMessage'
+
 interface TwitchChatMessagesEvents {
-	newEmoteMessage: (emoteIds: string[]) => void
+	[NEW_EMOTE_MESSAGE]: (senderName: string, emoteIds: string[]) => void
 }
 
 export default class TwitchChatMessages extends TypedEmitter<TwitchChatMessagesEvents> {
@@ -16,7 +18,8 @@ export default class TwitchChatMessages extends TypedEmitter<TwitchChatMessagesE
 			}
 			emoteSequence.sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
 			this.emit(
-				'newEmoteMessage',
+				NEW_EMOTE_MESSAGE,
+				userstate['display-name'] ?? 'unknown',
 				emoteSequence.map((t) => t[1])
 			)
 		}

@@ -2,7 +2,6 @@ import Phaser from 'phaser'
 import { Socket } from 'socket.io-client'
 import {
 	CCPSocketEventsMap,
-	EmotesState,
 	GlobalState,
 	HotAirBallonVationsValues,
 	HotAirBalloonVariation,
@@ -54,9 +53,9 @@ export class OverlayScene extends Phaser.Scene {
 			}
 		})
 
-		config.socket.on(NEW_EMOTES_TRIGGER, (state: EmotesState) => {
-			if (state.emoteUrls && state.visibility) {
-				for (const emoteURL of state.emoteUrls) {
+		config.socket.on(NEW_EMOTES_TRIGGER, (emoteUrls, state) => {
+			if (state.visibility) {
+				for (const emoteURL of emoteUrls) {
 					if (this.textures.exists(emoteURL)) {
 						new Emote(this, state, emoteURL, {
 							y: 900,

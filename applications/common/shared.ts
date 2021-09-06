@@ -11,6 +11,7 @@ export const EMOTES_UPDATE = 'emotesUpdate'
 export const BUBBLES_UPDATE = 'bubblesUpdate'
 
 export const NEW_EMOTES_TRIGGER = 'newEmotes'
+export const NEW_EMOTE_MESSAGE_TRIGGER = 'newEmoteMessage'
 
 export const CROWD_CROUCH_AUDIO_VALUE_THRESHOLD = 50
 export const CROWD_RUN_AUDIO_VALUE_THRESHOLD = 150
@@ -56,7 +57,6 @@ export interface HotAirBallonState {
 
 export interface EmotesState {
 	visibility: boolean
-	emoteUrls: string[]
 }
 
 export const EMOTE_MESSAGE = 'emoteMessage'
@@ -82,5 +82,6 @@ export interface CCPSocketEventsMap {
 	[HOT_AIR_BALLON_START]: (data: HotAirBalloonVariation) => void
 	[STATE_UPDATE]: (state: GlobalState) => void
 	[REQUEST_STATE]: () => void
-	[NEW_EMOTES_TRIGGER]: (emotesUpdate: EmotesState) => void
+	[NEW_EMOTES_TRIGGER]: (emoteUrls: string[], emoteState: EmotesState) => void
+	[NEW_EMOTE_MESSAGE_TRIGGER]: (senderName: string, emoteUrls: string[], emoteState: EmotesState) => void
 }

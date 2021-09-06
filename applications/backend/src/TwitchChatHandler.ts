@@ -1,16 +1,16 @@
 import { Client as TmiClient } from 'tmi.js'
 import { twitchLogger as logger } from './logger'
 import { TypedEmitter } from 'tiny-typed-emitter'
-import TwitchChatEmotes from './TwitchChatEmotes'
-import TwitchChatMessages from './TwitchChatMessages'
-
-export const NEW_EMOTES = 'newEmotes'
-export const NEW_EMOTE = 'newEmote'
+import TwitchChatEmotes, { NEW_EMOTES } from './TwitchChatEmotes'
+import TwitchChatMessages, { NEW_EMOTE_MESSAGE } from './TwitchChatMessages'
 
 interface TwitchChatHandlerEvents {
 	[NEW_EMOTES]: (emoteUrls: string[]) => void
-	[NEW_EMOTE]: (emoteUrl: string) => void
+	[NEW_EMOTE_MESSAGE]: (senderName: string, emoteUrls: string[]) => void
 }
+
+const emoteIdsToUrls = (emoteIds: string[]) =>
+	emoteIds.map((emoteId) => `https://static-cdn.jtvnw.net/emoticons/v2/${emoteId}/static/light/2.0`)
 
 export default class TwitchChatHandler extends TypedEmitter<TwitchChatHandlerEvents> {
 	private readonly tmi: TmiClient
@@ -39,13 +39,12 @@ export default class TwitchChatHandler extends TypedEmitter<TwitchChatHandlerEve
 			this.messagesHandler.handleChatMessage(userstate, message)
 		})
 
-		this.emotesHandler.on('newEmote', (emoteId) => {
-			this.emit(NEW_EMOTE, `https://static-cdn.jtvnw.net/emoticons/v2/${emoteId}/static/light/2.0`)
+		this.emotesHandler.on(NEW_EMOTES, (emoteIds) => {
+			this.emit(NEW_EMOTES, emoteIdsToUrls(emoteIds))
 		})
 
-		this.messagesHandler.on('newEmoteMessage', (emoteIds) => {
-			const emotes = emoteIds.map((emoteId) => `https://static-cdn.jtvnw.net/emoticons/v2/${emoteId}/static/light/2.0`)
-			this.emit(NEW_EMOTES, emotes)
+		this.messagesHandler.on(NEW_EMOTE_MESSAGE, (senderName, emoteIds) => {
+			this.emit(NEW_EMOTE_MESSAGE, senderName, emoteIdsToUrls(emoteIds))
 		})
 
 		// eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -68,3 +67,5 @@ export default class TwitchChatHandler extends TypedEmitter<TwitchChatHandlerEve
 		await this.tmi.join(channel)
 	}
 }
+
+export { NEW_EMOTES, NEW_EMOTE_MESSAGE }
