@@ -20,9 +20,11 @@ import {
 	BUBBLES_UPDATE,
 	EMOTES_UPDATE,
 	CCPSocketEventsMap,
+	NEW_EMOTES_TRIGGER,
 } from '@ccp/common'
 import { logger } from './logger'
 import { Server } from 'socket.io'
+import TwitchChatHandler, { NEW_EMOTE, NEW_EMOTES } from './TwitchChatHandler'
 
 const httpServer = createServer()
 const io = new Server<CCPSocketEventsMap>(httpServer, {})
@@ -69,6 +71,19 @@ const port = process.env.PORT_BACKEND ?? 5000
 httpServer.listen(port)
 logger.info(`Backend ready on port ${port}`)
 
+const twitchChatHandler = new TwitchChatHandler()
+twitchChatHandler.on(NEW_EMOTES, (emotes) => {
+	logger.info(JSON.stringify(emotes))
+	const emoteState: EmotesState = {
+		...state.emotes,
+		emoteUrls: emotes,
+	}
+	io.emit(NEW_EMOTES_TRIGGER, emoteState)
+})
+twitchChatHandler.on(NEW_EMOTE, (emoteUrl) => {
+	logger.info(emoteUrl)
+})
+
 let state: GlobalState = {
 	crowd: {
 		mode: CrowdMode.manual,
@@ -84,6 +99,7 @@ let state: GlobalState = {
 	},
 	emotes: {
 		visibility: false,
+		emoteUrls: [],
 	},
 	bubbles: {
 		visibility: false,
