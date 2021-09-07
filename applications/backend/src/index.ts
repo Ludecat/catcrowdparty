@@ -106,8 +106,8 @@ twitchChatHandler.on(NEW_EMOTES, (emoteUrls) => {
 twitchChatHandler.on(NEW_EMOTE_MESSAGE, (senderName, emoteUrls) => {
 	logger.info(`newEmoteMessage from ${senderName}: ${JSON.stringify(emoteUrls)}`)
 
-	const emoteState = store.getState().emotes
-	if (emoteState.visibility) {
-		io.emit(NEW_EMOTE_MESSAGE_TRIGGER, senderName, emoteUrls, emoteState)
+	const bubblesState = store.getState().bubbles
+	if (bubblesState.visibility) {
+		io.emit(NEW_EMOTE_MESSAGE_TRIGGER, senderName, emoteUrls, bubblesState)
 	}
 })

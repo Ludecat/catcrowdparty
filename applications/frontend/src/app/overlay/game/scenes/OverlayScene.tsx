@@ -7,6 +7,7 @@ import {
 	HotAirBalloonVariation,
 	HOT_AIR_BALLON_START,
 	NEW_EMOTES_TRIGGER,
+	NEW_EMOTE_MESSAGE_TRIGGER,
 	REQUEST_STATE,
 	STATE_UPDATE,
 } from '@ccp/common/shared'
@@ -14,8 +15,9 @@ import { SCENES } from '../config'
 import { Dude, DUDE_SPRITESHEET_KEY } from '../objects/Dude'
 import { HotAirBalloon } from '../objects/HotAirBalloon'
 import { Moderator, MODERATOR_SPRITESHEET_KEY } from '../objects/Moderator'
-import { Emote, EMOTE_SPRITESHEET_KEY } from '../objects/Emote'
+import { Emote } from '../objects/Emote'
 import { getRandomInt } from '../../../util/utils'
+import { EmoteBubble } from '../objects/EmoteBubble'
 
 export class OverlayScene extends Phaser.Scene {
 	public crowd: Dude[] = []
@@ -25,6 +27,10 @@ export class OverlayScene extends Phaser.Scene {
 
 	constructor() {
 		super({ key: SCENES.OVERLAY })
+	}
+
+	private getActiveGameObjectsByName(name: string) {
+		return this.children.list.filter((child) => child.name === name) as EmoteBubble[]
 	}
 
 	init(config: { socket: Socket<CCPSocketEventsMap>; initialState: GlobalState }) {
@@ -41,15 +47,42 @@ export class OverlayScene extends Phaser.Scene {
 				hotAirBalloon.handleState(state.hotAirballon)
 			}
 
-			const emotesInScene = this.children.list.filter((child) => child.name === 'emote') as Emote[]
-			for (const emotes of emotesInScene) {
+			const activeEmotes = this.getActiveGameObjectsByName('emote')
+			for (const emotes of activeEmotes) {
 				emotes.handleState(state.emotes)
+			}
+
+			const activeEmoteBubbles = this.getActiveGameObjectsByName('emoteBubble')
+			for (const bubble of activeEmoteBubbles) {
+				bubble.handleState(state.bubbles)
 			}
 		})
 
 		config.socket.on(HOT_AIR_BALLON_START, (data: HotAirBalloonVariation) => {
 			for (const hotAirBalloon of this.hotAirBalloons) {
 				hotAirBalloon.handleTrigger(data)
+			}
+		})
+
+		config.socket.on(NEW_EMOTE_MESSAGE_TRIGGER, (senderName, emoteUrls, state) => {
+			console.log(state.visibility)
+			if (state.visibility) {
+				let imageLoading
+				for (const emoteURL of emoteUrls) {
+					imageLoading = this.load.image(emoteURL, emoteURL)
+					imageLoading.on('loaderror', () => {
+						console.log('error while loading emote.')
+					})
+					imageLoading.start()
+				}
+
+				imageLoading?.on('complete', () => {
+					new EmoteBubble(this, senderName, state, emoteUrls, {
+						y: 300,
+						x: 300,
+						layer: this.mainLayer!,
+					})
+				})
 			}
 		})
 
@@ -87,7 +120,6 @@ export class OverlayScene extends Phaser.Scene {
 		 * https://rvros.itch.io/animated-pixel-hero
 		 * https://glusoft.com/tutorials/sdl2/sprite-animations
 		 */
-		this.load.image(EMOTE_SPRITESHEET_KEY, '/kappa.png')
 		this.load.spritesheet(DUDE_SPRITESHEET_KEY, '/dude.png', {
 			frameWidth: 77.42857142857143,
 			frameHeight: 57.2727272727,
