@@ -5,8 +5,11 @@ import { CCPGameObjectProps } from '../scenes/OverlayScene'
 
 export const POS_Y = 500
 
-const BUBBLE_WIDTH = 300
-const BUBBLE_HEIGHT = 200
+const BUBBLE_WIDTH = 200
+const BUBBLE_HEIGHT = 75
+
+const BUBBLE_ARROW_WIDTH_THRESHOLD = 50
+const BUBBLE_ARROW_HEIGHT = 100
 
 export class EmoteBubble extends Phaser.GameObjects.Graphics {
 	public bubble: Phaser.GameObjects.Graphics
@@ -48,7 +51,7 @@ export class EmoteBubble extends Phaser.GameObjects.Graphics {
 			delay: startDelay,
 		})
 
-		this.scene.tweens.add({
+		/* this.scene.tweens.add({
 			targets: this.bubble,
 			props: {
 				alpha: 0,
@@ -69,7 +72,7 @@ export class EmoteBubble extends Phaser.GameObjects.Graphics {
 			onComplete: () => {
 				this.destroy()
 			},
-		})
+		})*/
 
 		options.layer.add(this)
 
@@ -112,11 +115,11 @@ export class EmoteBubble extends Phaser.GameObjects.Graphics {
 		bubble.fillRoundedRect(0, 0, bubbleWidth, bubbleHeight, 16)
 
 		//  Calculate arrow coordinates
-		const point1X = bubbleWidth - 200
+		const point1X = bubbleWidth - BUBBLE_ARROW_WIDTH_THRESHOLD
 		const point1Y = bubbleHeight
-		const point2X = bubbleWidth - 100
+		const point2X = bubbleWidth - BUBBLE_ARROW_HEIGHT
 		const point2Y = bubbleHeight
-		const point3X = Math.floor(bubbleWidth - 100)
+		const point3X = Math.floor(bubbleWidth - BUBBLE_ARROW_HEIGHT)
 		const point3Y = Math.floor(bubbleHeight + arrowHeight)
 
 		//  Bubble arrow shadow
@@ -144,7 +147,7 @@ export class EmoteBubble extends Phaser.GameObjects.Graphics {
 		const content = scene.add.text(0, 0, senderName, {
 			fontFamily: 'Roboto',
 			fontSize: '20px',
-			color: '#000000',
+			color: '#FFFFFF',
 			align: 'center',
 			wordWrap: { width: bubbleWidth - bubblePadding * 2 },
 		})
@@ -155,7 +158,7 @@ export class EmoteBubble extends Phaser.GameObjects.Graphics {
 		 */
 		const b = content.getBounds()
 
-		content.setPosition(this.bubble.x + bubbleWidth / 2 - b.width / 2, this.bubble.y + bubbleHeight / 2 - b.height / 2)
+		content.setPosition(this.bubble.x + 5, this.bubble.y - 23)
 		return content
 	}
 }

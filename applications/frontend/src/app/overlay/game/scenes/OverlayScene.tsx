@@ -180,6 +180,22 @@ export class OverlayScene extends Phaser.Scene {
 			layer: this.mainLayer!,
 		})
 
+		new EmoteBubble(
+			this,
+			'senderName',
+			initialState.bubbles,
+			[
+				'https://static-cdn.jtvnw.net/emoticons/v2/28/static/light/2.0',
+				'https://static-cdn.jtvnw.net/emoticons/v2/301428702/static/light/2.0',
+				'https://static-cdn.jtvnw.net/emoticons/v2/304486301/static/light/2.0',
+			],
+			{
+				y: 300,
+				x: 300,
+				layer: this.mainLayer!,
+			}
+		)
+
 		socket.emit(REQUEST_STATE)
 	}
 }
