@@ -59,7 +59,12 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 	 * Inspired by https://phaser.io/examples/v3/view/game-objects/text/speech-bubble
 	 */
 	private createSpeechBubble(scene: Phaser.Scene) {
-		const bubble = new Phaser.GameObjects.Image(scene, scene.game.canvas.width - 350, 700, SPEECH_BUBBLE_SMALL_KEY)
+		const bubble = new Phaser.GameObjects.Image(
+			scene,
+			scene.game.canvas.width - 365,
+			this.y - 190,
+			SPEECH_BUBBLE_SMALL_KEY
+		)
 		bubble.setScale(2.25)
 		this.scene.add.existing(bubble)
 		return bubble

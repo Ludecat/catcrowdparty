@@ -212,7 +212,7 @@ export class OverlayScene extends Phaser.Scene {
 
 		this.moderator = new Moderator(this, initialState.moderator, {
 			x: this.game.canvas.width - 130,
-			y: this.game.canvas.height - 135,
+			y: this.game.canvas.height - 175,
 			layer: this.mainLayer!,
 		})
 
