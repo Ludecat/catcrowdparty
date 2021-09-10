@@ -3,8 +3,6 @@ import { BubblesState, EmotesState } from '@ccp/common/shared'
 import { getRandomInt } from '../../../util/utils'
 import { CCPGameObjectProps } from '../scenes/OverlayScene'
 
-export const POS_Y = 500
-
 const BUBBLE_WIDTH = 200
 const BUBBLE_HEIGHT = 75
 
@@ -26,7 +24,7 @@ export class EmoteBubble extends Phaser.GameObjects.Graphics {
 		const startDelay = getRandomInt(0, 500)
 
 		this.bubble = this.createSpeechBubble(scene, options.x, options.y, BUBBLE_WIDTH, BUBBLE_HEIGHT)
-		this.text = this.createBubbleText(scene, senderName, emoteUrls, BUBBLE_WIDTH, BUBBLE_HEIGHT)
+		this.text = this.createBubbleText(scene, senderName, emoteUrls, BUBBLE_WIDTH, BUBBLE_HEIGHT, startDelay)
 
 		this.setName('emoteBubble')
 		this.text.setAlpha(0)
@@ -51,7 +49,7 @@ export class EmoteBubble extends Phaser.GameObjects.Graphics {
 			delay: startDelay,
 		})
 
-		/* this.scene.tweens.add({
+		this.scene.tweens.add({
 			targets: this.bubble,
 			props: {
 				alpha: 0,
@@ -72,7 +70,7 @@ export class EmoteBubble extends Phaser.GameObjects.Graphics {
 			onComplete: () => {
 				this.destroy()
 			},
-		})*/
+		})
 
 		options.layer.add(this)
 
@@ -140,7 +138,8 @@ export class EmoteBubble extends Phaser.GameObjects.Graphics {
 		senderName: string,
 		texture: string[],
 		bubbleWidth: number,
-		bubbleHeight: number
+		bubbleHeight: number,
+		startDelay: number
 	) {
 		const bubblePadding = 10
 
@@ -152,12 +151,43 @@ export class EmoteBubble extends Phaser.GameObjects.Graphics {
 			wordWrap: { width: bubbleWidth - bubblePadding * 2 },
 		})
 
-		/**
-		 * TODO:
-		 * draw texture of emotes
-		 */
-		const b = content.getBounds()
+		content.setPosition(this.bubble.x + 5, this.bubble.y - 23)
 
+		const spaceBetween = 35
+		for (let i = 0; i <= texture.length && i < 3; i++) {
+			const POS_X = i !== 0 ? this.bubble.x + i * 65 + spaceBetween : this.bubble.x + spaceBetween
+			const imageGraphic = new Phaser.GameObjects.Image(
+				this.scene,
+				POS_X,
+				this.bubble.y + BUBBLE_HEIGHT / 2,
+				texture[i]
+			)
+			imageGraphic.setAlpha(0)
+
+			this.scene.tweens.add({
+				targets: imageGraphic,
+				props: {
+					alpha: 1,
+				},
+				duration: 500,
+				delay: startDelay + 500,
+			})
+
+			this.scene.tweens.add({
+				targets: imageGraphic,
+				props: {
+					alpha: 0,
+				},
+				delay: startDelay + 2500,
+				duration: 500,
+				onComplete: () => {
+					this.destroy()
+				},
+			})
+			imageGraphic.width = 50
+			imageGraphic.height = 50
+			scene.add.existing(imageGraphic)
+		}
 		content.setPosition(this.bubble.x + 5, this.bubble.y - 23)
 		return content
 	}

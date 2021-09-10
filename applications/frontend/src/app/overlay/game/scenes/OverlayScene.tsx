@@ -19,6 +19,8 @@ import { Emote } from '../objects/Emote'
 import { getRandomInt } from '../../../util/utils'
 import { EmoteBubble } from '../objects/EmoteBubble'
 
+export const EMOTE_POS_Y = 850
+
 export class OverlayScene extends Phaser.Scene {
 	public crowd: Dude[] = []
 	public moderator: Moderator | null = null
@@ -78,7 +80,7 @@ export class OverlayScene extends Phaser.Scene {
 
 				imageLoading?.on('complete', () => {
 					new EmoteBubble(this, senderName, state, emoteUrls, {
-						y: 300,
+						y: EMOTE_POS_Y,
 						x: 300,
 						layer: this.mainLayer!,
 					})
@@ -179,22 +181,6 @@ export class OverlayScene extends Phaser.Scene {
 			y: this.game.canvas.height - 200,
 			layer: this.mainLayer!,
 		})
-
-		new EmoteBubble(
-			this,
-			'senderName',
-			initialState.bubbles,
-			[
-				'https://static-cdn.jtvnw.net/emoticons/v2/28/static/light/2.0',
-				'https://static-cdn.jtvnw.net/emoticons/v2/301428702/static/light/2.0',
-				'https://static-cdn.jtvnw.net/emoticons/v2/304486301/static/light/2.0',
-			],
-			{
-				y: 300,
-				x: 300,
-				layer: this.mainLayer!,
-			}
-		)
 
 		socket.emit(REQUEST_STATE)
 	}
