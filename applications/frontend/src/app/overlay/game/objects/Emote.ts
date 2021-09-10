@@ -10,7 +10,8 @@ export class Emote extends Phaser.GameObjects.Sprite {
 		super(scene, options.x, options.y, texture)
 
 		this.setName('emote')
-		this.setScale(2)
+		this.width = 50
+		this.height = 50
 		this.setAlpha(0)
 
 		const startDelay = getRandomInt(0, 500)
