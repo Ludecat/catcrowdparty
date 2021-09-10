@@ -23,7 +23,7 @@ import { HotAirBalloon } from '../objects/HotAirBalloon'
 import { Moderator, MODERATOR_SPRITESHEET_KEY, SPEECH_BUBBLE_SMALL_KEY } from '../objects/Moderator'
 import { Emote } from '../objects/Emote'
 import { getRandomInt } from '../../../util/utils'
-import { EmoteBubble } from '../objects/EmoteBubble'
+import { EmoteBubble, SPEECH_BUBBLE_MEDIUM_KEY } from '../objects/EmoteBubble'
 
 export const EMOTE_POS_Y = 850
 
@@ -140,6 +140,7 @@ export class OverlayScene extends Phaser.Scene {
 			frameHeight: 92,
 		})
 		this.load.image(SPEECH_BUBBLE_SMALL_KEY, '/ccp_speechbubble_small_right.png')
+		this.load.image(SPEECH_BUBBLE_MEDIUM_KEY, '/ccp_speechbubble_medium_right.png')
 
 		this.load.spritesheet(CROWD_PERSON_BLUE_KEY, '/ccp_crowd_person_blue.png', {
 			frameWidth: 120,
