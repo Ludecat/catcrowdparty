@@ -2,6 +2,7 @@ import Phaser from 'phaser'
 import { Socket } from 'socket.io-client'
 import {
 	CCPSocketEventsMap,
+	CrowdState,
 	GlobalState,
 	HotAirBallonVationsValues,
 	HotAirBalloonVariation,
@@ -12,7 +13,12 @@ import {
 	STATE_UPDATE,
 } from '@ccp/common/shared'
 import { SCENES } from '../config'
-import { Dude, DUDE_SPRITESHEET_KEY } from '../objects/Dude'
+import {
+	CROWD_PERSON_BLUE_KEY,
+	CROWD_PERSON_GREEN_KEY,
+	CROWD_PERSON_PINK_KEY,
+	CrowdPerson,
+} from '../objects/CrowdPerson'
 import { HotAirBalloon } from '../objects/HotAirBalloon'
 import { Moderator, MODERATOR_SPRITESHEET_KEY, SPEECH_BUBBLE_SMALL_KEY } from '../objects/Moderator'
 import { Emote } from '../objects/Emote'
@@ -22,7 +28,7 @@ import { EmoteBubble } from '../objects/EmoteBubble'
 export const EMOTE_POS_Y = 850
 
 export class OverlayScene extends Phaser.Scene {
-	public crowd: Dude[] = []
+	public crowd: CrowdPerson[] = []
 	public moderator: Moderator | null = null
 	public hotAirBalloons: HotAirBalloon[] = []
 	public mainLayer: Phaser.GameObjects.Layer | null = null
@@ -117,15 +123,6 @@ export class OverlayScene extends Phaser.Scene {
 	}
 
 	preload() {
-		/**
-		 * Placeholder SpriteSheet
-		 * https://rvros.itch.io/animated-pixel-hero
-		 * https://glusoft.com/tutorials/sdl2/sprite-animations
-		 */
-		this.load.spritesheet(DUDE_SPRITESHEET_KEY, '/dude.png', {
-			frameWidth: 77.42857142857143,
-			frameHeight: 57.2727272727,
-		})
 		this.load.spritesheet(MODERATOR_SPRITESHEET_KEY, '/ccp_character_flo.png', {
 			frameWidth: 80,
 			frameHeight: 128,
@@ -143,14 +140,50 @@ export class OverlayScene extends Phaser.Scene {
 			frameHeight: 92,
 		})
 		this.load.image(SPEECH_BUBBLE_SMALL_KEY, '/ccp_speechbubble_small_right.png')
+
+		this.load.spritesheet(CROWD_PERSON_BLUE_KEY, '/ccp_crowd_person_blue.png', {
+			frameWidth: 120,
+			frameHeight: 128,
+		})
+
+		this.load.spritesheet(CROWD_PERSON_GREEN_KEY, '/ccp_crowd_person_green.png', {
+			frameWidth: 120,
+			frameHeight: 128,
+		})
+
+		this.load.spritesheet(CROWD_PERSON_PINK_KEY, '/ccp_crowd_person_pink.png', {
+			frameWidth: 120,
+			frameHeight: 128,
+		})
+	}
+
+	generateCrowdPerson(state: CrowdState, texture: string, y: number, xOffset: number) {
+		for (let i = 0; i < 10; i++) {
+			if (i === 0) {
+				this.crowd.push(
+					new CrowdPerson(
+						this,
+						state,
+						{
+							x: i * 160 + xOffset,
+							y,
+							layer: this.mainLayer!,
+						},
+						texture
+					)
+				)
+				continue
+			}
+
+			this.crowd.push(new CrowdPerson(this, state, { x: i * 160 + xOffset, y, layer: this.mainLayer! }, texture))
+		}
 	}
 
 	create(config: { socket: Socket<CCPSocketEventsMap>; initialState: GlobalState }) {
 		const { socket, initialState } = config
-
-		for (let i = 0; i < 23; i++) {
-			this.crowd.push(new Dude(this, initialState.crowd, { x: i * 75, y: 1000, layer: this.mainLayer! }))
-		}
+		this.generateCrowdPerson(initialState.crowd, CROWD_PERSON_PINK_KEY, 950, 150)
+		this.generateCrowdPerson(initialState.crowd, CROWD_PERSON_GREEN_KEY, 975, 50)
+		this.generateCrowdPerson(initialState.crowd, CROWD_PERSON_BLUE_KEY, 1000, 100)
 
 		this.hotAirBalloons.push(
 			new HotAirBalloon(this, initialState.hotAirballon, {
