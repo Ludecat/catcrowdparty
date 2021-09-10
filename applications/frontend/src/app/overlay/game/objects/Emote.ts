@@ -3,7 +3,6 @@ import { EmotesState } from '@ccp/common/shared'
 import { getRandomInt } from '../../../util/utils'
 import { CCPGameObjectProps } from '../scenes/OverlayScene'
 
-export const EMOTE_SPRITESHEET_KEY = 'kappa'
 export const POS_Y = 700
 
 export class Emote extends Phaser.GameObjects.Sprite {
@@ -61,7 +60,7 @@ export class Emote extends Phaser.GameObjects.Sprite {
 
 		this.handleState(state)
 		options.layer.add(this)
-		this.setDepth(-1)
+		this.setDepth(-10)
 		scene.add.existing(this)
 	}
 
