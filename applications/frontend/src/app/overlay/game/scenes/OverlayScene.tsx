@@ -14,7 +14,7 @@ import {
 import { SCENES } from '../config'
 import { Dude, DUDE_SPRITESHEET_KEY } from '../objects/Dude'
 import { HotAirBalloon } from '../objects/HotAirBalloon'
-import { Moderator, MODERATOR_SPRITESHEET_KEY } from '../objects/Moderator'
+import { Moderator, MODERATOR_SPRITESHEET_KEY, SPEECH_BUBBLE_SMALL_KEY } from '../objects/Moderator'
 import { Emote } from '../objects/Emote'
 import { getRandomInt } from '../../../util/utils'
 import { EmoteBubble } from '../objects/EmoteBubble'
@@ -126,9 +126,9 @@ export class OverlayScene extends Phaser.Scene {
 			frameWidth: 77.42857142857143,
 			frameHeight: 57.2727272727,
 		})
-		this.load.spritesheet(MODERATOR_SPRITESHEET_KEY, '/dude.png', {
-			frameWidth: 77.42857142857143,
-			frameHeight: 57.2727272727,
+		this.load.spritesheet(MODERATOR_SPRITESHEET_KEY, '/ccp_character_flo.png', {
+			frameWidth: 80,
+			frameHeight: 128,
 		})
 		this.load.spritesheet(HotAirBallonVationsValues.ludecat, '/hot_air_balloon_ludecat.png', {
 			frameWidth: 61,
@@ -142,6 +142,7 @@ export class OverlayScene extends Phaser.Scene {
 			frameWidth: 61,
 			frameHeight: 92,
 		})
+		this.load.image(SPEECH_BUBBLE_SMALL_KEY, '/ccp_speechbubble_small_right.png')
 	}
 
 	create(config: { socket: Socket<CCPSocketEventsMap>; initialState: GlobalState }) {
@@ -178,7 +179,7 @@ export class OverlayScene extends Phaser.Scene {
 
 		this.moderator = new Moderator(this, initialState.moderator, {
 			x: this.game.canvas.width - 130,
-			y: this.game.canvas.height - 200,
+			y: this.game.canvas.height - 135,
 			layer: this.mainLayer!,
 		})
 
