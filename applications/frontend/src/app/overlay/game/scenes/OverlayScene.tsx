@@ -4,10 +4,10 @@ import {
 	CCPSocketEventsMap,
 	CrowdState,
 	GlobalState,
-	HotAirBallonState,
-	HotAirBallonVationsValues,
+	HotAirBalloonState,
+	HotAirBalloonVationsValues,
 	HotAirBalloonVariation,
-	HOT_AIR_BALLON_START,
+	HOT_AIR_BALLOON_START,
 	NEW_EMOTES_TRIGGER,
 	NEW_EMOTE_MESSAGE_TRIGGER,
 	REQUEST_STATE,
@@ -55,9 +55,9 @@ export class OverlayScene extends Phaser.Scene {
 				mmoderator.handleState(state.moderator)
 			}
 
-			const activeHotAirBallons = this.getActiveGameObjectsByName<HotAirBalloon>('hotAirBallon')
-			for (const hotAirBalloon of activeHotAirBallons) {
-				hotAirBalloon.handleState(state.hotAirballon)
+			const activeHotAirBalloons = this.getActiveGameObjectsByName<HotAirBalloon>('hotAirBalloon')
+			for (const hotAirBalloon of activeHotAirBalloons) {
+				hotAirBalloon.handleState(state.hotAirballoon)
 			}
 
 			const activeEmotes = this.getActiveGameObjectsByName<Emote>('emote')
@@ -71,9 +71,9 @@ export class OverlayScene extends Phaser.Scene {
 			}
 		})
 
-		config.socket.on(HOT_AIR_BALLON_START, (data: HotAirBalloonVariation) => {
-			const activeHotAirBallons = this.getActiveGameObjectsByName<HotAirBalloon>('hotAirBallon')
-			for (const hotAirBalloon of activeHotAirBallons) {
+		config.socket.on(HOT_AIR_BALLOON_START, (data: HotAirBalloonVariation) => {
+			const activeHotAirBalloons = this.getActiveGameObjectsByName<HotAirBalloon>('hotAirBalloon')
+			for (const hotAirBalloon of activeHotAirBalloons) {
 				hotAirBalloon.handleTrigger(data)
 			}
 		})
@@ -133,15 +133,15 @@ export class OverlayScene extends Phaser.Scene {
 			frameWidth: 80,
 			frameHeight: 128,
 		})
-		this.load.spritesheet(HotAirBallonVationsValues.ludecat, '/hot_air_balloon_ludecat.png', {
+		this.load.spritesheet(HotAirBalloonVationsValues.ludecat, '/hot_air_balloon_ludecat.png', {
 			frameWidth: 61,
 			frameHeight: 92,
 		})
-		this.load.spritesheet(HotAirBallonVationsValues.fritzCola, '/hot_air_balloon_fritz_cola.png', {
+		this.load.spritesheet(HotAirBalloonVationsValues.fritzCola, '/hot_air_balloon_fritz_cola.png', {
 			frameWidth: 61,
 			frameHeight: 92,
 		})
-		this.load.spritesheet(HotAirBallonVationsValues.fhSalzburg, '/hot_air_balloon_fh_salzburg.png', {
+		this.load.spritesheet(HotAirBalloonVationsValues.fhSalzburg, '/hot_air_balloon_fh_salzburg.png', {
 			frameWidth: 61,
 			frameHeight: 92,
 		})
@@ -175,7 +175,7 @@ export class OverlayScene extends Phaser.Scene {
 		this.generateCrowdPerson(initialState.crowd, CROWD_PERSON_BLUE_KEY, 980, 100, 10)
 		this.generateCouchRow(initialState.crowd, this.game.canvas.height - 50, 80)
 
-		this.generateHotAirBallons(initialState.hotAirballon)
+		this.generateHotAirBalloons(initialState.hotAirballoon)
 
 		new Moderator(this, initialState.moderator, {
 			x: this.game.canvas.width - 130,
@@ -222,7 +222,7 @@ export class OverlayScene extends Phaser.Scene {
 		}
 	}
 
-	generateHotAirBallons(state: HotAirBallonState) {
+	generateHotAirBalloons(state: HotAirBalloonState) {
 		new HotAirBalloon(this, state, {
 			x: -100,
 			y: 400,
