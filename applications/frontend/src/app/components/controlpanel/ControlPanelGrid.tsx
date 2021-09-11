@@ -218,7 +218,7 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 			</GridItem>
 			<GridComponent
 				gridArea={'crowd-control'}
-				title="Crowd Control"
+				title="Crowd"
 				actions={
 					<Button value={globalState?.crowd.mode} onClick={setAndEmitCrowdMode}>
 						{globalState?.crowd.mode}
@@ -285,7 +285,7 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 			<GridComponent gridArea={'preview'} title="Live View" height={'540px'} width={'960px'}>
 				<Preview src="/overlay#small" height={1080} width={1920} />
 			</GridComponent>
-			<GridComponent gridArea={'triggers-control'} title="Triggers">
+			<GridComponent gridArea={'triggers-control'} title="Balloons">
 				<Button
 					onClick={setAndEmitBalloonTrigger}
 					disabled={!globalState.hotAirballon.visibility}
