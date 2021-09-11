@@ -29,7 +29,6 @@ import { Couch, COUCH_KEY } from '../objects/Couch'
 export const EMOTE_POS_Y = 850
 
 export class OverlayScene extends Phaser.Scene {
-	public moderator: Moderator | null = null
 	public hotAirBalloons: HotAirBalloon[] = []
 	public mainLayer: Phaser.GameObjects.Layer | null = null
 
@@ -55,7 +54,10 @@ export class OverlayScene extends Phaser.Scene {
 				couch.handleState(state.crowd)
 			}
 
-			this.moderator?.handleState(state.moderator)
+			const activeModerators = this.getActiveGameObjectsByName('moderator')
+			for (const mmoderator of activeModerators) {
+				mmoderator.handleState(state.moderator)
+			}
 
 			for (const hotAirBalloon of this.hotAirBalloons) {
 				hotAirBalloon.handleState(state.hotAirballon)
@@ -236,7 +238,7 @@ export class OverlayScene extends Phaser.Scene {
 			})
 		)
 
-		this.moderator = new Moderator(this, initialState.moderator, {
+		new Moderator(this, initialState.moderator, {
 			x: this.game.canvas.width - 130,
 			y: this.game.canvas.height - 175,
 			layer: this.mainLayer!,
