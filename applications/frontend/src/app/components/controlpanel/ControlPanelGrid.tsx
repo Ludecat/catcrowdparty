@@ -226,21 +226,21 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 				}
 			>
 				<Button onClick={setAndEmitCrowdIntensity} value={'0'} disabled={isDisabledManualCrowdButton}>
-					Idle
+					idle
 				</Button>
 				<Button
 					onClick={setAndEmitCrowdIntensity}
 					value={`${CROWD_CROUCH_AUDIO_VALUE_THRESHOLD}`}
 					disabled={isDisabledManualCrowdButton}
 				>
-					Crouch
+					jump
 				</Button>
 				<Button
 					onClick={setAndEmitCrowdIntensity}
 					value={`${CROWD_RUN_AUDIO_VALUE_THRESHOLD}`}
 					disabled={isDisabledManualCrowdButton}
 				>
-					Run
+					party
 				</Button>
 			</GridComponent>
 			<GridComponent

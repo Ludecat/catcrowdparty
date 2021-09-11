@@ -9,8 +9,8 @@ export const CROWD_PERSON_PINK_KEY = 'crowdPersonPink'
 
 export const CROWD_PERSON_STATE_KEY = {
 	IDLE: 'idle',
-	CROUCH: 'crouch',
-	RUN: 'run',
+	JUMP: 'jump',
+	PARTY: 'party',
 }
 
 export class CrowdPerson extends Phaser.GameObjects.Sprite {
@@ -29,7 +29,7 @@ export class CrowdPerson extends Phaser.GameObjects.Sprite {
 			delay: startDelay,
 		})
 		this.anims.create({
-			key: CROWD_PERSON_STATE_KEY.CROUCH,
+			key: CROWD_PERSON_STATE_KEY.JUMP,
 			frames: this.anims.generateFrameNumbers(texture, {
 				start: 0,
 				end: 6,
@@ -38,7 +38,7 @@ export class CrowdPerson extends Phaser.GameObjects.Sprite {
 			delay: startDelay,
 		})
 		this.anims.create({
-			key: CROWD_PERSON_STATE_KEY.RUN,
+			key: CROWD_PERSON_STATE_KEY.PARTY,
 			frames: this.anims.generateFrameNumbers(texture, {
 				start: 0,
 				end: 6,
@@ -65,13 +65,13 @@ export class CrowdPerson extends Phaser.GameObjects.Sprite {
 	}
 
 	public run() {
-		if (this.anims.currentAnim && this.anims.currentAnim.key === CROWD_PERSON_STATE_KEY.RUN) return
-		this.play({ key: CROWD_PERSON_STATE_KEY.RUN, repeat: -1 })
+		if (this.anims.currentAnim && this.anims.currentAnim.key === CROWD_PERSON_STATE_KEY.PARTY) return
+		this.play({ key: CROWD_PERSON_STATE_KEY.PARTY, repeat: -1 })
 	}
 
 	public crouch() {
-		if (this.anims.currentAnim && this.anims.currentAnim.key === CROWD_PERSON_STATE_KEY.CROUCH) return
-		this.play({ key: CROWD_PERSON_STATE_KEY.CROUCH, repeat: -1 })
+		if (this.anims.currentAnim && this.anims.currentAnim.key === CROWD_PERSON_STATE_KEY.JUMP) return
+		this.play({ key: CROWD_PERSON_STATE_KEY.JUMP, repeat: -1 })
 	}
 
 	public idle() {
