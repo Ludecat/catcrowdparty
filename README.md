@@ -32,6 +32,6 @@ https://lude.cat/
 https://www.facebook.com/ludecatgaming  
 https://www.twitch.tv/ludecat
 
-# Credits 
-Placeholder Hero: https://rvros.itch.io/animated-pixel-hero  
+# Credits
+
 Placeholder Hot Air Balloon: https://www.appgamekit.com/documentation/utilities/0_image_joiner.htm
