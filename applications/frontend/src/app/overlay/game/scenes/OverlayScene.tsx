@@ -29,7 +29,6 @@ import { Couch, COUCH_KEY } from '../objects/Couch'
 export const EMOTE_POS_Y = 850
 
 export class OverlayScene extends Phaser.Scene {
-	public crowd: CrowdPerson[] = []
 	public moderator: Moderator | null = null
 	public hotAirBalloons: HotAirBalloon[] = []
 	public mainLayer: Phaser.GameObjects.Layer | null = null
@@ -46,8 +45,9 @@ export class OverlayScene extends Phaser.Scene {
 		this.mainLayer = this.add.layer()
 
 		config.socket.on(STATE_UPDATE, (state: GlobalState) => {
-			for (const dude of this.crowd) {
-				dude.handleState(state.crowd)
+			const activeCrowd = this.getActiveGameObjectsByName('crowdperson')
+			for (const crowdPerson of activeCrowd) {
+				crowdPerson.handleState(state.crowd)
 			}
 
 			const activeCouches = this.getActiveGameObjectsByName('couch')
@@ -168,22 +168,21 @@ export class OverlayScene extends Phaser.Scene {
 	generateCrowdPerson(state: CrowdState, texture: string, y: number, xOffset: number, count: number) {
 		for (let i = 0; i < count; i++) {
 			if (i === 0) {
-				this.crowd.push(
-					new CrowdPerson(
-						this,
-						state,
-						{
-							x: i * 160 + xOffset,
-							y,
-							layer: this.mainLayer!,
-						},
-						texture
-					)
+				new CrowdPerson(
+					this,
+					state,
+					{
+						x: i * 160 + xOffset,
+						y,
+						layer: this.mainLayer!,
+					},
+					texture
 				)
+
 				continue
 			}
 
-			this.crowd.push(new CrowdPerson(this, state, { x: i * 160 + xOffset, y, layer: this.mainLayer! }, texture))
+			new CrowdPerson(this, state, { x: i * 160 + xOffset, y, layer: this.mainLayer! }, texture)
 		}
 	}
 

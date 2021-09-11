@@ -16,7 +16,7 @@ export const CROWD_PERSON_STATE_KEY = {
 export class CrowdPerson extends Phaser.GameObjects.Sprite {
 	constructor(scene: Phaser.Scene, crowdState: CrowdState, options: CCPGameObjectProps, texture: string) {
 		super(scene, options.x, options.y, texture)
-		this.setName(texture)
+		this.setName('crowdperson')
 
 		const startDelay = getRandomInt(0, 500)
 		this.anims.create({
