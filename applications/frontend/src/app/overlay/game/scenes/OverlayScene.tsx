@@ -50,6 +50,11 @@ export class OverlayScene extends Phaser.Scene {
 				dude.handleState(state.crowd)
 			}
 
+			const activeCouches = this.getActiveGameObjectsByName('couch')
+			for (const couch of activeCouches) {
+				couch.handleState(state.crowd)
+			}
+
 			this.moderator?.handleState(state.moderator)
 
 			for (const hotAirBalloon of this.hotAirBalloons) {
