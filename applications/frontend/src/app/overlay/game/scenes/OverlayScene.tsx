@@ -24,6 +24,7 @@ import { Moderator, MODERATOR_SPRITESHEET_KEY, SPEECH_BUBBLE_SMALL_KEY } from '.
 import { Emote } from '../objects/Emote'
 import { getRandomInt } from '../../../util/utils'
 import { EmoteBubble, SPEECH_BUBBLE_MEDIUM_KEY } from '../objects/EmoteBubble'
+import { Couch, COUCH_KEY } from '../objects/Couch'
 
 export const EMOTE_POS_Y = 850
 
@@ -141,6 +142,7 @@ export class OverlayScene extends Phaser.Scene {
 		})
 		this.load.image(SPEECH_BUBBLE_SMALL_KEY, '/ccp_speechbubble_small_right.png')
 		this.load.image(SPEECH_BUBBLE_MEDIUM_KEY, '/ccp_speechbubble_medium_right.png')
+		this.load.image(COUCH_KEY, '/ccp_couch.png')
 
 		this.load.spritesheet(CROWD_PERSON_BLUE_KEY, '/ccp_crowd_person_blue.png', {
 			frameWidth: 120,
@@ -158,8 +160,8 @@ export class OverlayScene extends Phaser.Scene {
 		})
 	}
 
-	generateCrowdPerson(state: CrowdState, texture: string, y: number, xOffset: number) {
-		for (let i = 0; i < 10; i++) {
+	generateCrowdPerson(state: CrowdState, texture: string, y: number, xOffset: number, count: number) {
+		for (let i = 0; i < count; i++) {
 			if (i === 0) {
 				this.crowd.push(
 					new CrowdPerson(
@@ -180,11 +182,30 @@ export class OverlayScene extends Phaser.Scene {
 		}
 	}
 
+	generateCouchRow(state: CrowdState, y: number, xOffset: number) {
+		for (let i = 0; i < 8; i++) {
+			if (i === 0) {
+				new Couch(this, state, {
+					x: i * 200 + xOffset,
+					y,
+					layer: this.mainLayer!,
+				})
+				continue
+			}
+
+			new Couch(this, state, { x: i * 200 + xOffset, y, layer: this.mainLayer! })
+		}
+	}
+
 	create(config: { socket: Socket<CCPSocketEventsMap>; initialState: GlobalState }) {
 		const { socket, initialState } = config
-		this.generateCrowdPerson(initialState.crowd, CROWD_PERSON_PINK_KEY, 950, 150)
-		this.generateCrowdPerson(initialState.crowd, CROWD_PERSON_GREEN_KEY, 975, 50)
-		this.generateCrowdPerson(initialState.crowd, CROWD_PERSON_BLUE_KEY, 1000, 100)
+
+		this.generateCrowdPerson(initialState.crowd, CROWD_PERSON_PINK_KEY, 930, 150, 9)
+		this.generateCouchRow(initialState.crowd, this.game.canvas.height - 100, 80)
+		this.generateCrowdPerson(initialState.crowd, CROWD_PERSON_GREEN_KEY, 956, 50, 10)
+		this.generateCouchRow(initialState.crowd, this.game.canvas.height - 75, 80)
+		this.generateCrowdPerson(initialState.crowd, CROWD_PERSON_BLUE_KEY, 980, 100, 10)
+		this.generateCouchRow(initialState.crowd, this.game.canvas.height - 50, 80)
 
 		this.hotAirBalloons.push(
 			new HotAirBalloon(this, initialState.hotAirballon, {

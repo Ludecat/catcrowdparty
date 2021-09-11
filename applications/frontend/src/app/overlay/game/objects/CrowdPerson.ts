@@ -47,7 +47,7 @@ export class CrowdPerson extends Phaser.GameObjects.Sprite {
 			delay: startDelay,
 		})
 
-		this.setScale(1)
+		this.setScale(0.55)
 		this.handleState(crowdState)
 		options.layer.add(this)
 		scene.add.existing(this)
