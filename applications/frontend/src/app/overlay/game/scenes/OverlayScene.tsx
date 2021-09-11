@@ -4,6 +4,7 @@ import {
 	CCPSocketEventsMap,
 	CrowdState,
 	GlobalState,
+	HotAirBallonState,
 	HotAirBallonVationsValues,
 	HotAirBalloonVariation,
 	HOT_AIR_BALLON_START,
@@ -29,53 +30,50 @@ import { Couch, COUCH_KEY } from '../objects/Couch'
 export const EMOTE_POS_Y = 850
 
 export class OverlayScene extends Phaser.Scene {
-	public hotAirBalloons: HotAirBalloon[] = []
 	public mainLayer: Phaser.GameObjects.Layer | null = null
 
 	constructor() {
 		super({ key: SCENES.OVERLAY })
 	}
 
-	private getActiveGameObjectsByName(name: string) {
-		return this.children.list.filter((child) => child.name === name) as EmoteBubble[]
-	}
-
 	init(config: { socket: Socket<CCPSocketEventsMap>; initialState: GlobalState }) {
 		this.mainLayer = this.add.layer()
 
 		config.socket.on(STATE_UPDATE, (state: GlobalState) => {
-			const activeCrowd = this.getActiveGameObjectsByName('crowdperson')
+			const activeCrowd = this.getActiveGameObjectsByName<CrowdPerson>('crowdperson')
 			for (const crowdPerson of activeCrowd) {
 				crowdPerson.handleState(state.crowd)
 			}
 
-			const activeCouches = this.getActiveGameObjectsByName('couch')
+			const activeCouches = this.getActiveGameObjectsByName<Couch>('couch')
 			for (const couch of activeCouches) {
 				couch.handleState(state.crowd)
 			}
 
-			const activeModerators = this.getActiveGameObjectsByName('moderator')
+			const activeModerators = this.getActiveGameObjectsByName<Moderator>('moderator') as Moderator[]
 			for (const mmoderator of activeModerators) {
 				mmoderator.handleState(state.moderator)
 			}
 
-			for (const hotAirBalloon of this.hotAirBalloons) {
+			const activeHotAirBallons = this.getActiveGameObjectsByName<HotAirBalloon>('hotAirBallon')
+			for (const hotAirBalloon of activeHotAirBallons) {
 				hotAirBalloon.handleState(state.hotAirballon)
 			}
 
-			const activeEmotes = this.getActiveGameObjectsByName('emote')
+			const activeEmotes = this.getActiveGameObjectsByName<Emote>('emote')
 			for (const emotes of activeEmotes) {
 				emotes.handleState(state.emotes)
 			}
 
-			const activeEmoteBubbles = this.getActiveGameObjectsByName('emoteBubble')
+			const activeEmoteBubbles = this.getActiveGameObjectsByName<EmoteBubble>('emoteBubble')
 			for (const bubble of activeEmoteBubbles) {
 				bubble.handleState(state.bubbles)
 			}
 		})
 
 		config.socket.on(HOT_AIR_BALLON_START, (data: HotAirBalloonVariation) => {
-			for (const hotAirBalloon of this.hotAirBalloons) {
+			const activeHotAirBallons = this.getActiveGameObjectsByName<HotAirBalloon>('hotAirBallon')
+			for (const hotAirBalloon of activeHotAirBallons) {
 				hotAirBalloon.handleTrigger(data)
 			}
 		})
@@ -167,6 +165,27 @@ export class OverlayScene extends Phaser.Scene {
 		})
 	}
 
+	create(config: { socket: Socket<CCPSocketEventsMap>; initialState: GlobalState }) {
+		const { socket, initialState } = config
+
+		this.generateCrowdPerson(initialState.crowd, CROWD_PERSON_PINK_KEY, 930, 150, 9)
+		this.generateCouchRow(initialState.crowd, this.game.canvas.height - 100, 80)
+		this.generateCrowdPerson(initialState.crowd, CROWD_PERSON_GREEN_KEY, 956, 50, 10)
+		this.generateCouchRow(initialState.crowd, this.game.canvas.height - 75, 80)
+		this.generateCrowdPerson(initialState.crowd, CROWD_PERSON_BLUE_KEY, 980, 100, 10)
+		this.generateCouchRow(initialState.crowd, this.game.canvas.height - 50, 80)
+
+		this.generateHotAirBallons(initialState.hotAirballon)
+
+		new Moderator(this, initialState.moderator, {
+			x: this.game.canvas.width - 130,
+			y: this.game.canvas.height - 175,
+			layer: this.mainLayer!,
+		})
+
+		socket.emit(REQUEST_STATE)
+	}
+
 	generateCrowdPerson(state: CrowdState, texture: string, y: number, xOffset: number, count: number) {
 		for (let i = 0; i < count; i++) {
 			if (i === 0) {
@@ -203,48 +222,29 @@ export class OverlayScene extends Phaser.Scene {
 		}
 	}
 
-	create(config: { socket: Socket<CCPSocketEventsMap>; initialState: GlobalState }) {
-		const { socket, initialState } = config
-
-		this.generateCrowdPerson(initialState.crowd, CROWD_PERSON_PINK_KEY, 930, 150, 9)
-		this.generateCouchRow(initialState.crowd, this.game.canvas.height - 100, 80)
-		this.generateCrowdPerson(initialState.crowd, CROWD_PERSON_GREEN_KEY, 956, 50, 10)
-		this.generateCouchRow(initialState.crowd, this.game.canvas.height - 75, 80)
-		this.generateCrowdPerson(initialState.crowd, CROWD_PERSON_BLUE_KEY, 980, 100, 10)
-		this.generateCouchRow(initialState.crowd, this.game.canvas.height - 50, 80)
-
-		this.hotAirBalloons.push(
-			new HotAirBalloon(this, initialState.hotAirballon, {
-				x: -100,
-				y: 400,
-				variation: 'ludecat',
-				layer: this.mainLayer!,
-			})
-		)
-		this.hotAirBalloons.push(
-			new HotAirBalloon(this, initialState.hotAirballon, {
-				x: -100,
-				y: 400,
-				variation: 'fritz-cola',
-				layer: this.mainLayer!,
-			})
-		)
-		this.hotAirBalloons.push(
-			new HotAirBalloon(this, initialState.hotAirballon, {
-				x: -100,
-				y: 400,
-				variation: 'fh-salzburg',
-				layer: this.mainLayer!,
-			})
-		)
-
-		new Moderator(this, initialState.moderator, {
-			x: this.game.canvas.width - 130,
-			y: this.game.canvas.height - 175,
+	generateHotAirBallons(state: HotAirBallonState) {
+		new HotAirBalloon(this, state, {
+			x: -100,
+			y: 400,
+			variation: 'ludecat',
 			layer: this.mainLayer!,
 		})
+		new HotAirBalloon(this, state, {
+			x: -100,
+			y: 400,
+			variation: 'fritz-cola',
+			layer: this.mainLayer!,
+		})
+		new HotAirBalloon(this, state, {
+			x: -100,
+			y: 400,
+			variation: 'fh-salzburg',
+			layer: this.mainLayer!,
+		})
+	}
 
-		socket.emit(REQUEST_STATE)
+	private getActiveGameObjectsByName<T>(name: string) {
+		return this.children.list.filter((child) => child.name === name) as never as T[]
 	}
 }
 
