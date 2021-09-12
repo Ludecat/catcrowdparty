@@ -20,7 +20,7 @@ import {
 	CROWD_PERSON_PINK_KEY,
 	CrowdPerson,
 } from '../objects/CrowdPerson'
-import { HotAirBalloon } from '../objects/HotAirBalloon'
+import { HotAirBalloon, PARTICLE_KEY } from '../objects/HotAirBalloon'
 import { Moderator, MODERATOR_SPRITESHEET_KEY, SPEECH_BUBBLE_SMALL_KEY } from '../objects/Moderator'
 import { Emote } from '../objects/Emote'
 import { getRandomInt } from '../../../util/utils'
@@ -130,6 +130,8 @@ export class OverlayScene extends Phaser.Scene {
 	}
 
 	preload() {
+		this.load.image(PARTICLE_KEY, '/ccp_particle_red.png')
+
 		this.load.spritesheet(MODERATOR_SPRITESHEET_KEY, '/ccp_character_flo.png', {
 			frameWidth: 80,
 			frameHeight: 128,
@@ -232,7 +234,7 @@ export class OverlayScene extends Phaser.Scene {
 			direction: 'goRight',
 		})
 		new HotAirBalloon(this, state, {
-			x: -100,
+			x: this.game.canvas.width + 100,
 			y: 400,
 			variation: 'fritz-cola',
 			layer: this.mainLayer!,
