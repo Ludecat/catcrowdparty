@@ -139,12 +139,12 @@ export class OverlayScene extends Phaser.Scene {
 			frameHeight: 400,
 		})
 		this.load.spritesheet(HotAirBalloonVationsValues.fritzCola, '/hot_air_balloon_fritz_cola.png', {
-			frameWidth: 61,
-			frameHeight: 92,
+			frameWidth: 192,
+			frameHeight: 400,
 		})
 		this.load.spritesheet(HotAirBalloonVationsValues.fhSalzburg, '/hot_air_balloon_fh_salzburg.png', {
-			frameWidth: 61,
-			frameHeight: 92,
+			frameWidth: 192,
+			frameHeight: 400,
 		})
 		this.load.image(SPEECH_BUBBLE_SMALL_KEY, '/ccp_speechbubble_small_right.png')
 		this.load.image(SPEECH_BUBBLE_MEDIUM_KEY, '/ccp_speechbubble_medium_right.png')
@@ -226,7 +226,7 @@ export class OverlayScene extends Phaser.Scene {
 	generateHotAirBalloons(state: HotAirBalloonState) {
 		new HotAirBalloon(this, state, {
 			x: -100,
-			y: 400,
+			y: 350,
 			variation: 'ludecat',
 			layer: this.mainLayer!,
 			direction: 'goRight',
@@ -240,7 +240,7 @@ export class OverlayScene extends Phaser.Scene {
 		})
 		new HotAirBalloon(this, state, {
 			x: -100,
-			y: 400,
+			y: 440,
 			variation: 'fh-salzburg',
 			layer: this.mainLayer!,
 			direction: 'goRight',

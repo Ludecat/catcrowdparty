@@ -27,6 +27,10 @@ export class HotAirBalloon extends Phaser.GameObjects.Sprite {
 		this.startX = options.x
 		this.startY = options.y
 
+		if (options.direction === 'goLeft') {
+			this.flipX = true
+		}
+
 		this.anims.create({
 			key: HOT_AIR_BALLOON_STATE_KEY.IDLE,
 			frames: this.anims.generateFrameNumbers(options.variation, {
