@@ -27,12 +27,12 @@ export class HotAirBalloon extends Phaser.GameObjects.Sprite {
 			key: HOT_AIR_BALLOON_STATE_KEY.IDLE,
 			frames: this.anims.generateFrameNumbers(options.variation, {
 				start: 0,
-				end: 4,
+				end: 8,
 			}),
 			frameRate: 12,
 		})
 
-		this.setScale(3)
+		this.setScale(0.8)
 		this.handleState(initialState)
 		scene.physics.add.existing(this)
 		options.layer.add(this)

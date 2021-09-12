@@ -135,8 +135,8 @@ export class OverlayScene extends Phaser.Scene {
 			frameHeight: 128,
 		})
 		this.load.spritesheet(HotAirBalloonVationsValues.ludecat, '/hot_air_balloon_ludecat.png', {
-			frameWidth: 61,
-			frameHeight: 92,
+			frameWidth: 192,
+			frameHeight: 400,
 		})
 		this.load.spritesheet(HotAirBalloonVationsValues.fritzCola, '/hot_air_balloon_fritz_cola.png', {
 			frameWidth: 61,
