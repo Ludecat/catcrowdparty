@@ -79,7 +79,6 @@ export class OverlayScene extends Phaser.Scene {
 		})
 
 		config.socket.on(NEW_EMOTE_MESSAGE_TRIGGER, (senderName, emoteUrls, state) => {
-			console.log(state.visibility)
 			const activeEmoteBubbles = this.getActiveGameObjectsByName<EmoteBubble>('emoteBubble')
 			if (activeEmoteBubbles.length > 0) return
 			if (state.visibility) {
