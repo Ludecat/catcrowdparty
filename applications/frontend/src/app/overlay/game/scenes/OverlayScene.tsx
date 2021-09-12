@@ -229,18 +229,21 @@ export class OverlayScene extends Phaser.Scene {
 			y: 400,
 			variation: 'ludecat',
 			layer: this.mainLayer!,
+			direction: 'goRight',
 		})
 		new HotAirBalloon(this, state, {
 			x: -100,
 			y: 400,
 			variation: 'fritz-cola',
 			layer: this.mainLayer!,
+			direction: 'goLeft',
 		})
 		new HotAirBalloon(this, state, {
 			x: -100,
 			y: 400,
 			variation: 'fh-salzburg',
 			layer: this.mainLayer!,
+			direction: 'goRight',
 		})
 	}
 

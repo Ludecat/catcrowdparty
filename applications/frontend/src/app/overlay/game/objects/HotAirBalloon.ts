@@ -2,8 +2,10 @@ import Phaser from 'phaser'
 import { HotAirBalloonVariation, HotAirBalloonVariationsType, HotAirBalloonState } from '@ccp/common/shared'
 import { CCPGameObjectProps } from '../scenes/OverlayScene'
 
+type DIRECTION_TYPE = 'goLeft' | 'goRight'
 interface HotAirBalloonProps extends CCPGameObjectProps {
 	variation: HotAirBalloonVariationsType
+	direction: DIRECTION_TYPE
 }
 
 export const HOT_AIR_BALLOON_STATE_KEY = {
@@ -15,11 +17,13 @@ export class HotAirBalloon extends Phaser.GameObjects.Sprite {
 	private variation: HotAirBalloonVariationsType
 	private startX
 	private startY
+	private direction: DIRECTION_TYPE
 
 	constructor(scene: Phaser.Scene, initialState: HotAirBalloonState, options: HotAirBalloonProps) {
 		super(scene, options.x, options.y, options.variation)
 		this.setName('hotAirBalloon')
 		this.variation = options.variation
+		this.direction = options.direction
 		this.startX = options.x
 		this.startY = options.y
 
@@ -46,8 +50,13 @@ export class HotAirBalloon extends Phaser.GameObjects.Sprite {
 
 	public handleTrigger(data: HotAirBalloonVariation) {
 		if (data.variation === this.variation) {
-			this.reset(this.startX, this.startY)
-			this.body.velocity.x = this.velocity
+			if (this.direction === 'goLeft') {
+				this.reset(this.scene.game.canvas.width + 100, this.startY)
+				this.body.velocity.x = this.velocity * -1
+			} else {
+				this.reset(this.startX, this.startY)
+				this.body.velocity.x = this.velocity
+			}
 		}
 	}
 
