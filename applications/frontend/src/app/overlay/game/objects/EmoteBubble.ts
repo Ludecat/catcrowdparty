@@ -57,6 +57,7 @@ export class EmoteBubble extends Phaser.GameObjects.Graphics {
 			delay: startDelay + 2500,
 			duration: 500,
 			onComplete: () => {
+				this.bubble.destroy()
 				this.destroy()
 			},
 		})
@@ -68,7 +69,7 @@ export class EmoteBubble extends Phaser.GameObjects.Graphics {
 			delay: startDelay + 2500,
 			duration: 500,
 			onComplete: () => {
-				this.destroy()
+				this.text.destroy()
 			},
 		})
 
