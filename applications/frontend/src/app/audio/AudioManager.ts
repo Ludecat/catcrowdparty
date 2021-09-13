@@ -1,5 +1,12 @@
 import { Socket } from 'socket.io-client'
-import { AUDIO_INPUT_VALUE_UPDATE, CCPSocketEventsMap } from '@ccp/common/shared'
+import {
+	AUDIO_INPUT_VALUE_UPDATE,
+	CCPSocketEventsMap,
+	CROWD_JUMP_THRESHOLD,
+	CROWD_PARTY_THRESHOLD,
+	isJumpState,
+	isPartyState,
+} from '@ccp/common/shared'
 import { getMediaStreamByDeviceId, resumeMediaPlay } from '../util/utils'
 
 export class AudioManager {
@@ -62,25 +69,67 @@ export class AudioManager {
 		this.frequencyBinCount = new Uint8Array(this.analyser!.frequencyBinCount)
 		this.analyser!.getByteFrequencyData(this.frequencyBinCount)
 
-		this.drawBar()
-	}
-
-	drawBar() {
-		this.clearCanvas()
-
-		this.canvasContext.fillStyle = '#FFCC00'
 		const maxPowerOfFrequencies = Math.max(...(this.frequencyBinCount ?? [0]))
 		this.currentFrequenciesPowerBatch.push(maxPowerOfFrequencies)
-		const mappedBarHeightToCanvasHeight = (maxPowerOfFrequencies / 255) * this.canvas.height
 
-		this.canvasContext.fillRect(0, this.canvas.height, this.canvas.width, -1 * mappedBarHeightToCanvasHeight)
-		this.canvasContext.fillStyle = '#000000'
-		this.canvasContext.textAlign = 'center'
-		this.canvasContext.fillText(
-			`${maxPowerOfFrequencies} frequencies max power.`,
-			this.canvas.width / 2,
-			this.canvas.height / 2
+		this.drawBar(maxPowerOfFrequencies)
+	}
+
+	drawBar(maxPowerOfFrequencies: number) {
+		this.clearCanvas()
+
+		this.setCanvasContextColorFromIntensity(maxPowerOfFrequencies)
+		this.canvasContext.fillRect(
+			0,
+			this.canvas.height,
+			this.canvas.width,
+			-1 * (maxPowerOfFrequencies / 255) * this.canvas.height
 		)
+
+		this.canvasContext.fillStyle = '#000000'
+		this.drawBarIndicators()
+
+		this.canvasContext.textAlign = 'center'
+		this.canvasContext.fillText(`${maxPowerOfFrequencies} frequencies max power.`, this.canvas.width / 2, 30)
+	}
+
+	setCanvasContextColorFromIntensity(intensity: number) {
+		let color = '#FFCC00'
+		if (isJumpState(intensity)) {
+			color = '#50C878'
+		} else if (isPartyState(intensity)) {
+			color = '#D284DD'
+		}
+
+		this.canvasContext.fillStyle = color
+	}
+
+	drawBarIndicators() {
+		const canvasHeightUnitFromBottom = this.canvas.height / 255
+
+		this.canvasContext.fillRect(
+			0,
+			this.canvas.height - canvasHeightUnitFromBottom * CROWD_JUMP_THRESHOLD,
+			this.canvas.width,
+			1
+		)
+		this.canvasContext.fillText(
+			`JUMP`,
+			this.canvas.width / 2,
+			this.canvas.height - canvasHeightUnitFromBottom * CROWD_JUMP_THRESHOLD - 10
+		)
+		this.canvasContext.fillText(
+			`PARTY`,
+			this.canvas.width / 2,
+			this.canvas.height - canvasHeightUnitFromBottom * CROWD_PARTY_THRESHOLD - 10
+		)
+		this.canvasContext.fillRect(
+			0,
+			this.canvas.height - canvasHeightUnitFromBottom * CROWD_PARTY_THRESHOLD,
+			this.canvas.width,
+			1
+		)
+		this.canvasContext.fillText(`IDLE`, this.canvas.width / 2, this.canvas.height - 10)
 	}
 
 	clearCanvas() {
