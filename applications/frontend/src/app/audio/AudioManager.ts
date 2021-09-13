@@ -78,10 +78,13 @@ export class AudioManager {
 	drawBar(maxPowerOfFrequencies: number) {
 		this.clearCanvas()
 
-		const mappedBarHeightToCanvasHeight = (maxPowerOfFrequencies / 255) * this.canvas.height
-
 		this.setCanvasContextColorFromIntensity(maxPowerOfFrequencies)
-		this.canvasContext.fillRect(0, this.canvas.height, this.canvas.width, -1 * mappedBarHeightToCanvasHeight)
+		this.canvasContext.fillRect(
+			0,
+			this.canvas.height,
+			this.canvas.width,
+			-1 * (maxPowerOfFrequencies / 255) * this.canvas.height
+		)
 
 		this.canvasContext.fillStyle = '#000000'
 		this.drawBarIndicators()
