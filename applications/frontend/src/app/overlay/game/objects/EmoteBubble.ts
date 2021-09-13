@@ -3,14 +3,14 @@ import { BubblesState, EmotesState } from '@ccp/common/shared'
 import { getRandomInt } from '../../../util/utils'
 import { CCPGameObjectProps } from '../scenes/OverlayScene'
 
-const BUBBLE_WIDTH = 200
 const BUBBLE_HEIGHT = 75
 
-const BUBBLE_ARROW_WIDTH_THRESHOLD = 50
-const BUBBLE_ARROW_HEIGHT = 100
+const BUBBLE_POS_X = 500
+const BUBBLE_POS_Y = 800
+export const SPEECH_BUBBLE_MEDIUM_KEY = 'speechBubbleMedium'
 
 export class EmoteBubble extends Phaser.GameObjects.Graphics {
-	public bubble: Phaser.GameObjects.Graphics
+	public bubble: Phaser.GameObjects.Image
 	public text: Phaser.GameObjects.Text
 
 	constructor(
@@ -23,8 +23,8 @@ export class EmoteBubble extends Phaser.GameObjects.Graphics {
 		super(scene)
 		const startDelay = getRandomInt(0, 500)
 
-		this.bubble = this.createSpeechBubble(scene, options.x, options.y, BUBBLE_WIDTH, BUBBLE_HEIGHT)
-		this.text = this.createBubbleText(scene, senderName, emoteUrls, BUBBLE_WIDTH, BUBBLE_HEIGHT, startDelay)
+		this.bubble = this.createSpeechBubble(scene)
+		this.text = this.createBubbleText(scene, senderName, emoteUrls, startDelay)
 
 		this.setName('emoteBubble')
 		this.text.setAlpha(0)
@@ -57,6 +57,7 @@ export class EmoteBubble extends Phaser.GameObjects.Graphics {
 			delay: startDelay + 2500,
 			duration: 500,
 			onComplete: () => {
+				this.bubble.destroy()
 				this.destroy()
 			},
 		})
@@ -68,7 +69,7 @@ export class EmoteBubble extends Phaser.GameObjects.Graphics {
 			delay: startDelay + 2500,
 			duration: 500,
 			onComplete: () => {
-				this.destroy()
+				this.text.destroy()
 			},
 		})
 
@@ -92,74 +93,33 @@ export class EmoteBubble extends Phaser.GameObjects.Graphics {
 	/**
 	 * Inspired by https://phaser.io/examples/v3/view/game-objects/text/speech-bubble
 	 */
-	private createSpeechBubble(scene: Phaser.Scene, x: number, y: number, width: number, height: number) {
-		const bubbleWidth = width
-		const bubbleHeight = height
-		const arrowHeight = bubbleHeight / 4
-		const bubble = scene.add.graphics({ x: x, y: y })
-
-		//  Bubble shadow
-		bubble.fillStyle(0x222222, 0.5)
-		bubble.fillRoundedRect(6, 6, bubbleWidth, bubbleHeight, 16)
-
-		//  Bubble color
-		bubble.fillStyle(0xffffff, 1)
-
-		//  Bubble outline line style
-		bubble.lineStyle(4, 0x565656, 1)
-
-		//  Bubble shape and outline
-		bubble.strokeRoundedRect(0, 0, bubbleWidth, bubbleHeight, 16)
-		bubble.fillRoundedRect(0, 0, bubbleWidth, bubbleHeight, 16)
-
-		//  Calculate arrow coordinates
-		const point1X = bubbleWidth - BUBBLE_ARROW_WIDTH_THRESHOLD
-		const point1Y = bubbleHeight
-		const point2X = bubbleWidth - BUBBLE_ARROW_HEIGHT
-		const point2Y = bubbleHeight
-		const point3X = Math.floor(bubbleWidth - BUBBLE_ARROW_HEIGHT)
-		const point3Y = Math.floor(bubbleHeight + arrowHeight)
-
-		//  Bubble arrow shadow
-		bubble.lineStyle(4, 0x222222, 0.5)
-		bubble.lineBetween(point2X - 1, point2Y + 6, point3X + 2, point3Y)
-
-		//  Bubble arrow fill
-		bubble.fillTriangle(point1X, point1Y, point2X, point2Y, point3X, point3Y)
-		bubble.lineStyle(2, 0x565656, 1)
-		bubble.lineBetween(point2X, point2Y, point3X, point3Y)
-		bubble.lineBetween(point1X, point1Y, point3X, point3Y)
-
+	private createSpeechBubble(scene: Phaser.Scene) {
+		const bubble = new Phaser.GameObjects.Image(scene, BUBBLE_POS_X, BUBBLE_POS_Y, SPEECH_BUBBLE_MEDIUM_KEY)
+		this.scene.add.existing(bubble)
 		return bubble
 	}
 
-	private createBubbleText(
-		scene: Phaser.Scene,
-		senderName: string,
-		texture: string[],
-		bubbleWidth: number,
-		bubbleHeight: number,
-		startDelay: number
-	) {
-		const bubblePadding = 10
-
-		const content = scene.add.text(0, 0, senderName, {
-			fontFamily: 'Roboto',
-			fontSize: '20px',
-			color: '#FFFFFF',
-			align: 'center',
-			wordWrap: { width: bubbleWidth - bubblePadding * 2 },
-		})
-
-		content.setPosition(this.bubble.x + 5, this.bubble.y - 23)
+	private createBubbleText(scene: Phaser.Scene, senderName: string, texture: string[], startDelay: number) {
+		const content = scene.add.text(
+			BUBBLE_POS_X - this.bubble.width / 2 + 5,
+			BUBBLE_POS_Y - this.bubble.height / 2 - 33,
+			senderName,
+			{
+				fontFamily: 'Roboto',
+				fontSize: '20px',
+				color: '#FFFFFF',
+				padding: { left: 4, bottom: 4, right: 4, top: 4 },
+				backgroundColor: '#000000',
+			}
+		)
 
 		const spaceBetween = 35
 		for (let i = 0; i <= texture.length && i < 3; i++) {
-			const POS_X = i !== 0 ? this.bubble.x + i * 65 + spaceBetween : this.bubble.x + spaceBetween
+			const POS_X = i !== 0 ? this.bubble.x - 100 + i * 65 + spaceBetween : this.bubble.x + spaceBetween - 100
 			const imageGraphic = new Phaser.GameObjects.Image(
 				this.scene,
 				POS_X,
-				this.bubble.y + BUBBLE_HEIGHT / 2,
+				this.bubble.y - BUBBLE_HEIGHT / 2 + 20,
 				texture[i]
 			)
 			imageGraphic.setAlpha(0)
@@ -181,14 +141,13 @@ export class EmoteBubble extends Phaser.GameObjects.Graphics {
 				delay: startDelay + 2500,
 				duration: 500,
 				onComplete: () => {
-					this.destroy()
+					imageGraphic.destroy()
 				},
 			})
 			imageGraphic.width = 50
 			imageGraphic.height = 50
 			scene.add.existing(imageGraphic)
 		}
-		content.setPosition(this.bubble.x + 5, this.bubble.y - 23)
 		return content
 	}
 }

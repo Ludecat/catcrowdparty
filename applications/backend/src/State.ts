@@ -1,4 +1,4 @@
-import { BubblesState, CrowdMode, CrowdState, EmotesState, HotAirBallonState, ModeratorState } from '@ccp/common'
+import { BubblesState, CrowdMode, CrowdState, EmotesState, HotAirBalloonState, ModeratorState } from '@ccp/common'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 const initialCrowdState: CrowdState = {
@@ -38,15 +38,15 @@ const moderatorSlice = createSlice({
 	},
 })
 
-const initialHotAirBallonState: HotAirBallonState = {
+const initialHotAirBalloonState: HotAirBalloonState = {
 	visibility: false,
 }
 
-const hotAirBallonSlice = createSlice({
-	name: 'hotAirBallon',
-	initialState: initialHotAirBallonState,
+const hotAirBalloonSlice = createSlice({
+	name: 'hotAirBalloon',
+	initialState: initialHotAirBalloonState,
 	reducers: {
-		update: (state, action: PayloadAction<Partial<HotAirBallonState>>) => {
+		update: (state, action: PayloadAction<Partial<HotAirBalloonState>>) => {
 			return {
 				...state,
 				...action.payload,
@@ -91,12 +91,12 @@ const emotesSlice = createSlice({
 
 export const crowdReducer = crowdSlice.reducer
 export const moderatorReducer = moderatorSlice.reducer
-export const hotAirBallonReducer = hotAirBallonSlice.reducer
+export const hotAirBalloonReducer = hotAirBalloonSlice.reducer
 export const bubblesReducer = bubblesSlice.reducer
 export const emotesReducer = emotesSlice.reducer
 
 export const updateCrowd = crowdSlice.actions.update
 export const updateModerator = moderatorSlice.actions.update
-export const updateHotAirBallon = hotAirBallonSlice.actions.update
+export const updateHotAirBalloon = hotAirBalloonSlice.actions.update
 export const updateBubbles = bubblesSlice.actions.update
 export const updateEmotes = emotesSlice.actions.update

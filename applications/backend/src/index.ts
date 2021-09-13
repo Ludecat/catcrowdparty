@@ -2,12 +2,12 @@ import '@ccp/common/env'
 import { createServer } from 'http'
 import {
 	MODERATOR_UPDATE,
-	HOT_AIR_BALLON_UPDATE,
+	HOT_AIR_BALLOON_UPDATE,
 	AudioInputValue,
 	AUDIO_INPUT_VALUE_UPDATE,
 	CROWD_UPDATE,
 	HotAirBalloonVariation,
-	HOT_AIR_BALLON_START,
+	HOT_AIR_BALLOON_START,
 	GlobalState,
 	STATE_UPDATE,
 	CrowdMode,
@@ -25,12 +25,12 @@ import {
 	bubblesReducer,
 	crowdReducer,
 	emotesReducer,
-	hotAirBallonReducer,
+	hotAirBalloonReducer,
 	moderatorReducer,
 	updateBubbles,
 	updateCrowd,
 	updateEmotes,
-	updateHotAirBallon,
+	updateHotAirBalloon,
 	updateModerator,
 } from './State'
 import TwitchChatHandler, { NEW_EMOTES, NEW_EMOTE_MESSAGE } from './TwitchChatHandler'
@@ -39,7 +39,7 @@ const store = configureStore<GlobalState>({
 	reducer: {
 		crowd: crowdReducer,
 		moderator: moderatorReducer,
-		hotAirballon: hotAirBallonReducer,
+		hotAirballoon: hotAirBalloonReducer,
 		bubbles: bubblesReducer,
 		emotes: emotesReducer,
 	},
@@ -67,10 +67,10 @@ io.on('connection', (socket) => {
 		)
 	})
 	socket.on(MODERATOR_UPDATE, (moderatorUpdate) => store.dispatch(updateModerator(moderatorUpdate)))
-	socket.on(HOT_AIR_BALLON_UPDATE, (hotAirBallonUpdate) => store.dispatch(updateHotAirBallon(hotAirBallonUpdate)))
-	socket.on(HOT_AIR_BALLON_START, (data: HotAirBalloonVariation) => {
-		logger.info(`received HOT_AIR_BALLON_START`)
-		io.emit(HOT_AIR_BALLON_START, data)
+	socket.on(HOT_AIR_BALLOON_UPDATE, (hotAirBalloonUpdate) => store.dispatch(updateHotAirBalloon(hotAirBalloonUpdate)))
+	socket.on(HOT_AIR_BALLOON_START, (data: HotAirBalloonVariation) => {
+		logger.info(`received HOT_AIR_BALLOON_START`)
+		io.emit(HOT_AIR_BALLOON_START, data)
 	})
 	socket.on(EMOTES_UPDATE, (emotesUpdate) => store.dispatch(updateEmotes(emotesUpdate)))
 	socket.on(BUBBLES_UPDATE, (bubblesUpdate) => store.dispatch(updateBubbles(bubblesUpdate)))

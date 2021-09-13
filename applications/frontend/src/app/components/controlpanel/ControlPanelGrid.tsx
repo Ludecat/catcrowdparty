@@ -1,18 +1,21 @@
 import React, { FunctionComponent, useState } from 'react'
 import {
 	MODERATOR_UPDATE,
-	HOT_AIR_BALLON_UPDATE,
+	HOT_AIR_BALLOON_UPDATE,
 	CROWD_UPDATE,
-	HotAirBallonVationsValues,
-	HOT_AIR_BALLON_START,
+	HotAirBalloonVationsValues,
+	HOT_AIR_BALLOON_START,
 	ModeratorState,
 	CrowdMode,
-	CROWD_CROUCH_AUDIO_VALUE_THRESHOLD,
-	CROWD_RUN_AUDIO_VALUE_THRESHOLD,
 	GlobalState,
 	EMOTES_UPDATE,
 	BUBBLES_UPDATE,
 	HotAirBalloonVariationsType,
+	CROWD_JUMP_THRESHOLD,
+	CROWD_PARTY_THRESHOLD,
+	isIdleState,
+	isJumpState,
+	isPartyState,
 } from '@ccp/common/shared'
 import { useSocket } from '../../hooks/useSocket'
 import { styled } from '../../styles/Theme'
@@ -169,7 +172,7 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 
 	const setAndEmitHotAirBalloonVisibility = useCallback(
 		(e: React.MouseEvent<HTMLInputElement>) => {
-			socket?.emit(HOT_AIR_BALLON_UPDATE, {
+			socket?.emit(HOT_AIR_BALLOON_UPDATE, {
 				visibility: e.currentTarget.checked,
 			})
 		},
@@ -205,7 +208,7 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 
 	const setAndEmitBalloonTrigger = useCallback(
 		(e: React.MouseEvent<HTMLButtonElement>) => {
-			socket?.emit(HOT_AIR_BALLON_START, { variation: e.currentTarget.value as HotAirBalloonVariationsType })
+			socket?.emit(HOT_AIR_BALLOON_START, { variation: e.currentTarget.value as HotAirBalloonVariationsType })
 		},
 		[socket]
 	)
@@ -218,29 +221,43 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 			</GridItem>
 			<GridComponent
 				gridArea={'crowd-control'}
-				title="Crowd Control"
+				title="Crowd"
 				actions={
-					<Button value={globalState?.crowd.mode} onClick={setAndEmitCrowdMode}>
-						{globalState?.crowd.mode}
+					<Button
+						value={globalState?.crowd.mode}
+						onClick={setAndEmitCrowdMode}
+						style={{
+							padding: '4px',
+							fontSize: '12px',
+						}}
+					>
+						mode: {globalState?.crowd.mode}
 					</Button>
 				}
 			>
-				<Button onClick={setAndEmitCrowdIntensity} value={'0'} disabled={isDisabledManualCrowdButton}>
-					Idle
+				<Button
+					onClick={setAndEmitCrowdIntensity}
+					value={'0'}
+					disabled={isDisabledManualCrowdButton}
+					isActive={isIdleState(globalState.crowd.intensity)}
+				>
+					idle
 				</Button>
 				<Button
 					onClick={setAndEmitCrowdIntensity}
-					value={`${CROWD_CROUCH_AUDIO_VALUE_THRESHOLD}`}
+					value={`${CROWD_JUMP_THRESHOLD}`}
 					disabled={isDisabledManualCrowdButton}
+					isActive={isJumpState(globalState.crowd.intensity)}
 				>
-					Crouch
+					jump
 				</Button>
 				<Button
 					onClick={setAndEmitCrowdIntensity}
-					value={`${CROWD_RUN_AUDIO_VALUE_THRESHOLD}`}
+					value={`${CROWD_PARTY_THRESHOLD}`}
 					disabled={isDisabledManualCrowdButton}
+					isActive={isPartyState(globalState.crowd.intensity)}
 				>
-					Run
+					party
 				</Button>
 			</GridComponent>
 			<GridComponent
@@ -257,9 +274,9 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 
 			<GridComponent gridArea={'layer-control'} title="Layers">
 				<CheckBoxToggle
-					checked={globalState.hotAirballon.visibility}
+					checked={globalState.hotAirballoon.visibility}
 					onClick={setAndEmitHotAirBalloonVisibility}
-					description="Air Ballon"
+					description="Air Balloon"
 				/>
 				<CheckBoxToggle
 					checked={globalState.moderator.visibility}
@@ -285,27 +302,27 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 			<GridComponent gridArea={'preview'} title="Live View" height={'540px'} width={'960px'}>
 				<Preview src="/overlay#small" height={1080} width={1920} />
 			</GridComponent>
-			<GridComponent gridArea={'triggers-control'} title="Triggers">
+			<GridComponent gridArea={'triggers-control'} title="Balloons">
 				<Button
 					onClick={setAndEmitBalloonTrigger}
-					disabled={!globalState.hotAirballon.visibility}
-					value={HotAirBallonVationsValues.ludecat}
+					disabled={!globalState.hotAirballoon.visibility}
+					value={HotAirBalloonVationsValues.ludecat}
 				>
-					LudeCat Air Ballon
+					LudeCat Air Balloon
 				</Button>
 				<Button
 					onClick={setAndEmitBalloonTrigger}
-					disabled={!globalState.hotAirballon.visibility}
-					value={HotAirBallonVationsValues.fritzCola}
+					disabled={!globalState.hotAirballoon.visibility}
+					value={HotAirBalloonVationsValues.fritzCola}
 				>
-					Fritz Cola Ballon
+					Fritz Cola Balloon
 				</Button>
 				<Button
 					onClick={setAndEmitBalloonTrigger}
-					disabled={!globalState.hotAirballon.visibility}
-					value={HotAirBallonVationsValues.fhSalzburg}
+					disabled={!globalState.hotAirballoon.visibility}
+					value={HotAirBalloonVationsValues.fhSalzburg}
 				>
-					FH Ballon
+					FH Balloon
 				</Button>
 			</GridComponent>
 		</Grid>

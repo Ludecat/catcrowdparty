@@ -6,28 +6,40 @@ export const STATE_UPDATE = 'stateUpdate'
 export const REQUEST_STATE = 'requestState'
 export const CROWD_UPDATE = 'crowdUpdate'
 export const MODERATOR_UPDATE = 'moderatorUpdate'
-export const HOT_AIR_BALLON_UPDATE = 'hotAirBallonUpdate'
+export const HOT_AIR_BALLOON_UPDATE = 'hotAirBalloonUpdate'
 export const EMOTES_UPDATE = 'emotesUpdate'
 export const BUBBLES_UPDATE = 'bubblesUpdate'
 
 export const NEW_EMOTES_TRIGGER = 'newEmotes'
 export const NEW_EMOTE_MESSAGE_TRIGGER = 'newEmoteMessage'
 
-export const CROWD_CROUCH_AUDIO_VALUE_THRESHOLD = 50
-export const CROWD_RUN_AUDIO_VALUE_THRESHOLD = 150
+export const CROWD_JUMP_THRESHOLD = 50
+export const CROWD_PARTY_THRESHOLD = 150
+
+export const isIdleState = (intensity: number) => {
+	return intensity < CROWD_JUMP_THRESHOLD
+}
+
+export const isJumpState = (intensity: number) => {
+	return intensity >= CROWD_JUMP_THRESHOLD && intensity < CROWD_PARTY_THRESHOLD
+}
+
+export const isPartyState = (intensity: number) => {
+	return intensity >= CROWD_PARTY_THRESHOLD
+}
 
 export enum CrowdMode {
 	auto = 'auto',
 	manual = 'manual',
 }
 
-export const HOT_AIR_BALLON_START = 'hotAirBallonStart'
+export const HOT_AIR_BALLOON_START = 'hotAirBalloonStart'
 export interface HotAirBalloonVariation {
 	variation: HotAirBalloonVariationsType
 }
 
 export type HotAirBalloonVariationsType = 'ludecat' | 'fritz-cola' | 'fh-salzburg'
-export const HotAirBallonVationsValues = {
+export const HotAirBalloonVationsValues = {
 	ludecat: 'ludecat',
 	fritzCola: 'fritz-cola',
 	fhSalzburg: 'fh-salzburg',
@@ -51,7 +63,7 @@ export interface ModeratorState {
 	visibility: boolean
 }
 
-export interface HotAirBallonState {
+export interface HotAirBalloonState {
 	visibility: boolean
 }
 
@@ -67,7 +79,7 @@ export interface BubblesState {
 export interface GlobalState {
 	crowd: CrowdState
 	moderator: ModeratorState
-	hotAirballon: HotAirBallonState
+	hotAirballoon: HotAirBalloonState
 	emotes: EmotesState
 	bubbles: BubblesState
 }
@@ -75,11 +87,11 @@ export interface GlobalState {
 export interface CCPSocketEventsMap {
 	[CROWD_UPDATE]: (crowdUpdate: Partial<CrowdState>) => void
 	[MODERATOR_UPDATE]: (moderatorUpdate: Partial<ModeratorState>) => void
-	[HOT_AIR_BALLON_UPDATE]: (hotAirBallonUpdate: Partial<HotAirBallonState>) => void
+	[HOT_AIR_BALLOON_UPDATE]: (hotAirBalloonUpdate: Partial<HotAirBalloonState>) => void
 	[EMOTES_UPDATE]: (emotesUpdate: Partial<EmotesState>) => void
 	[BUBBLES_UPDATE]: (bubblesUpdate: Partial<BubblesState>) => void
 	[AUDIO_INPUT_VALUE_UPDATE]: (data: AudioInputValue) => void
-	[HOT_AIR_BALLON_START]: (data: HotAirBalloonVariation) => void
+	[HOT_AIR_BALLOON_START]: (data: HotAirBalloonVariation) => void
 	[STATE_UPDATE]: (state: GlobalState) => void
 	[REQUEST_STATE]: () => void
 	[NEW_EMOTES_TRIGGER]: (emoteUrls: string[], emoteState: EmotesState) => void
