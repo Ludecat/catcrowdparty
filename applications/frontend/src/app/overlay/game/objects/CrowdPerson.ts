@@ -18,7 +18,7 @@ export class CrowdPerson extends Phaser.GameObjects.Sprite {
 		super(scene, options.x, options.y, texture)
 		this.setName('crowdperson')
 
-		const startDelay = getRandomInt(0, 500)
+		const startDelay = getRandomInt(0, 250)
 		this.anims.create({
 			key: CROWD_PERSON_STATE_KEY.IDLE,
 			frames: this.anims.generateFrameNumbers(texture, {
@@ -31,7 +31,7 @@ export class CrowdPerson extends Phaser.GameObjects.Sprite {
 		this.anims.create({
 			key: CROWD_PERSON_STATE_KEY.JUMP,
 			frames: this.anims.generateFrameNumbers(texture, {
-				start: 0,
+				start: 2,
 				end: 6,
 			}),
 			frameRate: 7,
@@ -40,8 +40,8 @@ export class CrowdPerson extends Phaser.GameObjects.Sprite {
 		this.anims.create({
 			key: CROWD_PERSON_STATE_KEY.PARTY,
 			frames: this.anims.generateFrameNumbers(texture, {
-				start: 0,
-				end: 6,
+				start: 7,
+				end: 11,
 			}),
 			frameRate: 7,
 			delay: startDelay,

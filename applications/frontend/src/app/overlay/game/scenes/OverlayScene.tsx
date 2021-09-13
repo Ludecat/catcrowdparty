@@ -153,17 +153,17 @@ export class OverlayScene extends Phaser.Scene {
 		this.load.image(COUCH_KEY, '/ccp_couch.png')
 
 		this.load.spritesheet(CROWD_PERSON_BLUE_KEY, '/ccp_crowd_person_blue.png', {
-			frameWidth: 120,
+			frameWidth: 128,
 			frameHeight: 128,
 		})
 
 		this.load.spritesheet(CROWD_PERSON_GREEN_KEY, '/ccp_crowd_person_green.png', {
-			frameWidth: 120,
+			frameWidth: 128,
 			frameHeight: 128,
 		})
 
 		this.load.spritesheet(CROWD_PERSON_PINK_KEY, '/ccp_crowd_person_pink.png', {
-			frameWidth: 120,
+			frameWidth: 128,
 			frameHeight: 128,
 		})
 	}
