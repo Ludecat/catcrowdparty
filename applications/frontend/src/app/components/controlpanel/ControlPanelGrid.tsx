@@ -7,12 +7,15 @@ import {
 	HOT_AIR_BALLOON_START,
 	ModeratorState,
 	CrowdMode,
-	CROWD_CROUCH_AUDIO_VALUE_THRESHOLD,
-	CROWD_RUN_AUDIO_VALUE_THRESHOLD,
 	GlobalState,
 	EMOTES_UPDATE,
 	BUBBLES_UPDATE,
 	HotAirBalloonVariationsType,
+	CROWD_JUMP_THRESHOLD,
+	CROWD_PARTY_THRESHOLD,
+	isIdleState,
+	isJumpState,
+	isPartyState,
 } from '@ccp/common/shared'
 import { useSocket } from '../../hooks/useSocket'
 import { styled } from '../../styles/Theme'
@@ -220,25 +223,39 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 				gridArea={'crowd-control'}
 				title="Crowd"
 				actions={
-					<Button value={globalState?.crowd.mode} onClick={setAndEmitCrowdMode}>
-						{globalState?.crowd.mode}
+					<Button
+						value={globalState?.crowd.mode}
+						onClick={setAndEmitCrowdMode}
+						style={{
+							padding: '4px',
+							fontSize: '12px',
+						}}
+					>
+						mode: {globalState?.crowd.mode}
 					</Button>
 				}
 			>
-				<Button onClick={setAndEmitCrowdIntensity} value={'0'} disabled={isDisabledManualCrowdButton}>
+				<Button
+					onClick={setAndEmitCrowdIntensity}
+					value={'0'}
+					disabled={isDisabledManualCrowdButton}
+					isActive={isIdleState(globalState.crowd.intensity)}
+				>
 					idle
 				</Button>
 				<Button
 					onClick={setAndEmitCrowdIntensity}
-					value={`${CROWD_CROUCH_AUDIO_VALUE_THRESHOLD}`}
+					value={`${CROWD_JUMP_THRESHOLD}`}
 					disabled={isDisabledManualCrowdButton}
+					isActive={isJumpState(globalState.crowd.intensity)}
 				>
 					jump
 				</Button>
 				<Button
 					onClick={setAndEmitCrowdIntensity}
-					value={`${CROWD_RUN_AUDIO_VALUE_THRESHOLD}`}
+					value={`${CROWD_PARTY_THRESHOLD}`}
 					disabled={isDisabledManualCrowdButton}
+					isActive={isPartyState(globalState.crowd.intensity)}
 				>
 					party
 				</Button>

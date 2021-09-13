@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import { CrowdState, CROWD_CROUCH_AUDIO_VALUE_THRESHOLD, CROWD_RUN_AUDIO_VALUE_THRESHOLD } from '@ccp/common/shared'
+import { CrowdState, isJumpState, isPartyState } from '@ccp/common/shared'
 import { CCPGameObjectProps } from '../scenes/OverlayScene'
 import { getRandomInt } from '../../../util/utils'
 
@@ -54,22 +54,22 @@ export class CrowdPerson extends Phaser.GameObjects.Sprite {
 	}
 
 	public handleState(state: CrowdState) {
-		if (state.intensity >= CROWD_RUN_AUDIO_VALUE_THRESHOLD) {
-			this.run()
-		} else if (state.intensity >= CROWD_CROUCH_AUDIO_VALUE_THRESHOLD) {
-			this.crouch()
+		if (isPartyState(state.intensity)) {
+			this.party()
+		} else if (isJumpState(state.intensity)) {
+			this.jump()
 		} else {
 			this.idle()
 		}
 		this.setVisible(state.visibility)
 	}
 
-	public run() {
+	public party() {
 		if (this.anims.currentAnim && this.anims.currentAnim.key === CROWD_PERSON_STATE_KEY.PARTY) return
 		this.play({ key: CROWD_PERSON_STATE_KEY.PARTY, repeat: -1 })
 	}
 
-	public crouch() {
+	public jump() {
 		if (this.anims.currentAnim && this.anims.currentAnim.key === CROWD_PERSON_STATE_KEY.JUMP) return
 		this.play({ key: CROWD_PERSON_STATE_KEY.JUMP, repeat: -1 })
 	}

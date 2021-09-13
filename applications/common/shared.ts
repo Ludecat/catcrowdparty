@@ -13,8 +13,20 @@ export const BUBBLES_UPDATE = 'bubblesUpdate'
 export const NEW_EMOTES_TRIGGER = 'newEmotes'
 export const NEW_EMOTE_MESSAGE_TRIGGER = 'newEmoteMessage'
 
-export const CROWD_CROUCH_AUDIO_VALUE_THRESHOLD = 50
-export const CROWD_RUN_AUDIO_VALUE_THRESHOLD = 150
+export const CROWD_JUMP_THRESHOLD = 50
+export const CROWD_PARTY_THRESHOLD = 150
+
+export const isIdleState = (intensity: number) => {
+	return intensity < CROWD_JUMP_THRESHOLD
+}
+
+export const isJumpState = (intensity: number) => {
+	return intensity >= CROWD_JUMP_THRESHOLD && intensity < CROWD_PARTY_THRESHOLD
+}
+
+export const isPartyState = (intensity: number) => {
+	return intensity >= CROWD_PARTY_THRESHOLD
+}
 
 export enum CrowdMode {
 	auto = 'auto',
