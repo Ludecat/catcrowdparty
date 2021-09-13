@@ -69,14 +69,15 @@ export class AudioManager {
 		this.frequencyBinCount = new Uint8Array(this.analyser!.frequencyBinCount)
 		this.analyser!.getByteFrequencyData(this.frequencyBinCount)
 
-		this.drawBar()
-	}
-
-	drawBar() {
-		this.clearCanvas()
-
 		const maxPowerOfFrequencies = Math.max(...(this.frequencyBinCount ?? [0]))
 		this.currentFrequenciesPowerBatch.push(maxPowerOfFrequencies)
+
+		this.drawBar(maxPowerOfFrequencies)
+	}
+
+	drawBar(maxPowerOfFrequencies: number) {
+		this.clearCanvas()
+
 		const mappedBarHeightToCanvasHeight = (maxPowerOfFrequencies / 255) * this.canvas.height
 
 		this.setCanvasContextColorFromIntensity(maxPowerOfFrequencies)
