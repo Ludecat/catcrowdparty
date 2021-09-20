@@ -26,6 +26,8 @@ const StyledTextArea = styled.textarea<{ height: string; width: string }>`
 	padding-top: 8px;
 	padding-bottom: 125px;
 	overflow: hidden;
+	transform: scale(0.8);
+	resize: none;
 `
 
 export const TextArea = ({ value, ...props }: TextAreaProps) => {
