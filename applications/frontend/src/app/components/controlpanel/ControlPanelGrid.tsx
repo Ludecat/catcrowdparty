@@ -69,11 +69,6 @@ const Preview = styled.iframe`
 	transform-origin: 0 0;
 `
 
-const ControlPanelHeading = styled.h1`
-	margin: 0;
-	padding: 0;
-`
-
 const GridItemHeadingActionsWrapper = styled.div`
 	margin-left: ${(p) => p.theme.space.m}px;
 	display: flex;
@@ -102,7 +97,7 @@ const GridComponent: FunctionComponent<GridComponentProps> = (props) => {
 
 const longestWordMaxThreshold = 15
 const maxCharThreshold = 128
-const maxLinesThreshold = 8
+const maxLinesThreshold = 6
 
 export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> = ({ globalState }) => {
 	const { socket } = useSocket()
@@ -216,9 +211,7 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 	const isDisabledManualCrowdButton = !globalState.crowd.visibility || globalState?.crowd.mode === 'auto'
 	return (
 		<Grid>
-			<GridItem gridArea={'header'}>
-				<ControlPanelHeading>Cat Crowd Party - Control Panel</ControlPanelHeading>
-			</GridItem>
+			<GridItem gridArea={'header'}></GridItem>
 			<GridComponent
 				gridArea={'crowd-control'}
 				title="Crowd"
