@@ -33,7 +33,6 @@ const Grid = styled.div`
 	grid-template-columns: 300px 1fr;
 	grid-auto-rows: auto;
 	grid-template-areas:
-		'header header'
 		'crowd-control preview'
 		'moderator-control preview'
 		'layer-control preview'
@@ -211,7 +210,6 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 	const isDisabledManualCrowdButton = !globalState.crowd.visibility || globalState?.crowd.mode === 'auto'
 	return (
 		<Grid>
-			<GridItem gridArea={'header'}></GridItem>
 			<GridComponent
 				gridArea={'crowd-control'}
 				title="Crowd"

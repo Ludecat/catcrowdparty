@@ -16,7 +16,6 @@ const StyledTextArea = styled.textarea<{ height: string; width: string }>`
 	border-radius: 3px;
 	caret-color: ${(p) => p.theme.color.blackPeral};
 	background: url('/ccp_speechbubble_small_left.png');
-	background-size: c;
 	background-size: 288px;
 	background-repeat: no-repeat;
 	border: none;

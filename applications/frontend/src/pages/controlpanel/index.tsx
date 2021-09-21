@@ -59,6 +59,9 @@ const ControlPanelPageWrapper = styled.div`
 		);
 	background-position: 0 0, 2px 2px;
 	background-size: 4px 4px;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
 `
 
 export default ControlPanelPage
