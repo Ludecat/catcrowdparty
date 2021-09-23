@@ -79,42 +79,43 @@ export class OverlayScene extends Phaser.Scene {
 		})
 
 		config.socket.on(NEW_EMOTE_MESSAGE_TRIGGER, async (senderName, emoteUrls, state) => {
-			if (state.visibility) {
-				try {
-					const emoteLoads = Array<Promise<void>>()
-					for (const emoteURL of emoteUrls) {
-						emoteLoads.push(this.loadImage(emoteURL))
-					}
-					await Promise.all(emoteLoads)
+			if (!state.visibility) {
+				return
+			}
 
-					const activeEmoteBubbles = this.getActiveGameObjectsByName<EmoteBubble>('emoteBubble')
-					if (activeEmoteBubbles.length === 0) {
-						new EmoteBubble(this, senderName, state, emoteUrls, {
-							y: EMOTE_POS_Y,
-							x: 300,
-							layer: this.mainLayer!,
-						})
-					}
-				} catch (e) {
-					console.log(`Failed to load/show emoteMessage: ${e}`)
+			try {
+				await this.prepareEmotes(emoteUrls)
+
+				const activeEmoteBubbles = this.getActiveGameObjectsByName<EmoteBubble>('emoteBubble')
+				if (activeEmoteBubbles.length === 0) {
+					new EmoteBubble(this, senderName, state, emoteUrls, {
+						y: EMOTE_POS_Y,
+						x: 300,
+						layer: this.mainLayer!,
+					})
 				}
+			} catch (e) {
+				console.log(`Failed to load/show emoteMessage: ${e}`)
 			}
 		})
 
 		config.socket.on(NEW_EMOTES_TRIGGER, async (emoteUrls, state) => {
-			if (state.visibility) {
+			if (!state.visibility) {
+				return
+			}
+
+			try {
+				await this.prepareEmotes(emoteUrls)
+
 				for (const emoteURL of emoteUrls) {
-					try {
-						await this.loadImage(emoteURL)
-						new Emote(this, state, emoteURL, {
-							y: 900,
-							x: getRandomInt(100, this.game.canvas.width - 100),
-							layer: this.mainLayer!,
-						})
-					} catch (e) {
-						console.log(`Failed to load emote ${emoteURL}`)
-					}
+					new Emote(this, state, emoteURL, {
+						y: 900,
+						x: getRandomInt(100, this.game.canvas.width - 100),
+						layer: this.mainLayer!,
+					})
 				}
+			} catch (e) {
+				console.log(`Failed to load/show emotes: ${e}`)
 			}
 		})
 	}
@@ -241,6 +242,14 @@ export class OverlayScene extends Phaser.Scene {
 
 	private getActiveGameObjectsByName<T>(name: string) {
 		return this.children.list.filter((child) => child.name === name) as never as T[]
+	}
+
+	private async prepareEmotes(emoteUrls: string[]) {
+		const emoteLoads = Array<Promise<void>>()
+		for (const emoteURL of emoteUrls) {
+			emoteLoads.push(this.loadImage(emoteURL))
+		}
+		await Promise.all(emoteLoads)
 	}
 
 	private loadImage(url: string): Promise<void> {
