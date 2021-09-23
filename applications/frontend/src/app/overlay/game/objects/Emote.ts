@@ -66,7 +66,7 @@ export class Emote extends Phaser.GameObjects.Sprite {
 	}
 
 	public handleState(state: EmotesState) {
-		this.setVisible(state.visibility)
+		this.setIsVisible(state.visibility)
 	}
 
 	public setIsVisible(visible: boolean) {

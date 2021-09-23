@@ -61,7 +61,7 @@ export class CrowdPerson extends Phaser.GameObjects.Sprite {
 		} else {
 			this.idle()
 		}
-		this.setVisible(state.visibility)
+		this.setIsVisible(state.visibility)
 	}
 
 	public party() {

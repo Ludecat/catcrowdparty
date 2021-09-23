@@ -16,7 +16,7 @@ export class Couch extends Phaser.GameObjects.Image {
 	}
 
 	public handleState(state: CrowdState) {
-		this.setVisible(state.visibility)
+		this.setIsVisible(state.visibility)
 	}
 
 	public setIsVisible(visible: boolean) {
