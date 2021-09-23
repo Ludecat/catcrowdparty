@@ -78,52 +78,42 @@ export class OverlayScene extends Phaser.Scene {
 			}
 		})
 
-		config.socket.on(NEW_EMOTE_MESSAGE_TRIGGER, (senderName, emoteUrls, state) => {
-			const activeEmoteBubbles = this.getActiveGameObjectsByName<EmoteBubble>('emoteBubble')
-			if (activeEmoteBubbles.length > 0) return
+		config.socket.on(NEW_EMOTE_MESSAGE_TRIGGER, async (senderName, emoteUrls, state) => {
 			if (state.visibility) {
-				let imageLoading
-				for (const emoteURL of emoteUrls) {
-					imageLoading = this.load.image(emoteURL, emoteURL)
-					imageLoading.on('loaderror', () => {
-						console.log('error while loading emote.')
-					})
-					imageLoading.start()
-				}
+				try {
+					const emoteLoads = Array<Promise<void>>()
+					for (const emoteURL of emoteUrls) {
+						emoteLoads.push(this.loadImage(emoteURL))
+					}
+					await Promise.all(emoteLoads)
 
-				imageLoading?.on('complete', () => {
-					new EmoteBubble(this, senderName, state, emoteUrls, {
-						y: EMOTE_POS_Y,
-						x: 300,
-						layer: this.mainLayer!,
-					})
-				})
+					const activeEmoteBubbles = this.getActiveGameObjectsByName<EmoteBubble>('emoteBubble')
+					if (activeEmoteBubbles.length === 0) {
+						new EmoteBubble(this, senderName, state, emoteUrls, {
+							y: EMOTE_POS_Y,
+							x: 300,
+							layer: this.mainLayer!,
+						})
+					}
+				} catch (e) {
+					console.log(`Failed to load/show emoteMessage: ${e}`)
+				}
 			}
 		})
 
-		config.socket.on(NEW_EMOTES_TRIGGER, (emoteUrls, state) => {
+		config.socket.on(NEW_EMOTES_TRIGGER, async (emoteUrls, state) => {
 			if (state.visibility) {
 				for (const emoteURL of emoteUrls) {
-					if (this.textures.exists(emoteURL)) {
+					try {
+						await this.loadImage(emoteURL)
 						new Emote(this, state, emoteURL, {
 							y: 900,
 							x: getRandomInt(100, this.game.canvas.width - 100),
 							layer: this.mainLayer!,
 						})
-						continue
+					} catch (e) {
+						console.log(`Failed to load emote ${emoteURL}`)
 					}
-					const imageLoading = this.load.image(emoteURL, emoteURL)
-					imageLoading.on('filecomplete-image-' + emoteURL, () => {
-						new Emote(this, state, emoteURL, {
-							y: 900,
-							x: getRandomInt(100, this.game.canvas.width - 100),
-							layer: this.mainLayer!,
-						})
-					})
-					imageLoading.on('loaderror', () => {
-						console.log('error while loading emote.')
-					})
-					imageLoading.start()
 				}
 			}
 		})
@@ -251,6 +241,20 @@ export class OverlayScene extends Phaser.Scene {
 
 	private getActiveGameObjectsByName<T>(name: string) {
 		return this.children.list.filter((child) => child.name === name) as never as T[]
+	}
+
+	private loadImage(url: string): Promise<void> {
+		return new Promise((resolve) => {
+			if (this.textures.exists(url)) {
+				resolve()
+			}
+			this.load.image(url, url)
+			this.load.once('filecomplete-image-' + url, () => {
+				resolve()
+			})
+
+			this.load.start()
+		})
 	}
 }
 
