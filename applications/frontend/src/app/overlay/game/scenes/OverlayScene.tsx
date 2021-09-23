@@ -256,6 +256,7 @@ export class OverlayScene extends Phaser.Scene {
 		return new Promise((resolve) => {
 			if (this.textures.exists(url)) {
 				resolve()
+				return
 			}
 			this.load.image(url, url)
 			this.load.once('filecomplete-image-' + url, () => {
