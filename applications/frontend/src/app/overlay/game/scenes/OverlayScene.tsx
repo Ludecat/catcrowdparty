@@ -21,16 +21,26 @@ import {
 	CrowdPerson,
 } from '../objects/CrowdPerson'
 import { HotAirBalloon, PARTICLE_KEY } from '../objects/HotAirBalloon'
-import { Moderator, MODERATOR_SPRITESHEET_KEY, SPEECH_BUBBLE_SMALL_KEY } from '../objects/Moderator'
+import {
+	Moderator,
+	MODERATOR_SPRITESHEET_KEY,
+	SPEECH_BUBBLE_SMALL_LEFT_KEY,
+	SPEECH_BUBBLE_SMALL_RIGHT_KEY,
+} from '../objects/Moderator'
 import { Emote } from '../objects/Emote'
 import { getRandomInt } from '../../../util/utils'
-import { EmoteBubble, SPEECH_BUBBLE_MEDIUM_KEY } from '../objects/EmoteBubble'
+import { EmoteBubble, SPEECH_BUBBLE_MEDIUM_RIGHT_KEY, SPEECH_BUBBLE_MEDIUM_LEFT_KEY } from '../objects/EmoteBubble'
 import { Couch, COUCH_KEY } from '../objects/Couch'
 
 export const EMOTE_POS_Y = 850
 
+export interface CrowdPersonsWithBubble {
+	[key: string]: CrowdPerson | null
+}
+
 export class OverlayScene extends Phaser.Scene {
 	public mainLayer: Phaser.GameObjects.Layer | null = null
+	public crowdPersonsWithBubble: CrowdPersonsWithBubble | Record<string, null> = {}
 
 	constructor() {
 		super({ key: SCENES.OVERLAY })
@@ -84,14 +94,19 @@ export class OverlayScene extends Phaser.Scene {
 			}
 
 			try {
-				await this.prepareEmotes(emoteUrls)
+				if (this.crowdPersonsWithBubble && this.getRandomAvailableCrowdPersonWithEmoteBubble()) {
+					const crowdPersonEmoteBubble = this.getRandomAvailableCrowdPersonWithEmoteBubble()
+					if (!crowdPersonEmoteBubble) return
+					this.crowdPersonsWithBubble[crowdPersonEmoteBubble.texture.key] = null
 
-				const activeEmoteBubbles = this.getActiveGameObjectsByName<EmoteBubble>('emoteBubble')
-				if (activeEmoteBubbles.length === 0) {
+					await this.prepareEmotes(emoteUrls)
 					new EmoteBubble(this, senderName, state, emoteUrls, {
-						y: EMOTE_POS_Y,
-						x: 300,
+						y: crowdPersonEmoteBubble.y - 105,
+						x: crowdPersonEmoteBubble.x - 130,
 						layer: this.mainLayer!,
+						crowdPersonsWithBubble: this.crowdPersonsWithBubble,
+						crowdPerson: crowdPersonEmoteBubble,
+						alignBubble: crowdPersonEmoteBubble.texture.key === CROWD_PERSON_GREEN_KEY ? 'left' : 'right',
 					})
 				}
 			} catch (e) {
@@ -139,8 +154,11 @@ export class OverlayScene extends Phaser.Scene {
 			frameWidth: 192,
 			frameHeight: 400,
 		})
-		this.load.image(SPEECH_BUBBLE_SMALL_KEY, '/ccp_speechbubble_small_right.png')
-		this.load.image(SPEECH_BUBBLE_MEDIUM_KEY, '/ccp_speechbubble_medium_right.png')
+		this.load.image(SPEECH_BUBBLE_SMALL_RIGHT_KEY, '/ccp_speechbubble_small_right.png')
+		this.load.image(SPEECH_BUBBLE_MEDIUM_RIGHT_KEY, '/ccp_speechbubble_medium_right.png')
+		this.load.image(SPEECH_BUBBLE_SMALL_LEFT_KEY, '/ccp_speechbubble_small_left.png')
+		this.load.image(SPEECH_BUBBLE_MEDIUM_LEFT_KEY, '/ccp_speechbubble_medium_left.png')
+
 		this.load.image(COUCH_KEY, '/ccp_couch.png')
 
 		this.load.spritesheet(CROWD_PERSON_BLUE_KEY, '/ccp_crowd_person_blue.png', {
@@ -162,11 +180,11 @@ export class OverlayScene extends Phaser.Scene {
 	create(config: { socket: Socket<CCPSocketEventsMap>; initialState: GlobalState }) {
 		const { socket, initialState } = config
 
-		this.generateCrowdPerson(initialState.crowd, CROWD_PERSON_PINK_KEY, 930, 150, 9)
+		this.generateCrowdPerson(initialState.crowd, CROWD_PERSON_PINK_KEY, 930, 150, 9, 2)
 		this.generateCouchRow(initialState.crowd, this.game.canvas.height - 100, 80)
-		this.generateCrowdPerson(initialState.crowd, CROWD_PERSON_GREEN_KEY, 956, 50, 10)
+		this.generateCrowdPerson(initialState.crowd, CROWD_PERSON_GREEN_KEY, 956, 50, 10, 5)
 		this.generateCouchRow(initialState.crowd, this.game.canvas.height - 75, 80)
-		this.generateCrowdPerson(initialState.crowd, CROWD_PERSON_BLUE_KEY, 980, 100, 10)
+		this.generateCrowdPerson(initialState.crowd, CROWD_PERSON_BLUE_KEY, 980, 100, 10, 9)
 		this.generateCouchRow(initialState.crowd, this.game.canvas.height - 50, 80)
 
 		this.generateHotAirBalloons(initialState.hotAirballoon)
@@ -180,7 +198,26 @@ export class OverlayScene extends Phaser.Scene {
 		socket.emit(REQUEST_STATE)
 	}
 
-	generateCrowdPerson(state: CrowdState, texture: string, y: number, xOffset: number, count: number) {
+	getRandomAvailableCrowdPersonWithEmoteBubble() {
+		if (!this.crowdPersonsWithBubble) return null
+		const keys = Object.keys(this.crowdPersonsWithBubble)
+		const availableCrowdPersons = []
+		for (const key of keys) {
+			if (this.crowdPersonsWithBubble[key]) {
+				availableCrowdPersons.push(this.crowdPersonsWithBubble[key])
+			}
+		}
+		return availableCrowdPersons[Math.floor(Math.random() * availableCrowdPersons.length)]
+	}
+
+	generateCrowdPerson(
+		state: CrowdState,
+		texture: string,
+		y: number,
+		xOffset: number,
+		count: number,
+		crowdPersonWithBubbleIndex: number
+	) {
 		for (let i = 0; i < count; i++) {
 			if (i === 0) {
 				new CrowdPerson(
@@ -197,7 +234,16 @@ export class OverlayScene extends Phaser.Scene {
 				continue
 			}
 
-			new CrowdPerson(this, state, { x: i * 160 + xOffset, y, layer: this.mainLayer! }, texture)
+			if (i === crowdPersonWithBubbleIndex) {
+				this.crowdPersonsWithBubble[texture] = new CrowdPerson(
+					this,
+					state,
+					{ x: i * 160 + xOffset, y, layer: this.mainLayer! },
+					texture
+				)
+			} else {
+				new CrowdPerson(this, state, { x: i * 160 + xOffset, y, layer: this.mainLayer! }, texture)
+			}
 		}
 	}
 

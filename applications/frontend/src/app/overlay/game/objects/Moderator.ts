@@ -3,7 +3,8 @@ import { ModeratorState } from '@ccp/common/shared'
 import { CCPGameObjectProps } from '../scenes/OverlayScene'
 
 export const MODERATOR_SPRITESHEET_KEY = 'moderator'
-export const SPEECH_BUBBLE_SMALL_KEY = 'speechBubbleSmall'
+export const SPEECH_BUBBLE_SMALL_RIGHT_KEY = 'speechBubbleRightSmall'
+export const SPEECH_BUBBLE_SMALL_LEFT_KEY = 'speechBubbleLeftSmall'
 export const MODERATOR_STATE_KEY = {
 	IDLE: 'idle',
 }
@@ -63,7 +64,7 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 			scene,
 			scene.game.canvas.width - 365,
 			this.y - 190,
-			SPEECH_BUBBLE_SMALL_KEY
+			SPEECH_BUBBLE_SMALL_RIGHT_KEY
 		)
 		bubble.setScale(2.25)
 		this.scene.add.existing(bubble)
