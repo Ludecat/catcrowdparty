@@ -1,13 +1,18 @@
 import Phaser from 'phaser'
 import { BubblesState, EmotesState } from '@ccp/common/shared'
 import { getRandomInt } from '../../../util/utils'
-import { CCPGameObjectProps } from '../scenes/OverlayScene'
+import { CCPGameObjectProps, CrowdPersonsWithBubble } from '../scenes/OverlayScene'
+import { CrowdPerson } from './CrowdPerson'
 
 const BUBBLE_HEIGHT = 75
+export const SPEECH_BUBBLE_MEDIUM_RIGHT_KEY = 'speechBubbleRightMedium'
+export const SPEECH_BUBBLE_MEDIUM_LEFT_KEY = 'speechBubbleLeftMedium'
 
-const BUBBLE_POS_X = 500
-const BUBBLE_POS_Y = 800
-export const SPEECH_BUBBLE_MEDIUM_KEY = 'speechBubbleMedium'
+interface EmoteBubbleProps extends CCPGameObjectProps {
+	crowdPersonsWithBubble?: CrowdPersonsWithBubble
+	crowdPerson?: CrowdPerson
+	alignBubble?: 'left' | 'right'
+}
 
 export class EmoteBubble extends Phaser.GameObjects.Graphics {
 	public bubble: Phaser.GameObjects.Image
@@ -18,12 +23,12 @@ export class EmoteBubble extends Phaser.GameObjects.Graphics {
 		senderName: string,
 		state: EmotesState,
 		emoteUrls: string[],
-		options: CCPGameObjectProps
+		options: EmoteBubbleProps
 	) {
-		super(scene)
+		super(scene, { x: options.x, y: options.y })
 		const startDelay = getRandomInt(0, 500)
 
-		this.bubble = this.createSpeechBubble(scene)
+		this.bubble = this.createSpeechBubble(scene, options.x, options.y, options.alignBubble)
 		this.text = this.createBubbleText(scene, senderName, emoteUrls, startDelay)
 
 		this.setName('emoteBubble')
@@ -57,6 +62,9 @@ export class EmoteBubble extends Phaser.GameObjects.Graphics {
 			delay: startDelay + 2500,
 			duration: 500,
 			onComplete: () => {
+				if (options.crowdPersonsWithBubble && options.crowdPerson) {
+					options.crowdPersonsWithBubble[options.crowdPerson.texture.key] = options.crowdPerson
+				}
 				this.bubble.destroy()
 				this.destroy()
 			},
@@ -93,16 +101,18 @@ export class EmoteBubble extends Phaser.GameObjects.Graphics {
 	/**
 	 * Inspired by https://phaser.io/examples/v3/view/game-objects/text/speech-bubble
 	 */
-	private createSpeechBubble(scene: Phaser.Scene) {
-		const bubble = new Phaser.GameObjects.Image(scene, BUBBLE_POS_X, BUBBLE_POS_Y, SPEECH_BUBBLE_MEDIUM_KEY)
+	private createSpeechBubble(scene: Phaser.Scene, x: number, y: number, alignBubble?: 'left' | 'right') {
+		const bubbleTexture = alignBubble === 'left' ? SPEECH_BUBBLE_MEDIUM_LEFT_KEY : SPEECH_BUBBLE_MEDIUM_RIGHT_KEY
+		const newX = alignBubble === 'left' ? x + 105 : x
+		const bubble = new Phaser.GameObjects.Image(scene, newX, y, bubbleTexture)
 		this.scene.add.existing(bubble)
 		return bubble
 	}
 
 	private createBubbleText(scene: Phaser.Scene, senderName: string, texture: string[], startDelay: number) {
 		const content = scene.add.text(
-			BUBBLE_POS_X - this.bubble.width / 2 + 5,
-			BUBBLE_POS_Y - this.bubble.height / 2 - 33,
+			this.bubble.x - this.bubble.width / 2 + 5,
+			this.bubble.y - this.bubble.height / 2 - 33,
 			senderName,
 			{
 				fontFamily: 'Roboto',
