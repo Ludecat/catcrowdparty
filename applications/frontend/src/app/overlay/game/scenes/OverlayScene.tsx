@@ -88,7 +88,7 @@ export class OverlayScene extends Phaser.Scene {
 			}
 		})
 
-		config.socket.on(NEW_EMOTE_MESSAGE_TRIGGER, async (senderName, emoteUrls, state) => {
+		config.socket.on(NEW_EMOTE_MESSAGE_TRIGGER, async (senderName, color, emoteUrls, state) => {
 			if (!state.visibility) {
 				return
 			}
@@ -107,6 +107,7 @@ export class OverlayScene extends Phaser.Scene {
 						crowdPersonsWithBubble: this.crowdPersonsWithBubble,
 						crowdPerson: crowdPersonEmoteBubble,
 						alignBubble: crowdPersonEmoteBubble.texture.key === CROWD_PERSON_GREEN_KEY ? 'left' : 'right',
+						color,
 					})
 				}
 			} catch (e) {

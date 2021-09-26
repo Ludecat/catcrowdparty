@@ -12,6 +12,7 @@ interface EmoteBubbleProps extends CCPGameObjectProps {
 	crowdPersonsWithBubble?: CrowdPersonsWithBubble
 	crowdPerson?: CrowdPerson
 	alignBubble?: 'left' | 'right'
+	color: string
 }
 
 export class EmoteBubble extends Phaser.GameObjects.Graphics {
@@ -28,7 +29,7 @@ export class EmoteBubble extends Phaser.GameObjects.Graphics {
 		super(scene, { x: options.x, y: options.y })
 		const startDelay = getRandomInt(0, 500)
 
-		this.bubble = this.createSpeechBubble(scene, options.x, options.y, options.alignBubble)
+		this.bubble = this.createSpeechBubble(scene, options.x, options.y, options.color, options.alignBubble)
 		this.text = this.createBubbleText(scene, senderName, emoteUrls, startDelay)
 
 		this.setName('emoteBubble')
@@ -101,10 +102,11 @@ export class EmoteBubble extends Phaser.GameObjects.Graphics {
 	/**
 	 * Inspired by https://phaser.io/examples/v3/view/game-objects/text/speech-bubble
 	 */
-	private createSpeechBubble(scene: Phaser.Scene, x: number, y: number, alignBubble?: 'left' | 'right') {
+	private createSpeechBubble(scene: Phaser.Scene, x: number, y: number, tint: string, alignBubble?: 'left' | 'right') {
 		const bubbleTexture = alignBubble === 'left' ? SPEECH_BUBBLE_MEDIUM_LEFT_KEY : SPEECH_BUBBLE_MEDIUM_RIGHT_KEY
 		const newX = alignBubble === 'left' ? x + 105 : x
 		const bubble = new Phaser.GameObjects.Image(scene, newX, y, bubbleTexture)
+		bubble.setTint(Phaser.Display.Color.HexStringToColor(tint).color)
 		this.scene.add.existing(bubble)
 		return bubble
 	}
