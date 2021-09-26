@@ -7,6 +7,8 @@ export const SPEECH_BUBBLE_SMALL_RIGHT_KEY = 'speechBubbleRightSmall'
 export const SPEECH_BUBBLE_SMALL_LEFT_KEY = 'speechBubbleLeftSmall'
 export const MODERATOR_STATE_KEY = {
 	IDLE: 'idle',
+	BLINK: 'blink',
+	TALK: 'talk',
 }
 
 export class Moderator extends Phaser.GameObjects.Sprite {
@@ -21,9 +23,27 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 			key: MODERATOR_STATE_KEY.IDLE,
 			frames: this.anims.generateFrameNumbers(MODERATOR_SPRITESHEET_KEY, {
 				start: 0,
-				end: 2,
+				end: 1,
 			}),
 			frameRate: 3,
+		})
+
+		this.anims.create({
+			key: MODERATOR_STATE_KEY.BLINK,
+			frames: this.anims.generateFrameNumbers(MODERATOR_SPRITESHEET_KEY, {
+				start: 2,
+				end: 2,
+			}),
+			frameRate: 8,
+		})
+
+		this.anims.create({
+			key: MODERATOR_STATE_KEY.TALK,
+			frames: this.anims.generateFrameNumbers(MODERATOR_SPRITESHEET_KEY, {
+				start: 3,
+				end: 5,
+			}),
+			frameRate: 4,
 		})
 
 		this.bubble = this.createSpeechBubble(scene)
@@ -35,9 +55,17 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 		scene.add.existing(this)
 	}
 
+	private idleChained() {
+		this.play({ key: MODERATOR_STATE_KEY.IDLE, repeat: 3 }).on('animationcomplete', () => {
+			this.play({ key: MODERATOR_STATE_KEY.TALK, repeat: 1 }).on('animationcomplete', () => {
+				this.idleChained()
+			})
+		})
+	}
+
 	public idle() {
 		if (this.anims.currentAnim && this.anims.currentAnim.key === MODERATOR_STATE_KEY.IDLE) return
-		this.play({ key: MODERATOR_STATE_KEY.IDLE, repeat: -1 })
+		this.idleChained()
 	}
 
 	public handleState(state: ModeratorState) {
