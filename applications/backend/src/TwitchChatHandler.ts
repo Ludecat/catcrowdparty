@@ -6,7 +6,7 @@ import TwitchChatMessages, { NEW_EMOTE_MESSAGE } from './TwitchChatMessages'
 
 interface TwitchChatHandlerEvents {
 	[NEW_EMOTES]: (emoteUrls: string[]) => void
-	[NEW_EMOTE_MESSAGE]: (senderName: string, emoteUrls: string[]) => void
+	[NEW_EMOTE_MESSAGE]: (senderName: string, color: string, emoteUrls: string[]) => void
 }
 
 const emoteIdsToUrls = (emoteIds: string[]) =>
@@ -43,8 +43,8 @@ export default class TwitchChatHandler extends TypedEmitter<TwitchChatHandlerEve
 			this.emit(NEW_EMOTES, emoteIdsToUrls(emoteIds))
 		})
 
-		this.messagesHandler.on(NEW_EMOTE_MESSAGE, (senderName, emoteIds) => {
-			this.emit(NEW_EMOTE_MESSAGE, senderName, emoteIdsToUrls(emoteIds))
+		this.messagesHandler.on(NEW_EMOTE_MESSAGE, (senderName, color, emoteIds) => {
+			this.emit(NEW_EMOTE_MESSAGE, senderName, color, emoteIdsToUrls(emoteIds))
 		})
 
 		// eslint-disable-next-line @typescript-eslint/no-floating-promises

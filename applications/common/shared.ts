@@ -95,5 +95,5 @@ export interface CCPSocketEventsMap {
 	[STATE_UPDATE]: (state: GlobalState) => void
 	[REQUEST_STATE]: () => void
 	[NEW_EMOTES_TRIGGER]: (emoteUrls: string[], emoteState: EmotesState) => void
-	[NEW_EMOTE_MESSAGE_TRIGGER]: (senderName: string, emoteUrls: string[], emoteState: EmotesState) => void
+	[NEW_EMOTE_MESSAGE_TRIGGER]: (senderName: string, color: string, emoteUrls: string[], emoteState: EmotesState) => void
 }
