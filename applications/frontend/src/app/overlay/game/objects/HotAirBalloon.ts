@@ -8,7 +8,6 @@ interface HotAirBalloonProps extends CCPGameObjectProps {
 	direction: DIRECTION_TYPE
 }
 
-export const PARTICLE_KEY = 'particle'
 export const HOT_AIR_BALLOON_STATE_KEY = {
 	IDLE: 'idle',
 }
@@ -46,16 +45,6 @@ export class HotAirBalloon extends Phaser.GameObjects.Sprite {
 		scene.physics.add.existing(this)
 		options.layer.add(this)
 		scene.add.existing(this)
-
-		const particles = this.scene.add.particles(PARTICLE_KEY)
-		const particleEmitter = particles.createEmitter({
-			speed: 100,
-			quantity: 0.2,
-			gravityX: 0,
-			gravityY: 200,
-			scale: { start: 0.05, end: 0.3 },
-		})
-		particleEmitter.startFollow(this, this.direction === 'goLeft' ? 50 : -50, 140)
 	}
 
 	public idle() {

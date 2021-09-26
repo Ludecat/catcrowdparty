@@ -20,7 +20,7 @@ import {
 	CROWD_PERSON_PINK_KEY,
 	CrowdPerson,
 } from '../objects/CrowdPerson'
-import { HotAirBalloon, PARTICLE_KEY } from '../objects/HotAirBalloon'
+import { HotAirBalloon } from '../objects/HotAirBalloon'
 import {
 	Moderator,
 	MODERATOR_SPRITESHEET_KEY,
@@ -136,8 +136,6 @@ export class OverlayScene extends Phaser.Scene {
 	}
 
 	preload() {
-		this.load.image(PARTICLE_KEY, '/ccp_particle_red.png')
-
 		this.load.spritesheet(MODERATOR_SPRITESHEET_KEY, '/ccp_character_flo.png', {
 			frameWidth: 80,
 			frameHeight: 128,
@@ -158,19 +156,15 @@ export class OverlayScene extends Phaser.Scene {
 		this.load.image(SPEECH_BUBBLE_MEDIUM_RIGHT_KEY, '/ccp_speechbubble_medium_right.png')
 		this.load.image(SPEECH_BUBBLE_SMALL_LEFT_KEY, '/ccp_speechbubble_small_left.png')
 		this.load.image(SPEECH_BUBBLE_MEDIUM_LEFT_KEY, '/ccp_speechbubble_medium_left.png')
-
 		this.load.image(COUCH_KEY, '/ccp_couch.png')
-
 		this.load.spritesheet(CROWD_PERSON_BLUE_KEY, '/ccp_crowd_person_blue.png', {
 			frameWidth: 128,
 			frameHeight: 128,
 		})
-
 		this.load.spritesheet(CROWD_PERSON_GREEN_KEY, '/ccp_crowd_person_green.png', {
 			frameWidth: 128,
 			frameHeight: 128,
 		})
-
 		this.load.spritesheet(CROWD_PERSON_PINK_KEY, '/ccp_crowd_person_pink.png', {
 			frameWidth: 128,
 			frameHeight: 128,
