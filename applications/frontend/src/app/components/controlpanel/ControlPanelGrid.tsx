@@ -26,6 +26,7 @@ import { GrUpdate } from 'react-icons/gr'
 import { useCallback } from 'react'
 import { toast } from 'react-toastify'
 import { longestWordCount } from '../../util/utils'
+import { Range, getTrackBackground } from 'react-range'
 
 const Grid = styled.div`
 	display: grid;
@@ -98,9 +99,15 @@ const longestWordMaxThreshold = 15
 const maxCharThreshold = 128
 const maxLinesThreshold = 6
 
+const STEP = 5
+const MIN = 0
+const MAX = 255
+const COLORS = ['#8b7211', '#FFCC00', '#ccc']
+
 export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> = ({ globalState }) => {
 	const { socket } = useSocket()
 	const [moderatorMessage, setModeratorMessage] = useState(globalState.moderator.message)
+	const [thresholdRange, setThresholdRange] = useState([60, 100])
 
 	const onModeratorMessageChange = useCallback(
 		(e: React.FormEvent<HTMLTextAreaElement>) => {
@@ -250,6 +257,97 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 				>
 					party
 				</Button>
+				<div
+					style={{
+						display: 'flex',
+						justifyContent: 'center',
+						flexWrap: 'wrap',
+					}}
+				>
+					<Range
+						values={thresholdRange}
+						step={STEP}
+						min={MIN}
+						max={MAX}
+						onChange={(values) => setThresholdRange(values)}
+						renderTrack={({ props, children }) => (
+							<div
+								role="button"
+								tabIndex={-1}
+								/* eslint-disable react/prop-types */
+								onMouseDown={props.onMouseDown}
+								onTouchStart={props.onTouchStart}
+								style={{
+									...props.style,
+									height: '56px',
+									display: 'flex',
+									width: '100%',
+								}}
+							>
+								<div
+									/* eslint-disable react/prop-types */
+									ref={props.ref}
+									style={{
+										height: '5px',
+										width: '100%',
+										borderRadius: '2px',
+										background: getTrackBackground({
+											values: thresholdRange,
+											colors: COLORS,
+											min: MIN,
+											max: MAX,
+										}),
+										alignSelf: 'center',
+									}}
+								>
+									{children}
+								</div>
+							</div>
+						)}
+						renderThumb={({ props, isDragged, index }) => (
+							<div
+								{...props}
+								style={{
+									/* eslint-disable react/prop-types */
+									...props.style,
+									height: '24px',
+									width: '24px',
+									borderRadius: '4px',
+									backgroundColor: '#FFF',
+									display: 'flex',
+									justifyContent: 'center',
+									alignItems: 'center',
+								}}
+							>
+								<div
+									style={{
+										position: 'absolute',
+										bottom: '-21px',
+										color: 'black',
+										fontWeight: 600,
+										fontSize: '12px',
+										padding: '2px 4px',
+										borderRadius: '4px',
+										backgroundColor: '#FFCC00',
+										display: 'flex',
+										justifyContent: 'center',
+										alignItems: 'center',
+										lineHeight: 1,
+									}}
+								>
+									{thresholdRange[index]}
+								</div>
+								<div
+									style={{
+										height: '16px',
+										width: '4px',
+										backgroundColor: isDragged ? '#FFCC00' : '#CCC',
+									}}
+								/>
+							</div>
+						)}
+					/>
+				</div>
 			</GridComponent>
 			<GridComponent
 				gridArea={'moderator-control'}
