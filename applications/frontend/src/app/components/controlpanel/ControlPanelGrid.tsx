@@ -32,7 +32,7 @@ const Grid = styled.div`
 	display: grid;
 	grid-gap: ${(p) => p.theme.space.xl}px;
 	grid-template-columns: 300px 1fr;
-	grid-auto-rows: auto;
+	grid-auto-rows: auto 290px auto auto auto;
 	grid-template-areas:
 		'crowd-control preview'
 		'moderator-control preview'
