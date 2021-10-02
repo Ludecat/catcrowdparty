@@ -41,7 +41,7 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 			key: MODERATOR_STATE_KEY.TALK,
 			frames: this.anims.generateFrameNumbers(MODERATOR_SPRITESHEET_KEY, {
 				start: 3,
-				end: 5,
+				end: 4,
 			}),
 			frameRate: 4,
 		})
