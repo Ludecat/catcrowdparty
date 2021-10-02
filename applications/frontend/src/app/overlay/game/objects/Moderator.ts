@@ -55,17 +55,9 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 		scene.add.existing(this)
 	}
 
-	private idleChained() {
-		this.play({ key: MODERATOR_STATE_KEY.IDLE, repeat: 3 }).on('animationcomplete', () => {
-			this.play({ key: MODERATOR_STATE_KEY.TALK, repeat: 1 }).on('animationcomplete', () => {
-				this.idleChained()
-			})
-		})
-	}
-
 	public idle() {
 		if (this.anims.currentAnim && this.anims.currentAnim.key === MODERATOR_STATE_KEY.IDLE) return
-		this.idleChained()
+		this.play({ key: MODERATOR_STATE_KEY.IDLE, repeat: -1 })
 	}
 
 	public handleState(state: ModeratorState) {
