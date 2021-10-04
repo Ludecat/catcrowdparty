@@ -58,7 +58,7 @@ export class OverlayScene extends Phaser.Scene {
 		config.socket.on(STATE_UPDATE, (state: GlobalState) => {
 			const activeCrowd = this.getActiveGameObjectsByName<CrowdPerson>('crowdperson')
 			for (const crowdPerson of activeCrowd) {
-				crowdPerson.handleState(state.crowd, state.globalSettings.crowdThreshold)
+				crowdPerson.handleState(state.crowd, state.settings.crowdThreshold)
 			}
 
 			const activeCouches = this.getActiveGameObjectsByName<Couch>('couch')
@@ -212,7 +212,7 @@ export class OverlayScene extends Phaser.Scene {
 
 		this.generateCrowdPerson(
 			initialState.crowd,
-			initialState.globalSettings.crowdThreshold,
+			initialState.settings.crowdThreshold,
 			CROWD_PERSON_PINK_DARK_KEY,
 			930,
 			150,
@@ -222,7 +222,7 @@ export class OverlayScene extends Phaser.Scene {
 		this.generateCouchRow(initialState.crowd, this.game.canvas.height - 100, 80, COUCH_DARK_KEY)
 		this.generateCrowdPerson(
 			initialState.crowd,
-			initialState.globalSettings.crowdThreshold,
+			initialState.settings.crowdThreshold,
 			CROWD_PERSON_GREEN_DARKER_KEY,
 			956,
 			50,
@@ -232,7 +232,7 @@ export class OverlayScene extends Phaser.Scene {
 		this.generateCouchRow(initialState.crowd, this.game.canvas.height - 75, 120, COUCH_DARKER_KEY)
 		this.generateCrowdPerson(
 			initialState.crowd,
-			initialState.globalSettings.crowdThreshold,
+			initialState.settings.crowdThreshold,
 			CROWD_PERSON_BLUE_KEY,
 			980,
 			100,

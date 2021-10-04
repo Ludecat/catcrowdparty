@@ -33,7 +33,7 @@ export class AudioManager {
 		window.onclick = () => resumeMediaPlay(this.audioContext)
 
 		socket.on(STATE_UPDATE, (globalState: GlobalState) => {
-			this.threshold = globalState.globalSettings.crowdThreshold
+			this.threshold = globalState.settings.crowdThreshold
 		})
 
 		this.loop = this.loop.bind(this)

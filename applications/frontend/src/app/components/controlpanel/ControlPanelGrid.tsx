@@ -14,7 +14,7 @@ import {
 	isIdleState,
 	isJumpState,
 	isPartyState,
-	GLOBAL_SETTINGS_UPDATE,
+	SETTINGS_UPDATE,
 } from '@ccp/common/shared'
 import { useSocket } from '../../hooks/useSocket'
 import { styled } from '../../styles/Theme'
@@ -212,11 +212,11 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 		[socket]
 	)
 
-	const setAndEmitGlobalSettingsTrigger = useCallback(
+	const setAndEmitSettingsTrigger = useCallback(
 		(threshold: number[]) => {
-			socket?.emit(GLOBAL_SETTINGS_UPDATE, { ...globalState, crowdThreshold: threshold })
+			socket?.emit(SETTINGS_UPDATE, { crowdThreshold: threshold })
 		},
-		[socket, globalState]
+		[socket]
 	)
 
 	const isDisabledManualCrowdButton = !globalState.crowd.visibility || globalState?.crowd.mode === 'auto'
@@ -242,23 +242,23 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 					onClick={setAndEmitCrowdIntensity}
 					value={'0'}
 					disabled={isDisabledManualCrowdButton}
-					isActive={isIdleState(globalState.crowd.intensity, globalState.globalSettings.crowdThreshold)}
+					isActive={isIdleState(globalState.crowd.intensity, globalState.settings.crowdThreshold)}
 				>
 					idle
 				</Button>
 				<Button
 					onClick={setAndEmitCrowdIntensity}
-					value={`${globalState.globalSettings.crowdThreshold[0]}`}
+					value={`${globalState.settings.crowdThreshold[0]}`}
 					disabled={isDisabledManualCrowdButton}
-					isActive={isJumpState(globalState.crowd.intensity, globalState.globalSettings.crowdThreshold)}
+					isActive={isJumpState(globalState.crowd.intensity, globalState.settings.crowdThreshold)}
 				>
 					jump
 				</Button>
 				<Button
 					onClick={setAndEmitCrowdIntensity}
-					value={`${globalState.globalSettings.crowdThreshold[1]}`}
+					value={`${globalState.settings.crowdThreshold[1]}`}
 					disabled={isDisabledManualCrowdButton}
-					isActive={isPartyState(globalState.crowd.intensity, globalState.globalSettings.crowdThreshold)}
+					isActive={isPartyState(globalState.crowd.intensity, globalState.settings.crowdThreshold)}
 				>
 					party
 				</Button>
@@ -270,11 +270,11 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 					}}
 				>
 					<Range
-						values={globalState.globalSettings.crowdThreshold}
+						values={globalState.settings.crowdThreshold}
 						step={STEP}
 						min={MIN}
 						max={MAX}
-						onChange={(values) => setAndEmitGlobalSettingsTrigger(values)}
+						onChange={(values) => setAndEmitSettingsTrigger(values)}
 						renderTrack={({ props, children }) => (
 							<div
 								role="button"
@@ -297,7 +297,7 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 										width: '100%',
 										borderRadius: '2px',
 										background: getTrackBackground({
-											values: globalState.globalSettings.crowdThreshold,
+											values: globalState.settings.crowdThreshold,
 											colors: COLORS,
 											min: MIN,
 											max: MAX,
@@ -340,7 +340,7 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 										lineHeight: 1,
 									}}
 								>
-									{globalState.globalSettings.crowdThreshold[index]}
+									{globalState.settings.crowdThreshold[index]}
 								</div>
 								<div
 									style={{

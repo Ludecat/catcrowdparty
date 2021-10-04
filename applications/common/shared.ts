@@ -2,7 +2,7 @@
 export const SOCKET_URL = 'http://localhost:5000'
 
 // SOCKET IO EVENTS
-export const GLOBAL_SETTINGS_UPDATE = 'globalSettingsUpdate'
+export const SETTINGS_UPDATE = 'settingsUpdate'
 export const STATE_UPDATE = 'stateUpdate'
 export const REQUEST_STATE = 'requestState'
 export const CROWD_UPDATE = 'crowdUpdate'
@@ -61,7 +61,7 @@ export interface ModeratorState {
 	visibility: boolean
 }
 
-export interface GlobalSettingsState {
+export interface SettingsState {
 	// crowdThreshold[0] = jumpState
 	// crowdThreshold[1] =  partyState
 	crowdThreshold: number[]
@@ -81,7 +81,7 @@ export interface BubblesState {
 }
 
 export interface GlobalState {
-	globalSettings: GlobalSettingsState
+	settings: SettingsState
 	crowd: CrowdState
 	moderator: ModeratorState
 	hotAirballoon: HotAirBalloonState
@@ -90,7 +90,7 @@ export interface GlobalState {
 }
 
 export interface CCPSocketEventsMap {
-	[GLOBAL_SETTINGS_UPDATE]: (globalSettintgsUpdate: Partial<GlobalSettingsState>) => void
+	[SETTINGS_UPDATE]: (settingsUpdate: Partial<SettingsState>) => void
 	[CROWD_UPDATE]: (crowdUpdate: Partial<CrowdState>) => void
 	[MODERATOR_UPDATE]: (moderatorUpdate: Partial<ModeratorState>) => void
 	[HOT_AIR_BALLOON_UPDATE]: (hotAirBalloonUpdate: Partial<HotAirBalloonState>) => void
