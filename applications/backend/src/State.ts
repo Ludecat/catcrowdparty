@@ -3,7 +3,7 @@ import {
 	CrowdMode,
 	CrowdState,
 	EmotesState,
-	GlobalSettingsState,
+	SettingsState,
 	HotAirBalloonState,
 	ModeratorState,
 } from '@ccp/common'
@@ -97,15 +97,15 @@ const emotesSlice = createSlice({
 	},
 })
 
-const initGlobalSettingsState: GlobalSettingsState = {
+const initialSettingsState: SettingsState = {
 	crowdThreshold: [50, 150],
 }
 
-const globalSettingsSlice = createSlice({
-	name: 'globalSettings',
-	initialState: initGlobalSettingsState,
+const settingsSlice = createSlice({
+	name: 'settings',
+	initialState: initialSettingsState,
 	reducers: {
-		update: (state, action: PayloadAction<Partial<GlobalSettingsState>>) => {
+		update: (state, action: PayloadAction<Partial<SettingsState>>) => {
 			return {
 				...state,
 				...action.payload,
@@ -114,14 +114,14 @@ const globalSettingsSlice = createSlice({
 	},
 })
 
-export const globalSettingsReducer = globalSettingsSlice.reducer
+export const settingsReducer = settingsSlice.reducer
 export const crowdReducer = crowdSlice.reducer
 export const moderatorReducer = moderatorSlice.reducer
 export const hotAirBalloonReducer = hotAirBalloonSlice.reducer
 export const bubblesReducer = bubblesSlice.reducer
 export const emotesReducer = emotesSlice.reducer
 
-export const updateGlobalSettings = globalSettingsSlice.actions.update
+export const updateSettings = settingsSlice.actions.update
 export const updateCrowd = crowdSlice.actions.update
 export const updateModerator = moderatorSlice.actions.update
 export const updateHotAirBalloon = hotAirBalloonSlice.actions.update

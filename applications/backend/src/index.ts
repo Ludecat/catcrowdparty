@@ -17,7 +17,7 @@ import {
 	CCPSocketEventsMap,
 	NEW_EMOTES_TRIGGER,
 	NEW_EMOTE_MESSAGE_TRIGGER,
-	GLOBAL_SETTINGS_UPDATE,
+	SETTINGS_UPDATE,
 } from '@ccp/common'
 import { logger } from './logger'
 import { Server } from 'socket.io'
@@ -26,13 +26,13 @@ import {
 	bubblesReducer,
 	crowdReducer,
 	emotesReducer,
-	globalSettingsReducer,
 	hotAirBalloonReducer,
 	moderatorReducer,
+	settingsReducer,
 	updateBubbles,
 	updateCrowd,
 	updateEmotes,
-	updateGlobalSettings,
+	updateSettings,
 	updateHotAirBalloon,
 	updateModerator,
 } from './State'
@@ -40,7 +40,7 @@ import TwitchChatHandler, { NEW_EMOTES, NEW_EMOTE_MESSAGE } from './TwitchChatHa
 
 const store = configureStore<GlobalState>({
 	reducer: {
-		globalSettings: globalSettingsReducer,
+		settings: settingsReducer,
 		crowd: crowdReducer,
 		moderator: moderatorReducer,
 		hotAirballoon: hotAirBalloonReducer,
@@ -55,7 +55,7 @@ const io = new Server<CCPSocketEventsMap>(httpServer, {})
 io.on('connection', (socket) => {
 	logger.info(`new connection from ${socket.id}!`)
 
-	socket.on(GLOBAL_SETTINGS_UPDATE, (globalStateUpdate) => store.dispatch(updateGlobalSettings(globalStateUpdate)))
+	socket.on(SETTINGS_UPDATE, (settingsUpdate) => store.dispatch(updateSettings(settingsUpdate)))
 	socket.on(CROWD_UPDATE, (crowdUpdate) => store.dispatch(updateCrowd(crowdUpdate)))
 	socket.on(AUDIO_INPUT_VALUE_UPDATE, (data: AudioInputValue) => {
 		logger.debug(`received AUDIO_INPUT_VALUE_UPDATE ${data.averageFrequencyPower}`)
