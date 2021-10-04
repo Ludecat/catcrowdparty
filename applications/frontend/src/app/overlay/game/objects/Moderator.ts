@@ -7,8 +7,6 @@ export const SPEECH_BUBBLE_SMALL_RIGHT_KEY = 'speechBubbleRightSmall'
 export const SPEECH_BUBBLE_SMALL_LEFT_KEY = 'speechBubbleLeftSmall'
 export const MODERATOR_STATE_KEY = {
 	IDLE: 'idle',
-	BLINK: 'blink',
-	TALK: 'talk',
 }
 
 export class Moderator extends Phaser.GameObjects.Sprite {
@@ -23,27 +21,9 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 			key: MODERATOR_STATE_KEY.IDLE,
 			frames: this.anims.generateFrameNumbers(MODERATOR_SPRITESHEET_KEY, {
 				start: 0,
-				end: 1,
+				end: 7,
 			}),
-			frameRate: 3,
-		})
-
-		this.anims.create({
-			key: MODERATOR_STATE_KEY.BLINK,
-			frames: this.anims.generateFrameNumbers(MODERATOR_SPRITESHEET_KEY, {
-				start: 2,
-				end: 2,
-			}),
-			frameRate: 8,
-		})
-
-		this.anims.create({
-			key: MODERATOR_STATE_KEY.TALK,
-			frames: this.anims.generateFrameNumbers(MODERATOR_SPRITESHEET_KEY, {
-				start: 3,
-				end: 4,
-			}),
-			frameRate: 4,
+			frameRate: 5,
 		})
 
 		this.bubble = this.createSpeechBubble(scene)

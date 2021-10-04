@@ -19,6 +19,12 @@ import {
 	CROWD_PERSON_GREEN_KEY,
 	CROWD_PERSON_PINK_KEY,
 	CrowdPerson,
+	CROWD_PERSON_GREEN_DARK_KEY,
+	CROWD_PERSON_PINK_DARK_KEY,
+	CROWD_PERSON_BLUE_DARK_KEY,
+	CROWD_PERSON_BLUE_DARKER_KEY,
+	CROWD_PERSON_GREEN_DARKER_KEY,
+	CROWD_PERSON_PINK_DARKER_KEY,
 } from '../objects/CrowdPerson'
 import { HotAirBalloon } from '../objects/HotAirBalloon'
 import {
@@ -30,7 +36,7 @@ import {
 import { Emote } from '../objects/Emote'
 import { getRandomInt } from '../../../util/utils'
 import { EmoteBubble, SPEECH_BUBBLE_MEDIUM_RIGHT_KEY, SPEECH_BUBBLE_MEDIUM_LEFT_KEY } from '../objects/EmoteBubble'
-import { Couch, COUCH_KEY } from '../objects/Couch'
+import { Couch, COUCH_DARKER_KEY, COUCH_DARK_KEY, COUCH_KEY } from '../objects/Couch'
 
 export const EMOTE_POS_Y = 850
 
@@ -158,15 +164,44 @@ export class OverlayScene extends Phaser.Scene {
 		this.load.image(SPEECH_BUBBLE_SMALL_LEFT_KEY, '/ccp_speechbubble_small_left.png')
 		this.load.image(SPEECH_BUBBLE_MEDIUM_LEFT_KEY, '/ccp_speechbubble_medium_left.png')
 		this.load.image(COUCH_KEY, '/ccp_couch.png')
+		this.load.image(COUCH_DARKER_KEY, '/ccp_couch_darker.png')
+		this.load.image(COUCH_DARK_KEY, '/ccp_couch_dark.png')
+
 		this.load.spritesheet(CROWD_PERSON_BLUE_KEY, '/ccp_crowd_person_blue.png', {
 			frameWidth: 128,
 			frameHeight: 128,
 		})
+		this.load.spritesheet(CROWD_PERSON_BLUE_DARK_KEY, '/ccp_crowd_person_blue_dark.png', {
+			frameWidth: 128,
+			frameHeight: 128,
+		})
+		this.load.spritesheet(CROWD_PERSON_BLUE_DARKER_KEY, '/ccp_crowd_person_blue_darker.png', {
+			frameWidth: 128,
+			frameHeight: 128,
+		})
+
 		this.load.spritesheet(CROWD_PERSON_GREEN_KEY, '/ccp_crowd_person_green.png', {
 			frameWidth: 128,
 			frameHeight: 128,
 		})
+		this.load.spritesheet(CROWD_PERSON_GREEN_DARK_KEY, '/ccp_crowd_person_green_dark.png', {
+			frameWidth: 128,
+			frameHeight: 128,
+		})
+		this.load.spritesheet(CROWD_PERSON_GREEN_DARKER_KEY, '/ccp_crowd_person_green_darker.png', {
+			frameWidth: 128,
+			frameHeight: 128,
+		})
+
 		this.load.spritesheet(CROWD_PERSON_PINK_KEY, '/ccp_crowd_person_pink.png', {
+			frameWidth: 128,
+			frameHeight: 128,
+		})
+		this.load.spritesheet(CROWD_PERSON_PINK_DARK_KEY, '/ccp_crowd_person_pink_dark.png', {
+			frameWidth: 128,
+			frameHeight: 128,
+		})
+		this.load.spritesheet(CROWD_PERSON_PINK_DARKER_KEY, '/ccp_crowd_person_pink_darker.png', {
 			frameWidth: 128,
 			frameHeight: 128,
 		})
@@ -178,23 +213,23 @@ export class OverlayScene extends Phaser.Scene {
 		this.generateCrowdPerson(
 			initialState.crowd,
 			initialState.globalSettings.crowdThreshold,
-			CROWD_PERSON_PINK_KEY,
+			CROWD_PERSON_PINK_DARK_KEY,
 			930,
 			150,
 			9,
 			2
 		)
-		this.generateCouchRow(initialState.crowd, this.game.canvas.height - 100, 80)
+		this.generateCouchRow(initialState.crowd, this.game.canvas.height - 100, 80, COUCH_DARK_KEY)
 		this.generateCrowdPerson(
 			initialState.crowd,
 			initialState.globalSettings.crowdThreshold,
-			CROWD_PERSON_GREEN_KEY,
+			CROWD_PERSON_GREEN_DARKER_KEY,
 			956,
 			50,
 			10,
 			5
 		)
-		this.generateCouchRow(initialState.crowd, this.game.canvas.height - 75, 80)
+		this.generateCouchRow(initialState.crowd, this.game.canvas.height - 75, 120, COUCH_DARKER_KEY)
 		this.generateCrowdPerson(
 			initialState.crowd,
 			initialState.globalSettings.crowdThreshold,
@@ -204,7 +239,7 @@ export class OverlayScene extends Phaser.Scene {
 			10,
 			9
 		)
-		this.generateCouchRow(initialState.crowd, this.game.canvas.height - 50, 80)
+		this.generateCouchRow(initialState.crowd, this.game.canvas.height - 50, 150, COUCH_KEY)
 
 		this.generateHotAirBalloons(initialState.hotAirballoon)
 
@@ -269,18 +304,19 @@ export class OverlayScene extends Phaser.Scene {
 		}
 	}
 
-	generateCouchRow(state: CrowdState, y: number, xOffset: number) {
+	generateCouchRow(state: CrowdState, y: number, xOffset: number, texture: string) {
 		for (let i = 0; i < 8; i++) {
 			if (i === 0) {
 				new Couch(this, state, {
 					x: i * 200 + xOffset,
 					y,
 					layer: this.mainLayer!,
+					texture,
 				})
 				continue
 			}
 
-			new Couch(this, state, { x: i * 200 + xOffset, y, layer: this.mainLayer! })
+			new Couch(this, state, { x: i * 200 + xOffset, y, layer: this.mainLayer!, texture })
 		}
 	}
 

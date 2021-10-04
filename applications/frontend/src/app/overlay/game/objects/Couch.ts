@@ -3,11 +3,17 @@ import { CrowdState } from '@ccp/common/shared'
 import { CCPGameObjectProps } from '../scenes/OverlayScene'
 
 export const COUCH_KEY = 'couch'
+export const COUCH_DARKER_KEY = 'darkerCouch'
+export const COUCH_DARK_KEY = 'darkCouch'
+
+interface CouchProps extends CCPGameObjectProps {
+	texture: string
+}
 
 export class Couch extends Phaser.GameObjects.Image {
-	constructor(scene: Phaser.Scene, crowdState: CrowdState, options: CCPGameObjectProps) {
-		super(scene, options.x, options.y, COUCH_KEY)
-		this.setName(COUCH_KEY)
+	constructor(scene: Phaser.Scene, crowdState: CrowdState, options: CouchProps) {
+		super(scene, options.x, options.y, options.texture)
+		this.setName('couch')
 
 		this.setScale(0.5)
 		this.handleState(crowdState)
