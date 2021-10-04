@@ -4,8 +4,16 @@ import { CCPGameObjectProps } from '../scenes/OverlayScene'
 import { getRandomInt } from '../../../util/utils'
 
 export const CROWD_PERSON_BLUE_KEY = 'crowdPersonBlue'
+export const CROWD_PERSON_BLUE_DARKER_KEY = 'crowdPersonDarkerBlue'
+export const CROWD_PERSON_BLUE_DARK_KEY = 'crowdPersonDarkBlue'
+
 export const CROWD_PERSON_GREEN_KEY = 'crowdPersonGreen'
+export const CROWD_PERSON_GREEN_DARKER_KEY = 'crowdPersonDarkerGreen'
+export const CROWD_PERSON_GREEN_DARK_KEY = 'crowdPersonDarkGreen'
+
 export const CROWD_PERSON_PINK_KEY = 'crowdPersonPink'
+export const CROWD_PERSON_PINK_DARKER_KEY = 'crowdPersonDarkerPink'
+export const CROWD_PERSON_PINK_DARK_KEY = 'crowdPersonDarkPink'
 
 export const CROWD_PERSON_STATE_KEY = {
 	IDLE: 'idle',

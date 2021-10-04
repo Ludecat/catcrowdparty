@@ -19,6 +19,12 @@ import {
 	CROWD_PERSON_GREEN_KEY,
 	CROWD_PERSON_PINK_KEY,
 	CrowdPerson,
+	CROWD_PERSON_GREEN_DARK_KEY,
+	CROWD_PERSON_PINK_DARK_KEY,
+	CROWD_PERSON_BLUE_DARK_KEY,
+	CROWD_PERSON_BLUE_DARKER_KEY,
+	CROWD_PERSON_GREEN_DARKER_KEY,
+	CROWD_PERSON_PINK_DARKER_KEY,
 } from '../objects/CrowdPerson'
 import { HotAirBalloon } from '../objects/HotAirBalloon'
 import {
@@ -160,15 +166,42 @@ export class OverlayScene extends Phaser.Scene {
 		this.load.image(COUCH_KEY, '/ccp_couch.png')
 		this.load.image(COUCH_DARKER_KEY, '/ccp_couch_darker.png')
 		this.load.image(COUCH_DARK_KEY, '/ccp_couch_dark.png')
+
 		this.load.spritesheet(CROWD_PERSON_BLUE_KEY, '/ccp_crowd_person_blue.png', {
 			frameWidth: 128,
 			frameHeight: 128,
 		})
+		this.load.spritesheet(CROWD_PERSON_BLUE_DARK_KEY, '/ccp_crowd_person_blue_dark.png', {
+			frameWidth: 128,
+			frameHeight: 128,
+		})
+		this.load.spritesheet(CROWD_PERSON_BLUE_DARKER_KEY, '/ccp_crowd_person_blue_darker.png', {
+			frameWidth: 128,
+			frameHeight: 128,
+		})
+
 		this.load.spritesheet(CROWD_PERSON_GREEN_KEY, '/ccp_crowd_person_green.png', {
 			frameWidth: 128,
 			frameHeight: 128,
 		})
+		this.load.spritesheet(CROWD_PERSON_GREEN_DARK_KEY, '/ccp_crowd_person_green_dark.png', {
+			frameWidth: 128,
+			frameHeight: 128,
+		})
+		this.load.spritesheet(CROWD_PERSON_GREEN_DARKER_KEY, '/ccp_crowd_person_green_darker.png', {
+			frameWidth: 128,
+			frameHeight: 128,
+		})
+
 		this.load.spritesheet(CROWD_PERSON_PINK_KEY, '/ccp_crowd_person_pink.png', {
+			frameWidth: 128,
+			frameHeight: 128,
+		})
+		this.load.spritesheet(CROWD_PERSON_PINK_DARK_KEY, '/ccp_crowd_person_pink_dark.png', {
+			frameWidth: 128,
+			frameHeight: 128,
+		})
+		this.load.spritesheet(CROWD_PERSON_PINK_DARKER_KEY, '/ccp_crowd_person_pink_darker.png', {
 			frameWidth: 128,
 			frameHeight: 128,
 		})
@@ -180,7 +213,7 @@ export class OverlayScene extends Phaser.Scene {
 		this.generateCrowdPerson(
 			initialState.crowd,
 			initialState.globalSettings.crowdThreshold,
-			CROWD_PERSON_PINK_KEY,
+			CROWD_PERSON_PINK_DARK_KEY,
 			930,
 			150,
 			9,
@@ -190,7 +223,7 @@ export class OverlayScene extends Phaser.Scene {
 		this.generateCrowdPerson(
 			initialState.crowd,
 			initialState.globalSettings.crowdThreshold,
-			CROWD_PERSON_GREEN_KEY,
+			CROWD_PERSON_GREEN_DARKER_KEY,
 			956,
 			50,
 			10,
