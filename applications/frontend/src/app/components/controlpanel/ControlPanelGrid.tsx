@@ -11,11 +11,10 @@ import {
 	EMOTES_UPDATE,
 	BUBBLES_UPDATE,
 	HotAirBalloonVariationsType,
-	CROWD_JUMP_THRESHOLD,
-	CROWD_PARTY_THRESHOLD,
 	isIdleState,
 	isJumpState,
 	isPartyState,
+	GLOBAL_SETTINGS_UPDATE,
 } from '@ccp/common/shared'
 import { useSocket } from '../../hooks/useSocket'
 import { styled } from '../../styles/Theme'
@@ -107,7 +106,6 @@ const COLORS = ['#8b7211', '#FFCC00', '#ccc']
 export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> = ({ globalState }) => {
 	const { socket } = useSocket()
 	const [moderatorMessage, setModeratorMessage] = useState(globalState.moderator.message)
-	const [thresholdRange, setThresholdRange] = useState([60, 100])
 
 	const onModeratorMessageChange = useCallback(
 		(e: React.FormEvent<HTMLTextAreaElement>) => {
@@ -214,6 +212,13 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 		[socket]
 	)
 
+	const setAndEmitGlobalSettingsTrigger = useCallback(
+		(threshold: number[]) => {
+			socket?.emit(GLOBAL_SETTINGS_UPDATE, { ...globalState, crowdThreshold: threshold })
+		},
+		[socket, globalState]
+	)
+
 	const isDisabledManualCrowdButton = !globalState.crowd.visibility || globalState?.crowd.mode === 'auto'
 	return (
 		<Grid>
@@ -237,23 +242,23 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 					onClick={setAndEmitCrowdIntensity}
 					value={'0'}
 					disabled={isDisabledManualCrowdButton}
-					isActive={isIdleState(globalState.crowd.intensity)}
+					isActive={isIdleState(globalState.crowd.intensity, globalState.globalSettings.crowdThreshold)}
 				>
 					idle
 				</Button>
 				<Button
 					onClick={setAndEmitCrowdIntensity}
-					value={`${CROWD_JUMP_THRESHOLD}`}
+					value={`${globalState.globalSettings.crowdThreshold[0]}`}
 					disabled={isDisabledManualCrowdButton}
-					isActive={isJumpState(globalState.crowd.intensity)}
+					isActive={isJumpState(globalState.crowd.intensity, globalState.globalSettings.crowdThreshold)}
 				>
 					jump
 				</Button>
 				<Button
 					onClick={setAndEmitCrowdIntensity}
-					value={`${CROWD_PARTY_THRESHOLD}`}
+					value={`${globalState.globalSettings.crowdThreshold[1]}`}
 					disabled={isDisabledManualCrowdButton}
-					isActive={isPartyState(globalState.crowd.intensity)}
+					isActive={isPartyState(globalState.crowd.intensity, globalState.globalSettings.crowdThreshold)}
 				>
 					party
 				</Button>
@@ -265,11 +270,11 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 					}}
 				>
 					<Range
-						values={thresholdRange}
+						values={globalState.globalSettings.crowdThreshold}
 						step={STEP}
 						min={MIN}
 						max={MAX}
-						onChange={(values) => setThresholdRange(values)}
+						onChange={(values) => setAndEmitGlobalSettingsTrigger(values)}
 						renderTrack={({ props, children }) => (
 							<div
 								role="button"
@@ -292,7 +297,7 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 										width: '100%',
 										borderRadius: '2px',
 										background: getTrackBackground({
-											values: thresholdRange,
+											values: globalState.globalSettings.crowdThreshold,
 											colors: COLORS,
 											min: MIN,
 											max: MAX,
@@ -335,7 +340,7 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 										lineHeight: 1,
 									}}
 								>
-									{thresholdRange[index]}
+									{globalState.globalSettings.crowdThreshold[index]}
 								</div>
 								<div
 									style={{

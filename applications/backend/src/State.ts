@@ -1,4 +1,12 @@
-import { BubblesState, CrowdMode, CrowdState, EmotesState, HotAirBalloonState, ModeratorState } from '@ccp/common'
+import {
+	BubblesState,
+	CrowdMode,
+	CrowdState,
+	EmotesState,
+	GlobalSettingsState,
+	HotAirBalloonState,
+	ModeratorState,
+} from '@ccp/common'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 const initialCrowdState: CrowdState = {
@@ -89,12 +97,31 @@ const emotesSlice = createSlice({
 	},
 })
 
+const initGlobalSettingsState: GlobalSettingsState = {
+	crowdThreshold: [50, 150],
+}
+
+const globalSettingsSlice = createSlice({
+	name: 'globalSettings',
+	initialState: initGlobalSettingsState,
+	reducers: {
+		update: (state, action: PayloadAction<Partial<GlobalSettingsState>>) => {
+			return {
+				...state,
+				...action.payload,
+			}
+		},
+	},
+})
+
+export const globalSettingsReducer = globalSettingsSlice.reducer
 export const crowdReducer = crowdSlice.reducer
 export const moderatorReducer = moderatorSlice.reducer
 export const hotAirBalloonReducer = hotAirBalloonSlice.reducer
 export const bubblesReducer = bubblesSlice.reducer
 export const emotesReducer = emotesSlice.reducer
 
+export const updateGlobalSettings = globalSettingsSlice.actions.update
 export const updateCrowd = crowdSlice.actions.update
 export const updateModerator = moderatorSlice.actions.update
 export const updateHotAirBalloon = hotAirBalloonSlice.actions.update

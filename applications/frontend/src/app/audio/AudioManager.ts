@@ -2,10 +2,10 @@ import { Socket } from 'socket.io-client'
 import {
 	AUDIO_INPUT_VALUE_UPDATE,
 	CCPSocketEventsMap,
-	CROWD_JUMP_THRESHOLD,
-	CROWD_PARTY_THRESHOLD,
+	GlobalState,
 	isJumpState,
 	isPartyState,
+	STATE_UPDATE,
 } from '@ccp/common/shared'
 import { getMediaStreamByDeviceId, resumeMediaPlay } from '../util/utils'
 
@@ -21,6 +21,7 @@ export class AudioManager {
 	private socket: Socket<CCPSocketEventsMap>
 	private intervalId: number | undefined
 	private currentFrequenciesPowerBatch: number[] = [0]
+	private threshold: number[] = [50, 100]
 
 	constructor(socket: Socket<CCPSocketEventsMap>, canvas: HTMLCanvasElement, initialDeviceId: string) {
 		this.audioContext = new window.AudioContext()
@@ -30,6 +31,10 @@ export class AudioManager {
 
 		// https://developer.chrome.com/blog/autoplay/#web-audio
 		window.onclick = () => resumeMediaPlay(this.audioContext)
+
+		socket.on(STATE_UPDATE, (globalState: GlobalState) => {
+			this.threshold = globalState.globalSettings.crowdThreshold
+		})
 
 		this.loop = this.loop.bind(this)
 		this.start(initialDeviceId)
@@ -95,9 +100,9 @@ export class AudioManager {
 
 	setCanvasContextColorFromIntensity(intensity: number) {
 		let color = '#FFCC00'
-		if (isJumpState(intensity)) {
+		if (isJumpState(intensity, this.threshold)) {
 			color = '#50C878'
-		} else if (isPartyState(intensity)) {
+		} else if (isPartyState(intensity, this.threshold)) {
 			color = '#D284DD'
 		}
 
@@ -109,23 +114,23 @@ export class AudioManager {
 
 		this.canvasContext.fillRect(
 			0,
-			this.canvas.height - canvasHeightUnitFromBottom * CROWD_JUMP_THRESHOLD,
+			this.canvas.height - canvasHeightUnitFromBottom * this.threshold[0],
 			this.canvas.width,
 			1
 		)
 		this.canvasContext.fillText(
 			`JUMP`,
 			this.canvas.width / 2,
-			this.canvas.height - canvasHeightUnitFromBottom * CROWD_JUMP_THRESHOLD - 10
+			this.canvas.height - canvasHeightUnitFromBottom * this.threshold[0] - 10
 		)
 		this.canvasContext.fillText(
 			`PARTY`,
 			this.canvas.width / 2,
-			this.canvas.height - canvasHeightUnitFromBottom * CROWD_PARTY_THRESHOLD - 10
+			this.canvas.height - canvasHeightUnitFromBottom * this.threshold[1] - 10
 		)
 		this.canvasContext.fillRect(
 			0,
-			this.canvas.height - canvasHeightUnitFromBottom * CROWD_PARTY_THRESHOLD,
+			this.canvas.height - canvasHeightUnitFromBottom * this.threshold[1],
 			this.canvas.width,
 			1
 		)
