@@ -13,7 +13,7 @@ interface CouchProps extends CCPGameObjectProps {
 export class Couch extends Phaser.GameObjects.Image {
 	constructor(scene: Phaser.Scene, crowdState: CrowdState, options: CouchProps) {
 		super(scene, options.x, options.y, options.texture)
-		this.setName(options.texture)
+		this.setName('couch')
 
 		this.setScale(0.5)
 		this.handleState(crowdState)
