@@ -11,11 +11,10 @@ import {
 	EMOTES_UPDATE,
 	BUBBLES_UPDATE,
 	HotAirBalloonVariationsType,
-	CROWD_JUMP_THRESHOLD,
-	CROWD_PARTY_THRESHOLD,
 	isIdleState,
 	isJumpState,
 	isPartyState,
+	GLOBAL_SETTINGS_UPDATE,
 } from '@ccp/common/shared'
 import { useSocket } from '../../hooks/useSocket'
 import { styled } from '../../styles/Theme'
@@ -26,12 +25,13 @@ import { GrUpdate } from 'react-icons/gr'
 import { useCallback } from 'react'
 import { toast } from 'react-toastify'
 import { longestWordCount } from '../../util/utils'
+import { Range, getTrackBackground } from 'react-range'
 
 const Grid = styled.div`
 	display: grid;
 	grid-gap: ${(p) => p.theme.space.xl}px;
 	grid-template-columns: 300px 1fr;
-	grid-auto-rows: auto;
+	grid-auto-rows: auto 290px auto auto auto;
 	grid-template-areas:
 		'crowd-control preview'
 		'moderator-control preview'
@@ -97,6 +97,11 @@ const GridComponent: FunctionComponent<GridComponentProps> = (props) => {
 const longestWordMaxThreshold = 15
 const maxCharThreshold = 128
 const maxLinesThreshold = 6
+
+const STEP = 5
+const MIN = 0
+const MAX = 255
+const COLORS = ['#8b7211', '#FFCC00', '#ccc']
 
 export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> = ({ globalState }) => {
 	const { socket } = useSocket()
@@ -207,6 +212,13 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 		[socket]
 	)
 
+	const setAndEmitGlobalSettingsTrigger = useCallback(
+		(threshold: number[]) => {
+			socket?.emit(GLOBAL_SETTINGS_UPDATE, { ...globalState, crowdThreshold: threshold })
+		},
+		[socket, globalState]
+	)
+
 	const isDisabledManualCrowdButton = !globalState.crowd.visibility || globalState?.crowd.mode === 'auto'
 	return (
 		<Grid>
@@ -230,26 +242,117 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 					onClick={setAndEmitCrowdIntensity}
 					value={'0'}
 					disabled={isDisabledManualCrowdButton}
-					isActive={isIdleState(globalState.crowd.intensity)}
+					isActive={isIdleState(globalState.crowd.intensity, globalState.globalSettings.crowdThreshold)}
 				>
 					idle
 				</Button>
 				<Button
 					onClick={setAndEmitCrowdIntensity}
-					value={`${CROWD_JUMP_THRESHOLD}`}
+					value={`${globalState.globalSettings.crowdThreshold[0]}`}
 					disabled={isDisabledManualCrowdButton}
-					isActive={isJumpState(globalState.crowd.intensity)}
+					isActive={isJumpState(globalState.crowd.intensity, globalState.globalSettings.crowdThreshold)}
 				>
 					jump
 				</Button>
 				<Button
 					onClick={setAndEmitCrowdIntensity}
-					value={`${CROWD_PARTY_THRESHOLD}`}
+					value={`${globalState.globalSettings.crowdThreshold[1]}`}
 					disabled={isDisabledManualCrowdButton}
-					isActive={isPartyState(globalState.crowd.intensity)}
+					isActive={isPartyState(globalState.crowd.intensity, globalState.globalSettings.crowdThreshold)}
 				>
 					party
 				</Button>
+				<div
+					style={{
+						display: 'flex',
+						justifyContent: 'center',
+						flexWrap: 'wrap',
+					}}
+				>
+					<Range
+						values={globalState.globalSettings.crowdThreshold}
+						step={STEP}
+						min={MIN}
+						max={MAX}
+						onChange={(values) => setAndEmitGlobalSettingsTrigger(values)}
+						renderTrack={({ props, children }) => (
+							<div
+								role="button"
+								tabIndex={-1}
+								/* eslint-disable react/prop-types */
+								onMouseDown={props.onMouseDown}
+								onTouchStart={props.onTouchStart}
+								style={{
+									...props.style,
+									height: '56px',
+									display: 'flex',
+									width: '100%',
+								}}
+							>
+								<div
+									/* eslint-disable react/prop-types */
+									ref={props.ref}
+									style={{
+										height: '5px',
+										width: '100%',
+										borderRadius: '2px',
+										background: getTrackBackground({
+											values: globalState.globalSettings.crowdThreshold,
+											colors: COLORS,
+											min: MIN,
+											max: MAX,
+										}),
+										alignSelf: 'center',
+									}}
+								>
+									{children}
+								</div>
+							</div>
+						)}
+						renderThumb={({ props, isDragged, index }) => (
+							<div
+								{...props}
+								style={{
+									/* eslint-disable react/prop-types */
+									...props.style,
+									height: '24px',
+									width: '24px',
+									borderRadius: '4px',
+									backgroundColor: '#FFF',
+									display: 'flex',
+									justifyContent: 'center',
+									alignItems: 'center',
+								}}
+							>
+								<div
+									style={{
+										position: 'absolute',
+										bottom: '-21px',
+										color: 'black',
+										fontWeight: 600,
+										fontSize: '12px',
+										padding: '2px 4px',
+										borderRadius: '4px',
+										backgroundColor: '#FFCC00',
+										display: 'flex',
+										justifyContent: 'center',
+										alignItems: 'center',
+										lineHeight: 1,
+									}}
+								>
+									{globalState.globalSettings.crowdThreshold[index]}
+								</div>
+								<div
+									style={{
+										height: '16px',
+										width: '4px',
+										backgroundColor: isDragged ? '#FFCC00' : '#CCC',
+									}}
+								/>
+							</div>
+						)}
+					/>
+				</div>
 			</GridComponent>
 			<GridComponent
 				gridArea={'moderator-control'}

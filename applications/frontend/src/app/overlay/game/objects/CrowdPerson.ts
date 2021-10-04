@@ -14,7 +14,13 @@ export const CROWD_PERSON_STATE_KEY = {
 }
 
 export class CrowdPerson extends Phaser.GameObjects.Sprite {
-	constructor(scene: Phaser.Scene, crowdState: CrowdState, options: CCPGameObjectProps, texture: string) {
+	constructor(
+		scene: Phaser.Scene,
+		crowdState: CrowdState,
+		threshold: number[],
+		options: CCPGameObjectProps,
+		texture: string
+	) {
 		super(scene, options.x, options.y, texture)
 		this.setName('crowdperson')
 
@@ -48,15 +54,15 @@ export class CrowdPerson extends Phaser.GameObjects.Sprite {
 		})
 
 		this.setScale(0.55)
-		this.handleState(crowdState)
+		this.handleState(crowdState, threshold)
 		options.layer.add(this)
 		scene.add.existing(this)
 	}
 
-	public handleState(state: CrowdState) {
-		if (isPartyState(state.intensity)) {
+	public handleState(state: CrowdState, threshold: number[]) {
+		if (isPartyState(state.intensity, threshold)) {
 			this.party()
-		} else if (isJumpState(state.intensity)) {
+		} else if (isJumpState(state.intensity, threshold)) {
 			this.jump()
 		} else {
 			this.idle()

@@ -52,7 +52,7 @@ export class OverlayScene extends Phaser.Scene {
 		config.socket.on(STATE_UPDATE, (state: GlobalState) => {
 			const activeCrowd = this.getActiveGameObjectsByName<CrowdPerson>('crowdperson')
 			for (const crowdPerson of activeCrowd) {
-				crowdPerson.handleState(state.crowd)
+				crowdPerson.handleState(state.crowd, state.globalSettings.crowdThreshold)
 			}
 
 			const activeCouches = this.getActiveGameObjectsByName<Couch>('couch')
@@ -175,11 +175,35 @@ export class OverlayScene extends Phaser.Scene {
 	create(config: { socket: Socket<CCPSocketEventsMap>; initialState: GlobalState }) {
 		const { socket, initialState } = config
 
-		this.generateCrowdPerson(initialState.crowd, CROWD_PERSON_PINK_KEY, 930, 150, 9, 2)
+		this.generateCrowdPerson(
+			initialState.crowd,
+			initialState.globalSettings.crowdThreshold,
+			CROWD_PERSON_PINK_KEY,
+			930,
+			150,
+			9,
+			2
+		)
 		this.generateCouchRow(initialState.crowd, this.game.canvas.height - 100, 80)
-		this.generateCrowdPerson(initialState.crowd, CROWD_PERSON_GREEN_KEY, 956, 50, 10, 5)
+		this.generateCrowdPerson(
+			initialState.crowd,
+			initialState.globalSettings.crowdThreshold,
+			CROWD_PERSON_GREEN_KEY,
+			956,
+			50,
+			10,
+			5
+		)
 		this.generateCouchRow(initialState.crowd, this.game.canvas.height - 75, 80)
-		this.generateCrowdPerson(initialState.crowd, CROWD_PERSON_BLUE_KEY, 980, 100, 10, 9)
+		this.generateCrowdPerson(
+			initialState.crowd,
+			initialState.globalSettings.crowdThreshold,
+			CROWD_PERSON_BLUE_KEY,
+			980,
+			100,
+			10,
+			9
+		)
 		this.generateCouchRow(initialState.crowd, this.game.canvas.height - 50, 80)
 
 		this.generateHotAirBalloons(initialState.hotAirballoon)
@@ -207,6 +231,7 @@ export class OverlayScene extends Phaser.Scene {
 
 	generateCrowdPerson(
 		state: CrowdState,
+		threshold: number[],
 		texture: string,
 		y: number,
 		xOffset: number,
@@ -218,6 +243,7 @@ export class OverlayScene extends Phaser.Scene {
 				new CrowdPerson(
 					this,
 					state,
+					threshold,
 					{
 						x: i * 160 + xOffset,
 						y,
@@ -233,11 +259,12 @@ export class OverlayScene extends Phaser.Scene {
 				this.crowdPersonsWithBubble[texture] = new CrowdPerson(
 					this,
 					state,
+					threshold,
 					{ x: i * 160 + xOffset, y, layer: this.mainLayer! },
 					texture
 				)
 			} else {
-				new CrowdPerson(this, state, { x: i * 160 + xOffset, y, layer: this.mainLayer! }, texture)
+				new CrowdPerson(this, state, threshold, { x: i * 160 + xOffset, y, layer: this.mainLayer! }, texture)
 			}
 		}
 	}

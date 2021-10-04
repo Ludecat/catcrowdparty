@@ -2,6 +2,7 @@
 export const SOCKET_URL = 'http://localhost:5000'
 
 // SOCKET IO EVENTS
+export const GLOBAL_SETTINGS_UPDATE = 'globalSettingsUpdate'
 export const STATE_UPDATE = 'stateUpdate'
 export const REQUEST_STATE = 'requestState'
 export const CROWD_UPDATE = 'crowdUpdate'
@@ -13,19 +14,16 @@ export const BUBBLES_UPDATE = 'bubblesUpdate'
 export const NEW_EMOTES_TRIGGER = 'newEmotes'
 export const NEW_EMOTE_MESSAGE_TRIGGER = 'newEmoteMessage'
 
-export const CROWD_JUMP_THRESHOLD = 50
-export const CROWD_PARTY_THRESHOLD = 150
-
-export const isIdleState = (intensity: number) => {
-	return intensity < CROWD_JUMP_THRESHOLD
+export const isIdleState = (intensity: number, threshold: number[]) => {
+	return intensity < threshold[0]
 }
 
-export const isJumpState = (intensity: number) => {
-	return intensity >= CROWD_JUMP_THRESHOLD && intensity < CROWD_PARTY_THRESHOLD
+export const isJumpState = (intensity: number, threshold: number[]) => {
+	return intensity >= threshold[0] && intensity < threshold[1]
 }
 
-export const isPartyState = (intensity: number) => {
-	return intensity >= CROWD_PARTY_THRESHOLD
+export const isPartyState = (intensity: number, threshold: number[]) => {
+	return intensity >= threshold[1]
 }
 
 export enum CrowdMode {
@@ -63,6 +61,12 @@ export interface ModeratorState {
 	visibility: boolean
 }
 
+export interface GlobalSettingsState {
+	// crowdThreshold[0] = jumpState
+	// crowdThreshold[1] =  partyState
+	crowdThreshold: number[]
+}
+
 export interface HotAirBalloonState {
 	visibility: boolean
 }
@@ -77,6 +81,7 @@ export interface BubblesState {
 }
 
 export interface GlobalState {
+	globalSettings: GlobalSettingsState
 	crowd: CrowdState
 	moderator: ModeratorState
 	hotAirballoon: HotAirBalloonState
@@ -85,6 +90,7 @@ export interface GlobalState {
 }
 
 export interface CCPSocketEventsMap {
+	[GLOBAL_SETTINGS_UPDATE]: (globalSettintgsUpdate: Partial<GlobalSettingsState>) => void
 	[CROWD_UPDATE]: (crowdUpdate: Partial<CrowdState>) => void
 	[MODERATOR_UPDATE]: (moderatorUpdate: Partial<ModeratorState>) => void
 	[HOT_AIR_BALLOON_UPDATE]: (hotAirBalloonUpdate: Partial<HotAirBalloonState>) => void
