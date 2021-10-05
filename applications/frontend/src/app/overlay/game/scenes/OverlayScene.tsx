@@ -416,7 +416,7 @@ export class OverlayScene extends Phaser.Scene {
 			y: 440,
 			variation: 'fritzKola',
 			layer: this.mainLayer!,
-			direction: 'goRight',
+			direction: 'goLeft',
 		})
 		new Zeppelin(this, state, {
 			x: -threshold,
@@ -430,7 +430,7 @@ export class OverlayScene extends Phaser.Scene {
 			y: 440,
 			variation: 'nerdic',
 			layer: this.mainLayer!,
-			direction: 'goRight',
+			direction: 'goLeft',
 		})
 	}
 

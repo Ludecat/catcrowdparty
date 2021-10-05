@@ -28,17 +28,24 @@ export class Zeppelin extends Phaser.GameObjects.Sprite {
 		this.startY = options.y
 
 		if (options.direction === 'goRight') {
-			this.flipX = true
+			this.anims.create({
+				key: ZEPPELIN_STATE_KEY.IDLE,
+				frames: this.anims.generateFrameNumbers(options.variation, {
+					start: 4,
+					end: 7,
+				}),
+				frameRate: 4,
+			})
+		} else {
+			this.anims.create({
+				key: ZEPPELIN_STATE_KEY.IDLE,
+				frames: this.anims.generateFrameNumbers(options.variation, {
+					start: 0,
+					end: 3,
+				}),
+				frameRate: 4,
+			})
 		}
-
-		this.anims.create({
-			key: ZEPPELIN_STATE_KEY.IDLE,
-			frames: this.anims.generateFrameNumbers(options.variation, {
-				start: 0,
-				end: 3,
-			}),
-			frameRate: 4,
-		})
 
 		this.setScale(1.42)
 		this.handleState(initialState)
