@@ -31,7 +31,7 @@ const crowdSlice = createSlice({
 
 const initialModeratorState: ModeratorState = {
 	message: '',
-	visibility: false,
+	visibility: true,
 }
 
 const moderatorSlice = createSlice({
@@ -48,7 +48,7 @@ const moderatorSlice = createSlice({
 })
 
 const initialHotAirBalloonState: HotAirBalloonState = {
-	visibility: false,
+	visibility: true,
 }
 
 const hotAirBalloonSlice = createSlice({
@@ -65,7 +65,7 @@ const hotAirBalloonSlice = createSlice({
 })
 
 const initialBubblesState: BubblesState = {
-	visibility: false,
+	visibility: true,
 }
 
 const bubblesSlice = createSlice({
@@ -82,7 +82,7 @@ const bubblesSlice = createSlice({
 })
 
 const initialEmotesState: EmotesState = {
-	visibility: false,
+	visibility: true,
 }
 
 const emotesSlice = createSlice({
