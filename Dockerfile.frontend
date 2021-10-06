@@ -15,7 +15,7 @@ RUN npm install
 
 # compile
 # ARG SOCKET_URL
-RUN cd ./applications/frontend
+RUN cd ./applications/common && npm run build
 
 # set target image directory
 WORKDIR /opt/frontend/applications/frontend

@@ -25,6 +25,7 @@ The frontend is available at port `2424` and backend at `4848`,
 # Docker
 
 `docker-compose up --build`
+`docker-compose up -d`
 
 # Docs
 
