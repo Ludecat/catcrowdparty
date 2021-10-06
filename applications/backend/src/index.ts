@@ -18,6 +18,9 @@ import {
 	NEW_EMOTES_TRIGGER,
 	NEW_EMOTE_MESSAGE_TRIGGER,
 	SETTINGS_UPDATE,
+	ZEPPELIN_UPDATE,
+	ZEPPELIN_START,
+	ZeppelinVariation,
 } from '@ccp/common'
 import { logger } from './logger'
 import { Server } from 'socket.io'
@@ -35,12 +38,15 @@ import {
 	updateSettings,
 	updateHotAirBalloon,
 	updateModerator,
+	zeppelinReducer,
+	updateZeppelin,
 } from './State'
 import TwitchChatHandler, { NEW_EMOTES, NEW_EMOTE_MESSAGE } from './TwitchChatHandler'
 
 const store = configureStore<GlobalState>({
 	reducer: {
 		settings: settingsReducer,
+		zeppelin: zeppelinReducer,
 		crowd: crowdReducer,
 		moderator: moderatorReducer,
 		hotAirballoon: hotAirBalloonReducer,
@@ -56,6 +62,11 @@ io.on('connection', (socket) => {
 	logger.info(`new connection from ${socket.id}!`)
 
 	socket.on(SETTINGS_UPDATE, (settingsUpdate) => store.dispatch(updateSettings(settingsUpdate)))
+	socket.on(ZEPPELIN_UPDATE, (zeppelinUpdate) => store.dispatch(updateZeppelin(zeppelinUpdate)))
+	socket.on(ZEPPELIN_START, (data: ZeppelinVariation) => {
+		logger.info(`received ZEPPELIN_START`)
+		io.emit(ZEPPELIN_START, data)
+	})
 	socket.on(CROWD_UPDATE, (crowdUpdate) => store.dispatch(updateCrowd(crowdUpdate)))
 	socket.on(AUDIO_INPUT_VALUE_UPDATE, (data: AudioInputValue) => {
 		logger.debug(`received AUDIO_INPUT_VALUE_UPDATE ${data.averageFrequencyPower}`)

@@ -12,6 +12,10 @@ import {
 	NEW_EMOTE_MESSAGE_TRIGGER,
 	REQUEST_STATE,
 	STATE_UPDATE,
+	ZEPPELIN_START,
+	ZeppelinVariation,
+	ZeppelinVariationValues,
+	ZeppelinState,
 } from '@ccp/common/shared'
 import { SCENES } from '../config'
 import {
@@ -37,6 +41,7 @@ import { Emote } from '../objects/Emote'
 import { getRandomInt } from '../../../util/utils'
 import { EmoteBubble, SPEECH_BUBBLE_MEDIUM_RIGHT_KEY, SPEECH_BUBBLE_MEDIUM_LEFT_KEY } from '../objects/EmoteBubble'
 import { Couch, COUCH_DARKER_KEY, COUCH_DARK_KEY, COUCH_KEY } from '../objects/Couch'
+import { Zeppelin } from '../objects/Zeppelin'
 
 export const EMOTE_POS_Y = 850
 
@@ -76,6 +81,11 @@ export class OverlayScene extends Phaser.Scene {
 				hotAirBalloon.handleState(state.hotAirballoon)
 			}
 
+			const activeZeppelins = this.getActiveGameObjectsByName<Zeppelin>('zeppelin')
+			for (const zeppelin of activeZeppelins) {
+				zeppelin.handleState(state.zeppelin)
+			}
+
 			const activeEmotes = this.getActiveGameObjectsByName<Emote>('emote')
 			for (const emotes of activeEmotes) {
 				emotes.handleState(state.emotes)
@@ -91,6 +101,13 @@ export class OverlayScene extends Phaser.Scene {
 			const activeHotAirBalloons = this.getActiveGameObjectsByName<HotAirBalloon>('hotAirBalloon')
 			for (const hotAirBalloon of activeHotAirBalloons) {
 				hotAirBalloon.handleTrigger(data)
+			}
+		})
+
+		config.socket.on(ZEPPELIN_START, (data: ZeppelinVariation) => {
+			const activeZeppelins = this.getActiveGameObjectsByName<Zeppelin>('zeppelin')
+			for (const zeppelin of activeZeppelins) {
+				zeppelin.handleTrigger(data)
 			}
 		})
 
@@ -159,6 +176,32 @@ export class OverlayScene extends Phaser.Scene {
 			frameWidth: 192,
 			frameHeight: 400,
 		})
+
+		this.load.spritesheet(ZeppelinVariationValues.razer, '/zeppelin/ccp_zeppelin_razer.png', {
+			frameWidth: 321,
+			frameHeight: 122,
+		})
+		this.load.spritesheet(ZeppelinVariationValues.willhaben, '/zeppelin/ccp_zeppelin_willhaben.png', {
+			frameWidth: 321,
+			frameHeight: 122,
+		})
+		this.load.spritesheet(ZeppelinVariationValues.ubisoft, '/zeppelin/ccp_zeppelin_ubisoft.png', {
+			frameWidth: 321,
+			frameHeight: 122,
+		})
+		this.load.spritesheet(ZeppelinVariationValues.akSalzburg, '/zeppelin/ccp_zeppelin_ak_salzburg.png', {
+			frameWidth: 321,
+			frameHeight: 122,
+		})
+		this.load.spritesheet(ZeppelinVariationValues.fritzKola, '/zeppelin/ccp_zeppelin_fritz_kola.png', {
+			frameWidth: 321,
+			frameHeight: 122,
+		})
+		this.load.spritesheet(ZeppelinVariationValues.nerdic, '/zeppelin/ccp_zeppelin_nerdic.png', {
+			frameWidth: 321,
+			frameHeight: 122,
+		})
+
 		this.load.image(SPEECH_BUBBLE_SMALL_RIGHT_KEY, '/ccp_speechbubble_small_right.png')
 		this.load.image(SPEECH_BUBBLE_MEDIUM_RIGHT_KEY, '/ccp_speechbubble_medium_right.png')
 		this.load.image(SPEECH_BUBBLE_SMALL_LEFT_KEY, '/ccp_speechbubble_small_left.png')
@@ -242,6 +285,7 @@ export class OverlayScene extends Phaser.Scene {
 		this.generateCouchRow(initialState.crowd, this.game.canvas.height - 50, 150, COUCH_KEY)
 
 		this.generateHotAirBalloons(initialState.hotAirballoon)
+		this.generateZeppelin(initialState.zeppelin)
 
 		new Moderator(this, initialState.moderator, {
 			x: this.game.canvas.width - 130,
@@ -341,6 +385,52 @@ export class OverlayScene extends Phaser.Scene {
 			variation: 'fh-salzburg',
 			layer: this.mainLayer!,
 			direction: 'goRight',
+		})
+	}
+
+	generateZeppelin(state: ZeppelinState) {
+		const threshold = 250
+		new Zeppelin(this, state, {
+			x: -threshold,
+			y: 350,
+			variation: 'razer',
+			layer: this.mainLayer!,
+			direction: 'goRight',
+		})
+		new Zeppelin(this, state, {
+			x: this.game.canvas.width + threshold,
+			y: 400,
+			variation: 'willhaben',
+			layer: this.mainLayer!,
+			direction: 'goLeft',
+		})
+		new Zeppelin(this, state, {
+			x: -threshold,
+			y: 440,
+			variation: 'ubisoft',
+			layer: this.mainLayer!,
+			direction: 'goRight',
+		})
+		new Zeppelin(this, state, {
+			x: -threshold,
+			y: 440,
+			variation: 'fritzKola',
+			layer: this.mainLayer!,
+			direction: 'goLeft',
+		})
+		new Zeppelin(this, state, {
+			x: -threshold,
+			y: 440,
+			variation: 'akSalzburg',
+			layer: this.mainLayer!,
+			direction: 'goRight',
+		})
+		new Zeppelin(this, state, {
+			x: -threshold,
+			y: 440,
+			variation: 'nerdic',
+			layer: this.mainLayer!,
+			direction: 'goLeft',
 		})
 	}
 

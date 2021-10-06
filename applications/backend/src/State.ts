@@ -6,6 +6,7 @@ import {
 	SettingsState,
 	HotAirBalloonState,
 	ModeratorState,
+	ZeppelinState,
 } from '@ccp/common'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
@@ -30,7 +31,7 @@ const crowdSlice = createSlice({
 
 const initialModeratorState: ModeratorState = {
 	message: '',
-	visibility: false,
+	visibility: true,
 }
 
 const moderatorSlice = createSlice({
@@ -47,7 +48,7 @@ const moderatorSlice = createSlice({
 })
 
 const initialHotAirBalloonState: HotAirBalloonState = {
-	visibility: false,
+	visibility: true,
 }
 
 const hotAirBalloonSlice = createSlice({
@@ -64,7 +65,7 @@ const hotAirBalloonSlice = createSlice({
 })
 
 const initialBubblesState: BubblesState = {
-	visibility: false,
+	visibility: true,
 }
 
 const bubblesSlice = createSlice({
@@ -81,7 +82,7 @@ const bubblesSlice = createSlice({
 })
 
 const initialEmotesState: EmotesState = {
-	visibility: false,
+	visibility: true,
 }
 
 const emotesSlice = createSlice({
@@ -114,7 +115,25 @@ const settingsSlice = createSlice({
 	},
 })
 
+const initialZeppelinState: ZeppelinState = {
+	visibility: true,
+}
+
+const zeppelinSlice = createSlice({
+	name: 'zeppelin',
+	initialState: initialZeppelinState,
+	reducers: {
+		update: (state, action: PayloadAction<Partial<ZeppelinState>>) => {
+			return {
+				...state,
+				...action.payload,
+			}
+		},
+	},
+})
+
 export const settingsReducer = settingsSlice.reducer
+export const zeppelinReducer = zeppelinSlice.reducer
 export const crowdReducer = crowdSlice.reducer
 export const moderatorReducer = moderatorSlice.reducer
 export const hotAirBalloonReducer = hotAirBalloonSlice.reducer
@@ -122,6 +141,7 @@ export const bubblesReducer = bubblesSlice.reducer
 export const emotesReducer = emotesSlice.reducer
 
 export const updateSettings = settingsSlice.actions.update
+export const updateZeppelin = zeppelinSlice.actions.update
 export const updateCrowd = crowdSlice.actions.update
 export const updateModerator = moderatorSlice.actions.update
 export const updateHotAirBalloon = hotAirBalloonSlice.actions.update

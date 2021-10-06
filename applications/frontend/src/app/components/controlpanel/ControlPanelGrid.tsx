@@ -15,6 +15,10 @@ import {
 	isJumpState,
 	isPartyState,
 	SETTINGS_UPDATE,
+	ZeppelinVariationValues,
+	ZEPPELIN_UPDATE,
+	ZEPPELIN_START,
+	ZeppelinVariationType,
 } from '@ccp/common/shared'
 import { useSocket } from '../../hooks/useSocket'
 import { styled } from '../../styles/Theme'
@@ -36,7 +40,7 @@ const Grid = styled.div`
 		'crowd-control preview'
 		'moderator-control preview'
 		'layer-control preview'
-		'triggers-control triggers-control';
+		'triggers-control zeppelin-control';
 `
 
 const GridItem = styled.div<{ gridArea: string; height?: string; width?: string }>`
@@ -205,9 +209,25 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 		[socket]
 	)
 
+	const setAndEmitZeppelinVisibility = useCallback(
+		(e: React.MouseEvent<HTMLInputElement>) => {
+			socket?.emit(ZEPPELIN_UPDATE, {
+				visibility: e.currentTarget.checked,
+			})
+		},
+		[socket]
+	)
+
 	const setAndEmitBalloonTrigger = useCallback(
 		(e: React.MouseEvent<HTMLButtonElement>) => {
 			socket?.emit(HOT_AIR_BALLOON_START, { variation: e.currentTarget.value as HotAirBalloonVariationsType })
+		},
+		[socket]
+	)
+
+	const setAndEmitZeppelinTrigger = useCallback(
+		(e: React.MouseEvent<HTMLButtonElement>) => {
+			socket?.emit(ZEPPELIN_START, { variation: e.currentTarget.value as ZeppelinVariationType })
 		},
 		[socket]
 	)
@@ -392,6 +412,11 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 					onChange={setAndEmitBubblesVisibility}
 					description="Twitch Speech Bubble"
 				/>
+				<CheckBoxToggle
+					checked={globalState.zeppelin.visibility}
+					onChange={setAndEmitZeppelinVisibility}
+					description="Zeppelin"
+				/>
 			</GridComponent>
 			<GridComponent gridArea={'preview'} title="Live View" height={'540px'} width={'960px'}>
 				<Preview src="/overlay#small" height={1080} width={1920} />
@@ -402,21 +427,65 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 					disabled={!globalState.hotAirballoon.visibility}
 					value={HotAirBalloonVationsValues.ludecat}
 				>
-					LudeCat Air Balloon
+					Yellow
 				</Button>
 				<Button
 					onClick={setAndEmitBalloonTrigger}
 					disabled={!globalState.hotAirballoon.visibility}
 					value={HotAirBalloonVationsValues.fritzCola}
 				>
-					Fritz Cola Balloon
+					Red
 				</Button>
 				<Button
 					onClick={setAndEmitBalloonTrigger}
 					disabled={!globalState.hotAirballoon.visibility}
 					value={HotAirBalloonVationsValues.fhSalzburg}
 				>
-					FH Balloon
+					Green
+				</Button>
+			</GridComponent>
+			<GridComponent gridArea={'zeppelin-control'} title="Zeppelins">
+				<Button
+					onClick={setAndEmitZeppelinTrigger}
+					disabled={!globalState.zeppelin.visibility}
+					value={ZeppelinVariationValues.razer}
+				>
+					Razer
+				</Button>
+				<Button
+					onClick={setAndEmitZeppelinTrigger}
+					disabled={!globalState.zeppelin.visibility}
+					value={ZeppelinVariationValues.willhaben}
+				>
+					willhaben
+				</Button>
+				<Button
+					onClick={setAndEmitZeppelinTrigger}
+					disabled={!globalState.zeppelin.visibility}
+					value={ZeppelinVariationValues.ubisoft}
+				>
+					Ubisoft
+				</Button>
+				<Button
+					onClick={setAndEmitZeppelinTrigger}
+					disabled={!globalState.zeppelin.visibility}
+					value={ZeppelinVariationValues.akSalzburg}
+				>
+					AK Salzburg
+				</Button>
+				<Button
+					onClick={setAndEmitZeppelinTrigger}
+					disabled={!globalState.zeppelin.visibility}
+					value={ZeppelinVariationValues.fritzKola}
+				>
+					Fritz Cola
+				</Button>
+				<Button
+					onClick={setAndEmitZeppelinTrigger}
+					disabled={!globalState.zeppelin.visibility}
+					value={ZeppelinVariationValues.nerdic}
+				>
+					Nerdic
 				</Button>
 			</GridComponent>
 		</Grid>
