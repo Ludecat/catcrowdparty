@@ -1,5 +1,5 @@
 // SOCKET IO
-export const SOCKET_URL = 'http://localhost:5000'
+export const SOCKET_URL = 'http://localhost:4848'
 
 // SOCKET IO EVENTS
 export const SETTINGS_UPDATE = 'settingsUpdate'

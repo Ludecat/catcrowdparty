@@ -20,7 +20,7 @@ Run `npm run build:all` from the root directory to build each application at onc
 # Start
 
 You can start each application from the root directory seperately by running `npm run start:frontend` and `npm run start:backend`.
-The frontend is available at port `2424` and backend at `5000`,
+The frontend is available at port `2424` and backend at `4848`,
 
 # Docker
 

@@ -104,7 +104,7 @@ store.subscribe(() => {
 	console.log(store.getState())
 })
 
-const port = process.env.PORT_BACKEND ?? 5000
+const port = process.env.PORT_BACKEND ?? 4848
 httpServer.listen(port)
 logger.info(`Backend ready on port ${port}`)
 

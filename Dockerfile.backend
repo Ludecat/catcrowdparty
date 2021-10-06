@@ -2,7 +2,7 @@
 FROM node:16-alpine3.11
 
 # expose ports
-EXPOSE 5000
+EXPOSE 4848
 
 # set target image directory
 WORKDIR /opt/backend
