@@ -1,0 +1,23 @@
+# define nodejs baseimage
+FROM node:16-alpine3.11
+
+# expose ports
+EXPOSE 5000
+
+# set target image directory
+WORKDIR /opt/backend
+
+# add all files to image directory
+ADD . /opt/backend
+
+# install dependencies
+RUN npm install
+
+# compile
+RUN cd ./applications/backend && npm run build
+
+# set target image directory
+WORKDIR /opt/backend/applications/backend
+
+# start
+ENTRYPOINT npm run start

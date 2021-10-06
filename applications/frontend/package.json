@@ -7,10 +7,11 @@
 	"main": "",
 	"description": "Cat Crowd Party Frontend",
 	"scripts": {
-		"dev": "next -p 4000",
-		"build": "npm run lint && next build",
+		"dev": "next -p 2424",
+		"build:lint": "npm run lint && next build",
+		"build": "next build",
 		"build:analyze": "cross-env ANALYZE=true npm run build",
-		"start": "npm run build && next start -p 4000",
+		"start": "npm run build && next start -p 2424",
 		"lint": "eslint ./src --ext .js,.jsx,.ts,.tsx"
 	},
 	"dependencies": {
