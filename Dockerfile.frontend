@@ -1,0 +1,24 @@
+# define nodejs baseimage
+FROM node:16-alpine3.11
+
+# expose ports
+EXPOSE 2424
+
+# set target image directory
+WORKDIR /opt/frontend
+
+# add all files to image directory
+ADD . /opt/frontend
+
+# install dependencies
+RUN npm install
+
+# compile
+# ARG SOCKET_URL
+RUN cd ./applications/frontend
+
+# set target image directory
+WORKDIR /opt/frontend/applications/frontend
+
+# start
+ENTRYPOINT npm run start
