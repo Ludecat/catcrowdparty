@@ -64,7 +64,7 @@ io.on('connection', (socket) => {
 	socket.on(SETTINGS_UPDATE, (settingsUpdate) => store.dispatch(updateSettings(settingsUpdate)))
 	socket.on(ZEPPELIN_UPDATE, (zeppelinUpdate) => store.dispatch(updateZeppelin(zeppelinUpdate)))
 	socket.on(ZEPPELIN_START, (data: ZeppelinVariation) => {
-		logger.info(`received HOT_AIR_BALLOON_START`)
+		logger.info(`received ZEPPELIN_START`)
 		io.emit(ZEPPELIN_START, data)
 	})
 	socket.on(CROWD_UPDATE, (crowdUpdate) => store.dispatch(updateCrowd(crowdUpdate)))
