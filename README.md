@@ -17,6 +17,8 @@ Never import `backend` modules from `frontend` and vice versa to avoid cicular d
 Run `npm install` from the root directory to install dependencies for each application.  
 Run `npm run build:all` from the root directory to build each application at once.
 
+Add and configure multiple `.env` files accordingly using `.env.example` templates .
+
 # Start
 
 You can start each application from the root directory seperately by running `npm run start:frontend` and `npm run start:backend`.
