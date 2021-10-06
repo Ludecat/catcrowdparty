@@ -31,6 +31,7 @@
 		"@babel/core": "^7.15.0",
 		"@babel/preset-react": "^7.14.5",
 		"@next/bundle-analyzer": "^11.1.0",
+		"@types/node": "^16.10.3",
 		"@types/react": "^17.0.19",
 		"@types/react-select": "^4.0.17",
 		"@types/styled-components": "^5.1.12",
