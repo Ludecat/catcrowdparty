@@ -72,8 +72,8 @@ export class OverlayScene extends Phaser.Scene {
 			}
 
 			const activeModerators = this.getActiveGameObjectsByName<Moderator>('moderator')
-			for (const mmoderator of activeModerators) {
-				mmoderator.handleState(state.moderator)
+			for (const moderator of activeModerators) {
+				moderator.handleState(state.moderator, false)
 			}
 
 			const activeHotAirBalloons = this.getActiveGameObjectsByName<HotAirBalloon>('hotAirBalloon')
@@ -301,9 +301,8 @@ export class OverlayScene extends Phaser.Scene {
 
 		this.generateHotAirBalloons(initialState.hotAirballoon)
 		this.generateZeppelin(initialState.zeppelin)
-
 		new Moderator(this, initialState.moderator, {
-			x: this.game.canvas.width - 130,
+			x: this.game.canvas.width + 250,
 			y: this.game.canvas.height - 175,
 			layer: this.mainLayer!,
 		})

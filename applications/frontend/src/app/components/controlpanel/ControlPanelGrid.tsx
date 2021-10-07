@@ -378,7 +378,7 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 				gridArea={'moderator-control'}
 				title="Moderator"
 				actions={
-					<Button disabled={!globalState.moderator.visibility} onClick={setAndEmitModeratorMessage}>
+					<Button onClick={setAndEmitModeratorMessage}>
 						<GrUpdate size={16} />
 					</Button>
 				}
