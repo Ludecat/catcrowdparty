@@ -252,37 +252,52 @@ export class OverlayScene extends Phaser.Scene {
 
 	create(config: { socket: Socket<CCPSocketEventsMap>; initialState: GlobalState }) {
 		const { socket, initialState } = config
+		const couchPositionFromBottomStart = 32
+		const crowdPersonRowFromBottomStart = 84
+		const couchRowWithCrowdPersonInbetweenDistance = 32
 
 		this.generateCrowdPerson(
 			initialState.crowd,
 			initialState.settings.crowdThreshold,
 			CROWD_PERSON_PINK_DARK_KEY,
-			930,
-			150,
+			this.game.canvas.height - crowdPersonRowFromBottomStart - couchRowWithCrowdPersonInbetweenDistance * 2,
+			130,
 			9,
 			2
 		)
-		this.generateCouchRow(initialState.crowd, this.game.canvas.height - 100, 80, COUCH_DARK_KEY)
+		this.generateCouchRow(
+			initialState.crowd,
+			this.game.canvas.height - couchPositionFromBottomStart - couchRowWithCrowdPersonInbetweenDistance * 2,
+			-20,
+			COUCH_DARK_KEY,
+			8
+		)
 		this.generateCrowdPerson(
 			initialState.crowd,
 			initialState.settings.crowdThreshold,
 			CROWD_PERSON_GREEN_DARKER_KEY,
-			956,
+			this.game.canvas.height - crowdPersonRowFromBottomStart - couchRowWithCrowdPersonInbetweenDistance,
 			50,
 			10,
 			5
 		)
-		this.generateCouchRow(initialState.crowd, this.game.canvas.height - 75, 120, COUCH_DARKER_KEY)
+		this.generateCouchRow(
+			initialState.crowd,
+			this.game.canvas.height - couchPositionFromBottomStart - couchRowWithCrowdPersonInbetweenDistance,
+			30,
+			COUCH_DARKER_KEY,
+			8
+		)
 		this.generateCrowdPerson(
 			initialState.crowd,
 			initialState.settings.crowdThreshold,
 			CROWD_PERSON_BLUE_KEY,
-			980,
+			this.game.canvas.height - crowdPersonRowFromBottomStart,
 			100,
 			10,
 			9
 		)
-		this.generateCouchRow(initialState.crowd, this.game.canvas.height - 50, 150, COUCH_KEY)
+		this.generateCouchRow(initialState.crowd, this.game.canvas.height - couchPositionFromBottomStart, 80, COUCH_KEY, 8)
 
 		this.generateHotAirBalloons(initialState.hotAirballoon)
 		this.generateZeppelin(initialState.zeppelin)
@@ -317,6 +332,7 @@ export class OverlayScene extends Phaser.Scene {
 		count: number,
 		crowdPersonWithBubbleIndex: number
 	) {
+		const inbetweenDistance = 150
 		for (let i = 0; i < count; i++) {
 			if (i === 0) {
 				new CrowdPerson(
@@ -324,7 +340,7 @@ export class OverlayScene extends Phaser.Scene {
 					state,
 					threshold,
 					{
-						x: i * 160 + xOffset,
+						x: i * inbetweenDistance + xOffset,
 						y,
 						layer: this.mainLayer!,
 					},
@@ -339,17 +355,23 @@ export class OverlayScene extends Phaser.Scene {
 					this,
 					state,
 					threshold,
-					{ x: i * 160 + xOffset, y, layer: this.mainLayer! },
+					{ x: i * inbetweenDistance + xOffset, y, layer: this.mainLayer! },
 					texture
 				)
 			} else {
-				new CrowdPerson(this, state, threshold, { x: i * 160 + xOffset, y, layer: this.mainLayer! }, texture)
+				new CrowdPerson(
+					this,
+					state,
+					threshold,
+					{ x: i * inbetweenDistance + xOffset, y, layer: this.mainLayer! },
+					texture
+				)
 			}
 		}
 	}
 
-	generateCouchRow(state: CrowdState, y: number, xOffset: number, texture: string) {
-		for (let i = 0; i < 8; i++) {
+	generateCouchRow(state: CrowdState, y: number, xOffset: number, texture: string, count: number) {
+		for (let i = 0; i < count; i++) {
 			if (i === 0) {
 				new Couch(this, state, {
 					x: i * 200 + xOffset,
