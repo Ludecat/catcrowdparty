@@ -73,12 +73,10 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 
 		this.on('animationcomplete_' + MODERATOR_STATE_KEY.WALK_LEFT, () => {
 			this.idle()
-			console.log('finished walking')
 		})
 
 		this.on('animationcomplete_' + MODERATOR_STATE_KEY.WALK_RIGHT, () => {
 			this.idle()
-			console.log('finished walking')
 		})
 
 		this.bubble = this.createSpeechBubble(scene, false)
