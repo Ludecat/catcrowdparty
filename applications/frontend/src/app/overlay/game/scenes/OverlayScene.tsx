@@ -333,21 +333,24 @@ export class OverlayScene extends Phaser.Scene {
 	) {
 		const inbetweenDistance = 150
 		for (let i = 0; i < count; i++) {
+			const outOfScreenPositionX = i * -1 - inbetweenDistance - xOffset
+			const onScreenPositionX = i * inbetweenDistance + xOffset
+
 			if (i === 0) {
 				new CrowdPerson(
 					this,
 					state,
 					threshold,
 					{
-						x: i * inbetweenDistance + xOffset,
+						x: outOfScreenPositionX,
 						y,
 						layer: this.mainLayer!,
 						idleInvisiblePosition: {
-							x: i * -1 - inbetweenDistance - xOffset,
+							x: outOfScreenPositionX,
 							y,
 						},
 						idlePosition: {
-							x: i * inbetweenDistance + xOffset,
+							x: onScreenPositionX,
 							y,
 						},
 					},
@@ -363,15 +366,15 @@ export class OverlayScene extends Phaser.Scene {
 					state,
 					threshold,
 					{
-						x: i * inbetweenDistance + xOffset,
+						x: outOfScreenPositionX,
 						y,
 						layer: this.mainLayer!,
 						idleInvisiblePosition: {
-							x: i * -1 - inbetweenDistance - xOffset,
+							x: outOfScreenPositionX,
 							y,
 						},
 						idlePosition: {
-							x: i * inbetweenDistance + xOffset,
+							x: onScreenPositionX,
 							y,
 						},
 					},
@@ -383,15 +386,15 @@ export class OverlayScene extends Phaser.Scene {
 					state,
 					threshold,
 					{
-						x: i * inbetweenDistance + xOffset,
+						x: outOfScreenPositionX,
 						y,
 						layer: this.mainLayer!,
 						idleInvisiblePosition: {
-							x: i * -1 - inbetweenDistance - xOffset,
+							x: outOfScreenPositionX,
 							y,
 						},
 						idlePosition: {
-							x: i * inbetweenDistance + xOffset,
+							x: onScreenPositionX,
 							y,
 						},
 					},
