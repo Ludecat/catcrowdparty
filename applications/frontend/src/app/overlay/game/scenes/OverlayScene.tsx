@@ -63,7 +63,7 @@ export class OverlayScene extends Phaser.Scene {
 		config.socket.on(STATE_UPDATE, (state: GlobalState) => {
 			const activeCrowd = this.getActiveGameObjectsByName<CrowdPerson>('crowdperson')
 			for (const crowdPerson of activeCrowd) {
-				crowdPerson.handleState(state.crowd, state.settings.crowdThreshold)
+				crowdPerson.handleState(state.crowd, state.settings.crowdThreshold, false)
 			}
 
 			const activeCouches = this.getActiveGameObjectsByName<Couch>('couch')
@@ -342,6 +342,14 @@ export class OverlayScene extends Phaser.Scene {
 						x: i * inbetweenDistance + xOffset,
 						y,
 						layer: this.mainLayer!,
+						idleInvisiblePosition: {
+							x: i * -1 - inbetweenDistance - xOffset,
+							y,
+						},
+						idlePosition: {
+							x: i * inbetweenDistance + xOffset,
+							y,
+						},
 					},
 					texture
 				)
@@ -354,7 +362,19 @@ export class OverlayScene extends Phaser.Scene {
 					this,
 					state,
 					threshold,
-					{ x: i * inbetweenDistance + xOffset, y, layer: this.mainLayer! },
+					{
+						x: i * inbetweenDistance + xOffset,
+						y,
+						layer: this.mainLayer!,
+						idleInvisiblePosition: {
+							x: i * -1 - inbetweenDistance - xOffset,
+							y,
+						},
+						idlePosition: {
+							x: i * inbetweenDistance + xOffset,
+							y,
+						},
+					},
 					texture
 				)
 			} else {
@@ -362,7 +382,19 @@ export class OverlayScene extends Phaser.Scene {
 					this,
 					state,
 					threshold,
-					{ x: i * inbetweenDistance + xOffset, y, layer: this.mainLayer! },
+					{
+						x: i * inbetweenDistance + xOffset,
+						y,
+						layer: this.mainLayer!,
+						idleInvisiblePosition: {
+							x: i * -1 - inbetweenDistance - xOffset,
+							y,
+						},
+						idlePosition: {
+							x: i * inbetweenDistance + xOffset,
+							y,
+						},
+					},
 					texture
 				)
 			}

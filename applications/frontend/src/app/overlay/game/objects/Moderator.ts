@@ -97,7 +97,7 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 		const collider = this.scene.physics.add.overlap(
 			this,
 			this.idlePosition,
-			(clownOnBlock) => {
+			(currentGameObject) => {
 				this.emit(
 					'animationcomplete_' + this.anims.currentAnim.key,
 					this.anims.currentAnim,
@@ -105,7 +105,7 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 				)
 				this.text.setVisible(true)
 				this.bubble.setVisible(true)
-				clownOnBlock.body.stop()
+				currentGameObject.body.stop()
 				this.scene.physics.world.removeCollider(collider)
 			},
 			undefined,
@@ -117,13 +117,13 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 		const collider2 = this.scene.physics.add.overlap(
 			this,
 			this.invisibleIdlePosition,
-			(clownOnBlock) => {
+			(currentGameObject) => {
 				this.emit(
 					'animationcomplete_' + this.anims.currentAnim.key,
 					this.anims.currentAnim,
 					this.anims.currentAnim.frames
 				)
-				clownOnBlock.body.stop()
+				currentGameObject.body.stop()
 				this.scene.physics.world.removeCollider(collider2)
 			},
 			undefined,
