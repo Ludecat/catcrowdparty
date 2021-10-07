@@ -121,8 +121,8 @@ export class CrowdPerson extends Phaser.GameObjects.Sprite {
 		})
 		this.isMyVisible = crowdState.visibility
 		this.setScale(0.55)
-		this.handleState(crowdState, threshold, true)
 		scene.physics.add.existing(this)
+		this.handleState(crowdState, threshold, true)
 		options.layer.add(this)
 		scene.add.existing(this)
 	}
@@ -136,6 +136,10 @@ export class CrowdPerson extends Phaser.GameObjects.Sprite {
 			this.idle()
 		}
 
+		if (isStart && state.visibility) {
+			this.isMyVisible = true
+			this.walkIn()
+		}
 		if (isStart) return
 
 		if (this.isMyVisible != state.visibility) {
