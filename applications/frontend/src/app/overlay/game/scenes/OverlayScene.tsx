@@ -63,7 +63,7 @@ export class OverlayScene extends Phaser.Scene {
 		config.socket.on(STATE_UPDATE, (state: GlobalState) => {
 			const activeCrowd = this.getActiveGameObjectsByName<CrowdPerson>('crowdperson')
 			for (const crowdPerson of activeCrowd) {
-				crowdPerson.handleState(state.crowd, state.settings.crowdThreshold)
+				crowdPerson.handleState(state.crowd, state.settings.crowdThreshold, false)
 			}
 
 			const activeCouches = this.getActiveGameObjectsByName<Couch>('couch')
@@ -333,15 +333,26 @@ export class OverlayScene extends Phaser.Scene {
 	) {
 		const inbetweenDistance = 150
 		for (let i = 0; i < count; i++) {
+			const outOfScreenPositionX = i * -1 - inbetweenDistance - xOffset
+			const onScreenPositionX = i * inbetweenDistance + xOffset
+
 			if (i === 0) {
 				new CrowdPerson(
 					this,
 					state,
 					threshold,
 					{
-						x: i * inbetweenDistance + xOffset,
+						x: outOfScreenPositionX,
 						y,
 						layer: this.mainLayer!,
+						idleInvisiblePosition: {
+							x: outOfScreenPositionX,
+							y,
+						},
+						idlePosition: {
+							x: onScreenPositionX,
+							y,
+						},
 					},
 					texture
 				)
@@ -354,7 +365,19 @@ export class OverlayScene extends Phaser.Scene {
 					this,
 					state,
 					threshold,
-					{ x: i * inbetweenDistance + xOffset, y, layer: this.mainLayer! },
+					{
+						x: outOfScreenPositionX,
+						y,
+						layer: this.mainLayer!,
+						idleInvisiblePosition: {
+							x: outOfScreenPositionX,
+							y,
+						},
+						idlePosition: {
+							x: onScreenPositionX,
+							y,
+						},
+					},
 					texture
 				)
 			} else {
@@ -362,7 +385,19 @@ export class OverlayScene extends Phaser.Scene {
 					this,
 					state,
 					threshold,
-					{ x: i * inbetweenDistance + xOffset, y, layer: this.mainLayer! },
+					{
+						x: outOfScreenPositionX,
+						y,
+						layer: this.mainLayer!,
+						idleInvisiblePosition: {
+							x: outOfScreenPositionX,
+							y,
+						},
+						idlePosition: {
+							x: onScreenPositionX,
+							y,
+						},
+					},
 					texture
 				)
 			}

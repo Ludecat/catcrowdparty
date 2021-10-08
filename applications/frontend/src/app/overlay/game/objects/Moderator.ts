@@ -16,6 +16,8 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 	public text: Phaser.GameObjects.Text
 	public idlePosition: Phaser.GameObjects.Rectangle
 	public invisibleIdlePosition: Phaser.GameObjects.Rectangle
+	private isInViewport: boolean
+	private message: string
 
 	constructor(scene: Phaser.Scene, initialState: ModeratorState, options: CCPGameObjectProps) {
 		super(scene, options.x, options.y, MODERATOR_SPRITESHEET_KEY)
@@ -29,6 +31,7 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 				100
 			)
 		)
+		this.message = initialState.message
 
 		this.invisibleIdlePosition = scene.physics.add.existing(
 			new Phaser.GameObjects.Rectangle(
@@ -82,10 +85,12 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 		this.bubble = this.createSpeechBubble(scene, false)
 		this.text = this.createBubbleText(scene, initialState.message, false)
 
+		this.isInViewport = initialState.visibility
+
 		this.setScale(2)
+		scene.physics.add.existing(this)
 		this.idle()
 		options.layer.add(this)
-		scene.physics.add.existing(this)
 		scene.add.existing(this)
 
 		this.addTargetIdleCollider()
@@ -97,7 +102,7 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 		const collider = this.scene.physics.add.overlap(
 			this,
 			this.idlePosition,
-			(clownOnBlock) => {
+			(currentGameObject) => {
 				this.emit(
 					'animationcomplete_' + this.anims.currentAnim.key,
 					this.anims.currentAnim,
@@ -105,7 +110,8 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 				)
 				this.text.setVisible(true)
 				this.bubble.setVisible(true)
-				clownOnBlock.body.stop()
+				this.isInViewport = true
+				currentGameObject.body.stop()
 				this.scene.physics.world.removeCollider(collider)
 			},
 			undefined,
@@ -117,13 +123,13 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 		const collider2 = this.scene.physics.add.overlap(
 			this,
 			this.invisibleIdlePosition,
-			(clownOnBlock) => {
+			(currentGameObject) => {
 				this.emit(
 					'animationcomplete_' + this.anims.currentAnim.key,
 					this.anims.currentAnim,
 					this.anims.currentAnim.frames
 				)
-				clownOnBlock.body.stop()
+				currentGameObject.body.stop()
 				this.scene.physics.world.removeCollider(collider2)
 			},
 			undefined,
@@ -151,14 +157,26 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 	}
 
 	public handleState(state: ModeratorState, isStart: boolean) {
-		this.text.destroy()
-		if (isStart && state.visibility === this.text.visible && this.bubble.visible === state.visibility) return
-		if (state.visibility) {
+		if (isStart && state.visibility) {
+			this.isInViewport = true
 			this.text = this.createBubbleText(this.scene, state.message, false)
 			this.walkIn()
-		} else {
-			this.walkOut()
-			this.bubble.setVisible(state.visibility)
+		}
+		if (isStart) return
+
+		if (this.message != state.message) {
+			this.text.destroy()
+			this.text = this.createBubbleText(this.scene, state.message, true)
+		}
+		if (this.isInViewport != state.visibility) {
+			if (state.visibility) {
+				this.walkIn()
+			} else {
+				this.walkOut()
+				this.bubble.setVisible(false)
+				this.text.setVisible(false)
+			}
+			this.isInViewport = state.visibility
 		}
 	}
 
@@ -180,6 +198,7 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 
 	private createBubbleText(scene: Phaser.Scene, message: string, visible: boolean) {
 		const bubblePadding = 70
+		this.message = message
 
 		const content = scene.add.text(0, 0, message, {
 			fontFamily: 'Roboto',
@@ -190,7 +209,7 @@ export class Moderator extends Phaser.GameObjects.Sprite {
 		})
 
 		const b = content.getBounds()
-
+		this.message = message
 		content.setPosition(this.bubble.x - b.width / 2, this.bubble.y - b.height / 2 - 40)
 		content.setVisible(visible)
 		return content

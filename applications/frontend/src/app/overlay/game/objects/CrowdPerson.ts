@@ -19,20 +19,51 @@ export const CROWD_PERSON_STATE_KEY = {
 	IDLE: 'idle',
 	JUMP: 'jump',
 	PARTY: 'party',
+	WALK_RIGHT: 'walkRightCrowdPerson',
+	WALK_LEFT: 'walkLeftCrowdPerson',
 }
 
+interface CrowdPersonProps extends CCPGameObjectProps {
+	idlePosition: { x: number; y: number }
+	idleInvisiblePosition: { x: number; y: number }
+}
+
+const minVelocity = 350
+const maxVelocity = 1000
 export class CrowdPerson extends Phaser.GameObjects.Sprite {
+	public idlePosition: Phaser.GameObjects.Rectangle
+	public idleInvisiblePosition: Phaser.GameObjects.Rectangle
+	private isInViewport: boolean
+	private moveToObjectVelocity: number
+
 	constructor(
 		scene: Phaser.Scene,
 		crowdState: CrowdState,
 		threshold: number[],
-		options: CCPGameObjectProps,
+		options: CrowdPersonProps,
 		texture: string
 	) {
 		super(scene, options.x, options.y, texture)
 		this.setName('crowdperson')
 
-		const startDelay = getRandomInt(0, 250)
+		this.idlePosition = scene.physics.add.existing(
+			new Phaser.GameObjects.Rectangle(this.scene, options.idlePosition.x, options.idlePosition.y, 25, 100)
+		)
+
+		this.idleInvisiblePosition = scene.physics.add.existing(
+			new Phaser.GameObjects.Rectangle(
+				this.scene,
+				options.idleInvisiblePosition.x,
+				options.idleInvisiblePosition.y,
+				25,
+				100
+			)
+		)
+
+		const startDelay = getRandomInt(0, 150)
+
+		this.moveToObjectVelocity = getRandomInt(minVelocity, maxVelocity)
+
 		this.anims.create({
 			key: CROWD_PERSON_STATE_KEY.IDLE,
 			frames: this.anims.generateFrameNumbers(texture, {
@@ -61,13 +92,44 @@ export class CrowdPerson extends Phaser.GameObjects.Sprite {
 			delay: startDelay,
 		})
 
+		this.anims.create({
+			key: CROWD_PERSON_STATE_KEY.WALK_RIGHT,
+			frames: this.anims.generateFrameNumbers(texture, {
+				start: 12,
+				end: 13,
+			}),
+			frameRate: 8,
+		})
+
+		this.anims.create({
+			key: CROWD_PERSON_STATE_KEY.WALK_LEFT,
+			frames: this.anims.generateFrameNumbers(texture, {
+				start: 14,
+				end: 15,
+			}),
+			frameRate: 8,
+		})
+
+		this.on('animationcomplete', (anim: Phaser.Animations.Animation, frame: number) => {
+			this.emit('animationcomplete_' + anim.key, anim, frame)
+		})
+
+		this.on('animationcomplete_' + CROWD_PERSON_STATE_KEY.WALK_LEFT, () => {
+			this.idle()
+		})
+
+		this.on('animationcomplete_' + CROWD_PERSON_STATE_KEY.WALK_RIGHT, () => {
+			this.idle()
+		})
+		this.isInViewport = crowdState.visibility
 		this.setScale(0.55)
-		this.handleState(crowdState, threshold)
+		scene.physics.add.existing(this)
+		this.handleState(crowdState, threshold, true)
 		options.layer.add(this)
 		scene.add.existing(this)
 	}
 
-	public handleState(state: CrowdState, threshold: number[]) {
+	public handleState(state: CrowdState, threshold: number[], isStart: boolean) {
 		if (isPartyState(state.intensity, threshold)) {
 			this.party()
 		} else if (isJumpState(state.intensity, threshold)) {
@@ -75,7 +137,29 @@ export class CrowdPerson extends Phaser.GameObjects.Sprite {
 		} else {
 			this.idle()
 		}
-		this.setIsVisible(state.visibility)
+
+		if (isStart && state.visibility) {
+			this.isInViewport = true
+			this.walkIn()
+		}
+		if (isStart) return
+
+		if (this.isInViewport != state.visibility) {
+			this.moveToObjectVelocity = getRandomInt(minVelocity, maxVelocity)
+			if (state.visibility) {
+				this.walkIn()
+			} else {
+				this.walkOut()
+			}
+
+			this.isInViewport = state.visibility
+			this.setIsVisible(state.visibility)
+		}
+	}
+
+	public idle() {
+		if (this.anims.currentAnim && this.anims.currentAnim.key === CROWD_PERSON_STATE_KEY.IDLE) return
+		this.play({ key: CROWD_PERSON_STATE_KEY.IDLE, repeat: -1 })
 	}
 
 	public party() {
@@ -88,13 +172,58 @@ export class CrowdPerson extends Phaser.GameObjects.Sprite {
 		this.play({ key: CROWD_PERSON_STATE_KEY.JUMP, repeat: -1 })
 	}
 
-	public idle() {
-		if (this.anims.currentAnim && this.anims.currentAnim.key === CROWD_PERSON_STATE_KEY.IDLE) return
-		this.play({ key: CROWD_PERSON_STATE_KEY.IDLE, repeat: -1 })
+	public walkOut() {
+		if (this.anims.currentAnim && this.anims.currentAnim.key === CROWD_PERSON_STATE_KEY.WALK_LEFT) return
+		this.addTargetInvisibleIdleCollider()
+		this.scene.physics.moveToObject(this, this.idleInvisiblePosition, this.moveToObjectVelocity)
+		this.play({ key: CROWD_PERSON_STATE_KEY.WALK_LEFT, repeat: -1 })
+	}
+
+	public addTargetInvisibleIdleCollider() {
+		const collider = this.scene.physics.add.overlap(
+			this,
+			this.idleInvisiblePosition,
+			(currentGameObject) => {
+				this.emit(
+					'animationcomplete_' + this.anims.currentAnim.key,
+					this.anims.currentAnim,
+					this.anims.currentAnim.frames
+				)
+				currentGameObject.body.stop()
+				this.scene.physics.world.removeCollider(collider)
+			},
+			undefined,
+			this
+		)
+	}
+
+	public walkIn() {
+		if (this.anims.currentAnim && this.anims.currentAnim.key === CROWD_PERSON_STATE_KEY.WALK_RIGHT) return
+		this.addTargetIdleCollider()
+		this.scene.physics.moveToObject(this, this.idlePosition, this.moveToObjectVelocity)
+		this.play({ key: CROWD_PERSON_STATE_KEY.WALK_RIGHT, repeat: -1 })
+	}
+
+	public addTargetIdleCollider() {
+		const collider = this.scene.physics.add.overlap(
+			this,
+			this.idlePosition,
+			(currentGameObject) => {
+				this.emit(
+					'animationcomplete_' + this.anims.currentAnim.key,
+					this.anims.currentAnim,
+					this.anims.currentAnim.frames
+				)
+				currentGameObject.body.stop()
+				this.scene.physics.world.removeCollider(collider)
+			},
+			undefined,
+			this
+		)
 	}
 
 	public setIsVisible(visible: boolean) {
-		if (this.visible === visible) return
-		this.setVisible(visible)
+		if (this.isInViewport === visible) return
+		this.isInViewport = visible
 	}
 }
