@@ -1,5 +1,5 @@
-import { SETTINGS_UPDATE } from '@ccp/common'
-import React, { useCallback, useState } from 'react'
+import { SETTINGS_UPDATE, STATE_UPDATE } from '@ccp/common'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useSocket } from '../../hooks/useSocket'
 import { styled } from '../../styles/Theme'
 
@@ -16,6 +16,12 @@ export const TwitchChannelInput = ({ value }: TwitchChannelInputProps) => {
 
 	const onInputChange = useCallback((e) => {
 		setCurrentValue(e.target.value)
+	}, [])
+
+	useEffect(() => {
+		socket?.on(STATE_UPDATE, (s) => {
+			setCurrentValue(s.settings.twitchChannel)
+		})
 	}, [])
 
 	const emitSettingsUpdateTwitchChannel = useCallback(() => {
