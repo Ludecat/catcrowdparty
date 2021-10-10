@@ -30,6 +30,7 @@ import { useCallback } from 'react'
 import { toast } from 'react-toastify'
 import { longestWordCount } from '../../util/utils'
 import { Range, getTrackBackground } from 'react-range'
+import { TwitchChannelInput } from './TwitchChannelInput'
 
 const Grid = styled.div`
 	display: grid;
@@ -418,7 +419,13 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 					description="Zeppelin"
 				/>
 			</GridComponent>
-			<GridComponent gridArea={'preview'} title="Live View" height={'540px'} width={'960px'}>
+			<GridComponent
+				gridArea={'preview'}
+				title="Live View"
+				height={'540px'}
+				width={'960px'}
+				actions={<TwitchChannelInput value={globalState.settings.twitchChannel} />}
+			>
 				<Preview src="/overlay#small" height={1080} width={1920} />
 			</GridComponent>
 			<GridComponent gridArea={'triggers-control'} title="Balloons">
