@@ -3,6 +3,7 @@ import { twitchLogger as logger } from './logger'
 import { TypedEmitter } from 'tiny-typed-emitter'
 import TwitchChatEmotes, { NEW_EMOTES } from './TwitchChatEmotes'
 import TwitchChatMessages, { NEW_EMOTE_MESSAGE } from './TwitchChatMessages'
+import { initialSettingsState } from './State'
 
 interface TwitchChatHandlerEvents {
 	[NEW_EMOTES]: (emoteUrls: string[]) => void
@@ -48,23 +49,44 @@ export default class TwitchChatHandler extends TypedEmitter<TwitchChatHandlerEve
 		})
 
 		// eslint-disable-next-line @typescript-eslint/no-floating-promises
-		this.tryConnect()
+		this.tryConnect(initialSettingsState.twitchChannel)
 	}
 
-	private async tryConnect() {
+	public async tryConnect(channel: string) {
 		try {
-			await this.connect()
+			await this.connect(channel)
 		} catch (e) {
-			logger.error('Failed to conntect to chat')
+			logger.error('Failed to connect to chat.')
 		}
 	}
 
-	private async connect() {
+	private async connect(channel: string) {
 		await this.tmi.connect()
+		await this.tryJoinChannel(channel)
+	}
 
-		const channel = process.env.TWITCH_CHANNEL ?? 'twitch'
-		logger.info(`Joining channel ${channel}`)
-		await this.tmi.join(channel)
+	public async joinNewChannel(channel: string, channelToDisconnect: string) {
+		logger.info(`Reconnecting to new channel ${channel}.`)
+		await this.leaveChannel(channelToDisconnect)
+		await this.tryJoinChannel(channel)
+	}
+
+	private async tryJoinChannel(channel: string) {
+		try {
+			logger.info(`Joining channel ${channel}`)
+			await this.tmi.join(channel)
+		} catch (e) {
+			logger.warn(`Couldn't join channel ${channel}.`)
+		}
+	}
+
+	private async leaveChannel(channelToDisconnect: string) {
+		try {
+			logger.info(`Disconnecting channel ${channelToDisconnect}.`)
+			await this.tmi.part(channelToDisconnect)
+		} catch (e) {
+			logger.error('Failed to disconntect from chat.')
+		}
 	}
 }
 

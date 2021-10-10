@@ -108,7 +108,7 @@ export interface GlobalState {
 }
 
 export interface CCPSocketEventsMap {
-	[SETTINGS_UPDATE]: (settingsUpdate: Partial<SettingsState>) => void
+	[SETTINGS_UPDATE]: (settingsUpdate: Partial<SettingsState>) => Promise<void>
 	[CROWD_UPDATE]: (crowdUpdate: Partial<CrowdState>) => void
 	[MODERATOR_UPDATE]: (moderatorUpdate: Partial<ModeratorState>) => void
 	[EMOTES_UPDATE]: (emotesUpdate: Partial<EmotesState>) => void

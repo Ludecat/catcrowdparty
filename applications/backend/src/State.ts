@@ -98,9 +98,9 @@ const emotesSlice = createSlice({
 	},
 })
 
-const initialSettingsState: SettingsState = {
+export const initialSettingsState: SettingsState = {
 	crowdThreshold: [50, 150],
-	twitchChannel: 'heideltrautEUW',
+	twitchChannel: process.env.TWITCH_CHANNEL ?? 'heideltrautEUW',
 }
 
 const settingsSlice = createSlice({

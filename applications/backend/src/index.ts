@@ -61,7 +61,17 @@ const io = new Server<CCPSocketEventsMap>(httpServer, {})
 io.on('connection', (socket) => {
 	logger.info(`new connection from ${socket.id}!`)
 
-	socket.on(SETTINGS_UPDATE, (settingsUpdate) => store.dispatch(updateSettings(settingsUpdate)))
+	socket.on(SETTINGS_UPDATE, async (settingsUpdate) => {
+		if (settingsUpdate.twitchChannel !== store.getState().settings.twitchChannel) {
+			await twitchChatHandler.joinNewChannel(
+				settingsUpdate.twitchChannel ?? '',
+				store.getState().settings.twitchChannel
+			)
+		} else {
+			logger.info(`Already connected to channel ${settingsUpdate.twitchChannel}.`)
+		}
+		store.dispatch(updateSettings(settingsUpdate))
+	})
 	socket.on(ZEPPELIN_UPDATE, (zeppelinUpdate) => store.dispatch(updateZeppelin(zeppelinUpdate)))
 	socket.on(ZEPPELIN_START, (data: ZeppelinVariation) => {
 		logger.info(`received ZEPPELIN_START`)
@@ -107,9 +117,7 @@ store.subscribe(() => {
 const port = process.env.PORT_BACKEND ?? 4848
 httpServer.listen(port)
 logger.info(`Backend ready on port ${port}`)
-
 const twitchChatHandler = new TwitchChatHandler()
-
 twitchChatHandler.on(NEW_EMOTES, (emoteUrls) => {
 	logger.info(`newEmotes: ${JSON.stringify(emoteUrls)}`)
 
