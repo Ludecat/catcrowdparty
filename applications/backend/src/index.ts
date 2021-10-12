@@ -64,7 +64,8 @@ io.on('connection', (socket) => {
 	socket.on(SETTINGS_UPDATE, async (settingsUpdate) => {
 		if (
 			settingsUpdate.twitchChannel !== store.getState().settings.twitchChannel &&
-			typeof settingsUpdate.twitchChannel !== 'undefined'
+			typeof settingsUpdate.twitchChannel !== 'undefined' &&
+			settingsUpdate.twitchChannel !== null
 		) {
 			await twitchChatHandler.joinNewChannel(settingsUpdate.twitchChannel)
 		} else {
@@ -117,7 +118,7 @@ store.subscribe(() => {
 const port = process.env.PORT_BACKEND ?? 4848
 httpServer.listen(port)
 logger.info(`Backend ready on port ${port}`)
-const twitchChatHandler = new TwitchChatHandler()
+const twitchChatHandler = new TwitchChatHandler(process.env.TWITCH_CHANNEL ?? 'twitch')
 twitchChatHandler.on(NEW_EMOTES, (emoteUrls) => {
 	logger.info(`newEmotes: ${JSON.stringify(emoteUrls)}`)
 

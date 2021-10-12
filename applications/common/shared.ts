@@ -78,7 +78,7 @@ export interface SettingsState {
 	// crowdThreshold[0] = jumpState
 	// crowdThreshold[1] =  partyState
 	crowdThreshold: number[]
-	twitchChannel: string
+	twitchChannel: string | null
 }
 
 export interface HotAirBalloonState {

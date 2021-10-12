@@ -3,7 +3,6 @@ import { twitchLogger as logger } from './logger'
 import { TypedEmitter } from 'tiny-typed-emitter'
 import TwitchChatEmotes, { NEW_EMOTES } from './TwitchChatEmotes'
 import TwitchChatMessages, { NEW_EMOTE_MESSAGE } from './TwitchChatMessages'
-import { initialTwitchChannel } from './State'
 
 interface TwitchChatHandlerEvents {
 	[NEW_EMOTES]: (emoteUrls: string[]) => void
@@ -20,7 +19,7 @@ export default class TwitchChatHandler extends TypedEmitter<TwitchChatHandlerEve
 
 	private connectedChannel: string | null = null
 
-	constructor() {
+	constructor(initialChannel: string) {
 		super()
 		this.tmi = new TmiClient({
 			connection: {
@@ -50,13 +49,17 @@ export default class TwitchChatHandler extends TypedEmitter<TwitchChatHandlerEve
 			this.emit(NEW_EMOTE_MESSAGE, senderName, color, emoteIdsToUrls(emoteIds))
 		})
 
-		// eslint-disable-next-line @typescript-eslint/no-floating-promises
-		this.tryConnect()
+		this.start(initialChannel)
 	}
 
-	private async tryConnect() {
+	private start(initialChannel: string) {
+		// eslint-disable-next-line @typescript-eslint/no-floating-promises
+		this.tryConnect(initialChannel)
+	}
+
+	private async tryConnect(channel: string) {
 		try {
-			await this.connect(initialTwitchChannel)
+			await this.connect(channel)
 		} catch (e) {
 			logger.error('Failed to connect to chat.')
 		}
