@@ -62,11 +62,11 @@ io.on('connection', (socket) => {
 	logger.info(`new connection from ${socket.id}!`)
 
 	socket.on(SETTINGS_UPDATE, async (settingsUpdate) => {
-		if (settingsUpdate.twitchChannel !== store.getState().settings.twitchChannel) {
-			await twitchChatHandler.joinNewChannel(
-				settingsUpdate.twitchChannel ?? '',
-				store.getState().settings.twitchChannel
-			)
+		if (
+			settingsUpdate.twitchChannel !== store.getState().settings.twitchChannel &&
+			typeof settingsUpdate.twitchChannel !== 'undefined'
+		) {
+			await twitchChatHandler.joinNewChannel(settingsUpdate.twitchChannel)
 		} else {
 			logger.info(`Already connected to channel ${settingsUpdate.twitchChannel}.`)
 		}

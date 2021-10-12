@@ -3,7 +3,7 @@ import { twitchLogger as logger } from './logger'
 import { TypedEmitter } from 'tiny-typed-emitter'
 import TwitchChatEmotes, { NEW_EMOTES } from './TwitchChatEmotes'
 import TwitchChatMessages, { NEW_EMOTE_MESSAGE } from './TwitchChatMessages'
-import { initialSettingsState } from './State'
+import { initialTwitchChannel } from './State'
 
 interface TwitchChatHandlerEvents {
 	[NEW_EMOTES]: (emoteUrls: string[]) => void
@@ -17,6 +17,8 @@ export default class TwitchChatHandler extends TypedEmitter<TwitchChatHandlerEve
 	private readonly tmi: TmiClient
 	private readonly emotesHandler: TwitchChatEmotes
 	private readonly messagesHandler: TwitchChatMessages
+
+	private connectedChannel: string | null = null
 
 	constructor() {
 		super()
@@ -49,12 +51,12 @@ export default class TwitchChatHandler extends TypedEmitter<TwitchChatHandlerEve
 		})
 
 		// eslint-disable-next-line @typescript-eslint/no-floating-promises
-		this.tryConnect(initialSettingsState.twitchChannel)
+		this.tryConnect()
 	}
 
-	public async tryConnect(channel: string) {
+	private async tryConnect() {
 		try {
-			await this.connect(channel)
+			await this.connect(initialTwitchChannel)
 		} catch (e) {
 			logger.error('Failed to connect to chat.')
 		}
@@ -65,9 +67,9 @@ export default class TwitchChatHandler extends TypedEmitter<TwitchChatHandlerEve
 		await this.tryJoinChannel(channel)
 	}
 
-	public async joinNewChannel(channel: string, channelToDisconnect: string) {
+	public async joinNewChannel(channel: string) {
 		logger.info(`Reconnecting to new channel ${channel}.`)
-		await this.leaveChannel(channelToDisconnect)
+		await this.leaveCurrentChannel()
 		await this.tryJoinChannel(channel)
 	}
 
@@ -75,15 +77,22 @@ export default class TwitchChatHandler extends TypedEmitter<TwitchChatHandlerEve
 		try {
 			logger.info(`Joining channel ${channel}`)
 			await this.tmi.join(channel)
+			this.connectedChannel = channel
 		} catch (e) {
 			logger.warn(`Couldn't join channel ${channel}.`)
 		}
 	}
 
-	private async leaveChannel(channelToDisconnect: string) {
+	private async leaveCurrentChannel() {
+		if (this.connectedChannel === null) {
+			logger.warn(`Cannot disconnect from nullish channel.`)
+			return
+		}
+
 		try {
-			logger.info(`Disconnecting channel ${channelToDisconnect}.`)
-			await this.tmi.part(channelToDisconnect)
+			logger.info(`Disconnecting channel ${this.connectedChannel}.`)
+			await this.tmi.part(this.connectedChannel)
+			this.connectedChannel = null
 		} catch (e) {
 			logger.error('Failed to disconntect from chat.')
 		}
