@@ -424,7 +424,7 @@ export const ControlPanelGrid: FunctionComponent<{ globalState: GlobalState }> =
 				title="Live View"
 				height={'540px'}
 				width={'960px'}
-				actions={<TwitchChannelInput value={globalState.settings.twitchChannel} />}
+				actions={<TwitchChannelInput value={globalState.settings.twitchChannel ?? ''} />}
 			>
 				<Preview src="/overlay#small" height={1080} width={1920} />
 			</GridComponent>

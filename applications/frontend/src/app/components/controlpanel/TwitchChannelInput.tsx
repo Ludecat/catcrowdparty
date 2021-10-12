@@ -20,7 +20,7 @@ export const TwitchChannelInput = ({ value }: TwitchChannelInputProps) => {
 
 	useEffect(() => {
 		socket?.on(STATE_UPDATE, (s) => {
-			setCurrentValue(s.settings.twitchChannel)
+			setCurrentValue(s.settings.twitchChannel ?? '')
 		})
 	}, [])
 
