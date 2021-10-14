@@ -110,8 +110,6 @@ logger.info(`Backend ready on port ${port}`)
 
 const twitchChatHandler = new TwitchChatHandler()
 twitchChatHandler.on(NEW_EMOTES, (emoteUrls) => {
-	logger.info(`newEmotes: ${JSON.stringify(emoteUrls)}`)
-
 	const emoteState = store.getState().emotes
 	if (emoteState.visibility) {
 		io.emit(NEW_EMOTES_TRIGGER, emoteUrls, emoteState)
@@ -119,8 +117,6 @@ twitchChatHandler.on(NEW_EMOTES, (emoteUrls) => {
 })
 
 twitchChatHandler.on(NEW_EMOTE_MESSAGE, (senderName, color, emoteUrls) => {
-	logger.info(`newEmoteMessage from ${senderName}: ${JSON.stringify(emoteUrls)}`)
-
 	const bubblesState = store.getState().bubbles
 	if (bubblesState.visibility) {
 		io.emit(NEW_EMOTE_MESSAGE_TRIGGER, senderName, color, emoteUrls, bubblesState)
