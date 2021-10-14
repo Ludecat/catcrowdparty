@@ -19,7 +19,7 @@ export default class TwitchChatHandler extends TypedEmitter<TwitchChatHandlerEve
 
 	private connectedChannel: string | null = null
 
-	constructor(initialChannel: string) {
+	constructor() {
 		super()
 		this.tmi = new TmiClient({
 			connection: {
@@ -48,29 +48,19 @@ export default class TwitchChatHandler extends TypedEmitter<TwitchChatHandlerEve
 		this.messagesHandler.on(NEW_EMOTE_MESSAGE, (senderName, color, emoteIds) => {
 			this.emit(NEW_EMOTE_MESSAGE, senderName, color, emoteIdsToUrls(emoteIds))
 		})
-
-		this.start(initialChannel)
 	}
 
-	private start(initialChannel: string) {
-		// eslint-disable-next-line @typescript-eslint/no-floating-promises
-		this.tryConnect(initialChannel)
-	}
-
-	private async tryConnect(channel: string) {
-		try {
-			await this.connect(channel)
-		} catch (e) {
-			logger.error('Failed to connect to chat.')
-		}
-	}
-
-	private async connect(channel: string) {
+	public async connect(initialChannel: string) {
 		await this.tmi.connect()
-		await this.tryJoinChannel(channel)
+		await this.tryJoinChannel(initialChannel)
 	}
 
 	public async joinNewChannel(channel: string) {
+		if (channel === this.connectedChannel) {
+			logger.debug(`Already connected to this channel`)
+			return
+		}
+
 		logger.info(`Reconnecting to new channel ${channel}.`)
 		await this.leaveCurrentChannel()
 		await this.tryJoinChannel(channel)
