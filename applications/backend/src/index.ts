@@ -109,7 +109,6 @@ httpServer.listen(port)
 logger.info(`Backend ready on port ${port}`)
 
 const twitchChatHandler = new TwitchChatHandler()
-
 twitchChatHandler.on(NEW_EMOTES, (emoteUrls) => {
 	logger.info(`newEmotes: ${JSON.stringify(emoteUrls)}`)
 
@@ -127,3 +126,24 @@ twitchChatHandler.on(NEW_EMOTE_MESSAGE, (senderName, color, emoteUrls) => {
 		io.emit(NEW_EMOTE_MESSAGE_TRIGGER, senderName, color, emoteUrls, bubblesState)
 	}
 })
+
+const initalTwitchChannel = process.env.TWITCH_CHANNEL ?? 'twitch'
+twitchChatHandler.connect(initalTwitchChannel).then(
+	() => {
+		store.subscribe(() => {
+			const newChannel = store.getState().settings.twitchChannel
+			if (newChannel !== null) {
+				twitchChatHandler.connectTo(newChannel).catch((e) => logger.warn(`Failed to switch channel: ${e}`))
+			}
+		})
+
+		store.dispatch(
+			updateSettings({
+				twitchChannel: initalTwitchChannel,
+			})
+		)
+	},
+	() => {
+		logger.error('Failed to connect to twitch chat')
+	}
+)
