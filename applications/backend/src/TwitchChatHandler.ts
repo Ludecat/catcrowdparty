@@ -52,21 +52,21 @@ export default class TwitchChatHandler extends TypedEmitter<TwitchChatHandlerEve
 
 	public async connect(initialChannel: string) {
 		await this.tmi.connect()
-		await this.tryJoinChannel(initialChannel)
+		await this.joinChannel(initialChannel)
 	}
 
-	public async joinNewChannel(channel: string) {
+	public async connectTo(channel: string) {
 		if (channel === this.connectedChannel) {
 			logger.debug(`Already connected to this channel`)
 			return
 		}
 
 		logger.info(`Reconnecting to new channel ${channel}.`)
-		await this.leaveCurrentChannel()
-		await this.tryJoinChannel(channel)
+		await this.leaveChannel()
+		await this.joinChannel(channel)
 	}
 
-	private async tryJoinChannel(channel: string) {
+	private async joinChannel(channel: string) {
 		try {
 			logger.info(`Joining channel ${channel}`)
 			await this.tmi.join(channel)
@@ -76,7 +76,7 @@ export default class TwitchChatHandler extends TypedEmitter<TwitchChatHandlerEve
 		}
 	}
 
-	private async leaveCurrentChannel() {
+	private async leaveChannel() {
 		if (this.connectedChannel === null) {
 			logger.warn(`Cannot disconnect from nullish channel.`)
 			return

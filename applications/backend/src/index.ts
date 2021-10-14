@@ -108,7 +108,6 @@ const port = process.env.PORT_BACKEND ?? 4848
 httpServer.listen(port)
 logger.info(`Backend ready on port ${port}`)
 
-// twitch chat
 const twitchChatHandler = new TwitchChatHandler()
 twitchChatHandler.on(NEW_EMOTES, (emoteUrls) => {
 	logger.info(`newEmotes: ${JSON.stringify(emoteUrls)}`)
@@ -134,7 +133,7 @@ twitchChatHandler.connect(initalTwitchChannel).then(
 		store.subscribe(() => {
 			const newChannel = store.getState().settings.twitchChannel
 			if (newChannel !== null) {
-				twitchChatHandler.joinNewChannel(newChannel).catch((e) => logger.warn(`Failed to switch channel: ${e}`))
+				twitchChatHandler.connectTo(newChannel).catch((e) => logger.warn(`Failed to switch channel: ${e}`))
 			}
 		})
 
