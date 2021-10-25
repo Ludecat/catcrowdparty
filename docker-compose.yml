@@ -6,55 +6,28 @@ services:
       context: ./
       dockerfile: Dockerfile.frontend
     image: ccp/frontend
-    ports:
-      - '2424:2424'
-    environment:
-      VIRTUAL_HOST: 'ccp.redcouch.at'
-      LETSENCRYPT_HOST: 'ccp.redcouch.at'
-      VIRTUAL_PORT: '2424'
-      LETSENCRYPT_EMAIL: 'patzi@2die4.com'
-
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.ccp-frontend.rule=Host(`ccp.redcouch.at`)'
+      - 'traefik.http.routers.ccp-frontend.entrypoints=websecure'
+      - 'traefik.http.routers.ccp-frontend.tls.certresolver=myresolver'
+    networks:
+      internal:
+    restart: always
   backend:
     build:
       context: ./
       dockerfile: Dockerfile.backend
     image: ccp/backend
-    ports:
-      - '4848:4848'
-    environment:
-      VIRTUAL_HOST: 'ccp.backend.redcouch.at'
-      LETSENCRYPT_HOST: 'ccp.backend.redcouch.at'
-      VIRTUAL_PORT: '4848'
-      LETSENCRYPT_EMAIL: 'patzi@2die4.com'
-
-  nginx-proxy:
-    image: nginxproxy/nginx-proxy
-    container_name: nginx-proxy
-    ports:
-      - '80:80'
-      - '443:443'
-    volumes:
-      - conf:/etc/nginx/conf.d
-      - vhost:/etc/nginx/vhost.d
-      - html:/usr/share/nginx/html
-      - dhparam:/etc/nginx/dhparam
-      - certs:/etc/nginx/certs:ro
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-
-  acme-companion:
-    image: nginxproxy/acme-companion
-    container_name: nginx-proxy-acme
-    volumes_from:
-      - nginx-proxy
-    volumes:
-      - certs:/etc/nginx/certs:rw
-      - acme:/etc/acme.sh
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-
-volumes:
-  conf:
-  vhost:
-  html:
-  dhparam:
-  certs:
-  acme:
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.ccp-backend.rule=Host(`ccp.backend.redcouch.at`)'
+      - 'traefik.http.routers.ccp-backend.entrypoints=websecure'
+      - 'traefik.http.routers.ccp-backend.tls.certresolver=myresolver'
+    networks:
+      internal:
+    restart: always
+networks:
+  internal:
+    external:
+      name: paddy_internal
