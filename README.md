@@ -29,6 +29,13 @@ The frontend is available at port `2424` and backend at `4848`,
 `docker-compose up --build`
 `docker-compose up -d`
 
+# Add new dependency
+
+This repository uses `npm workspaces`. Npm workpaces allows developers to manage multiple packages to be managed from the root directory (e.g. local `@ccp` namespace).
+Therefore it is an absolute requirement to only install dependencies from the root directory.
+
+Use `npm install <packagename> -w <workspace-name>` to install dependencies to one application located in `applications`.
+
 # Docs
 
 Tech Stack, Flow Chart and Presentation are located in [docs](docs).
@@ -38,7 +45,3 @@ Tech Stack, Flow Chart and Presentation are located in [docs](docs).
 https://lude.cat/  
 https://www.facebook.com/ludecatgaming  
 https://www.twitch.tv/ludecat
-
-# Credits
-
-Placeholder Hot Air Balloon: https://www.appgamekit.com/documentation/utilities/0_image_joiner.htm

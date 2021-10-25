@@ -100,6 +100,7 @@ const emotesSlice = createSlice({
 
 const initialSettingsState: SettingsState = {
 	crowdThreshold: [50, 150],
+	twitchChannel: null,
 }
 
 const settingsSlice = createSlice({
